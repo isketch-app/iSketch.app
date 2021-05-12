@@ -1,0 +1,24 @@
+﻿.logo {
+    height:60px;
+    cursor:pointer;
+    user-select:none;
+}
+.img {
+    display:inline-block;
+    height:60px;
+    width:60px;
+    background-image:url('./static/images/isketch.svg');
+    background-size:85% 85%;
+    background-position:center center;
+    background-repeat:no-repeat;
+    vertical-align:top;
+}
+.text {
+    font-family: gaegu;
+    font-weight:bolder;
+    font-size:26px;
+    height:60px;
+    line-height:60px;
+    display:inline-block;
+    vertical-align:top;
+}

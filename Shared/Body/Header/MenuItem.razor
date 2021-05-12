@@ -1,0 +1,39 @@
+﻿@inject NavigationManager nm;
+
+<span @onclick="OnClick" class="menuitem @Selected">
+    @Text
+</span>
+
+@code {
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public string URL { get; set; }
+    public string SelectedCompare = "";
+    public string Selected { get; set; }
+    public void OnClick()
+    {
+        nm.NavigateTo(URL);
+    }
+    protected override void OnInitialized()
+    {
+        nm.LocationChanged += LocChanged;
+        LocChanged(null, null);
+    }
+    public void LocChanged(object o, LocationChangedEventArgs e)
+    {
+        if(nm.Uri.ToLower().EndsWith(URL.ToLower()))
+        {
+            Selected = "selected";
+        }
+        else
+        {
+            Selected = "";
+        }
+        if(SelectedCompare != Selected)
+        {
+            SelectedCompare = Selected;
+            StateHasChanged();
+        }
+    }
+} 

@@ -1,2 +1,15 @@
-﻿body {
+﻿@font-face {
+    font-family: gaegu;
+    src: url('../fonts/gaegu.ttf');
+}
+@font-face {
+    font-family: noto;
+    src: url('../fonts/noto.ttf');
+}
+body {
+    font-family:noto;
+    margin:0px;
+    padding:0px;
+    color:white;
+    background-color:black;
 }

@@ -1,0 +1,15 @@
+﻿.header {
+    height:60px;
+    width:calc(100% - 20px);
+    background-color:transparent;
+    display:flex;
+    padding:10px;
+}
+.center {
+    flex:1;
+    text-align:center;
+}
+.items {
+    display:inline-block;
+    height:60px;
+}
