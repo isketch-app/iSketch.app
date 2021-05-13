@@ -6,4 +6,7 @@ export default class iSketchGame {
     NewISketchTimer(selector, instanceID) {
         this.GameObjects[instanceID] = new iSketchTimer(selector);
     }
+    DisposeGameObject(instanceID) {
+        this.GameObjects[instanceID] = undefined;
+    }
 }

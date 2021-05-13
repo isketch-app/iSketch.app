@@ -1,18 +1,37 @@
 ﻿@inject IJSRuntime JS
+@inject NavigationManager NM; 
 
 <div class="isketch-timer-frame">
     <canvas width="110" height="110" class="isketch-timer" id="@GUID"></canvas>
 </div>
 
 @code {
-    public string GUID = Guid.NewGuid().ToString();
+    public string CurrentLocation;
+    public string GUID = "x" + Guid.NewGuid().ToString();
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
         if (firstRender)
         {
+            CurrentLocation = NM.Uri;
+            NM.LocationChanged += Dispose;
             await JS.InvokeVoidAsync("iSketchGame.NewISketchTimer", "#" + GUID, GUID);
-            await JS.InvokeVoidAsync("iSketchGame.GameObjects." + GUID + ".startTimer");
+            OnTimerInitialized(EventArgs.Empty);
         }
+    }
+    public async void Dispose(object o, LocationChangedEventArgs e)
+    {
+        if (e.Location == CurrentLocation) return;
+        await JS.InvokeVoidAsync("iSketchGame.GameObjects." + GUID + ".stopTimer");
+        await JS.InvokeVoidAsync("iSketchGame.DisposeGameObject", GUID);
+    }
+    public async Task StartTimer()
+    {
+        await JS.InvokeVoidAsync("iSketchGame.GameObjects." + GUID + ".startTimer");
+    }
+    public event EventHandler TimerInitialized;
+    protected virtual void OnTimerInitialized(EventArgs e)
+    {
+        EventHandler handler = TimerInitialized;
+        handler?.Invoke(this, e);
     }
 }

@@ -17,6 +17,7 @@
         this.startMS = 0;
         this.isTick = false;
         this.ding = new Audio("./static/sounds/iSketchTimer.ding.ogg");
+        this.shouldStopTimer = false;
 
         this.audioCtx = new AudioContext();
         this.req = new Request("./static/sounds/iSketchTimer.tick.ogg");
@@ -36,6 +37,7 @@
     }
 
     loop(parent) {
+        if (this.shouldStopTimer) return;
         var timerRatio = ((performance.now() - this.startMS) / this.timerMS);
         this.ctx.fillStyle = "#fff"
         this.ctx.fillRect(0, 0, this.is_timer.width, this.is_timer.height);
@@ -64,11 +66,17 @@
 
     startTimer() {
         var parent = this;
+        this.shouldStopTimer = false;
         this.startMS = performance.now();
         this.ctx.fillStyle = this.colorTM;
         requestAnimationFrame(function () {
             parent.loop(parent);
         });
+    }
+
+    stopTimer() {
+        this.shouldStopTimer = true;
+        this.stopTick();
     }
 
     startTick() {

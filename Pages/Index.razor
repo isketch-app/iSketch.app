@@ -1,8 +1,22 @@
 ﻿@page "/"
+@using iSketchTimer = iSketch.app.Shared.Game.Timer.Timer; 
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
 
-<iSketch.app.Shared.Game.Timer.Timer />
+<iSketch.app.Shared.Game.Timer.Timer @ref="timer" />
+
+@code {
+    public iSketchTimer timer;
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        timer.TimerInitialized += TimerReady;
+        return base.OnAfterRenderAsync(firstRender);
+    }
+    private async void TimerReady(object o, EventArgs e)
+    {
+        await timer.StartTimer();
+    }
+} 
