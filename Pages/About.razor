@@ -1,5 +1,7 @@
 ﻿@page "/About";
+@implements IDisposable;
 @using System.Reflection;
+@using System.Timers;
 
 <div class="page">
     <div class="logo"></div>
@@ -10,7 +12,7 @@
     <table>
         <tr>
             <td>Version:</td>
-            <td>@name.Version.ToString()</td>
+            <td>@name</td>
         </tr>
         <tr>
             <td>Author:</td>
@@ -33,27 +35,55 @@
         </tr>
         <tr>
             <td>Server Name:</td>
-            <td>@System.Environment.MachineName</td>
+            <td>@servername</td>
         </tr>
         <tr>
             <td>OS:</td>
-            <td>@System.Environment.OSVersion.ToString()</td>
+            <td>@os</td>
         </tr>
         <tr>
             <td>CPU Threads:</td>
-            <td>@System.Environment.ProcessorCount</td>
+            <td>@threads</td>
         </tr>
         <tr>
             <td>.NET Version:</td>
-            <td>@System.Environment.Version</td>
+            <td>@netversion</td>
         </tr>
     </table>
 </div>
 
 @code {
-    static Assembly self = Assembly.GetExecutingAssembly();
-    AssemblyName name = self.GetName();
-    string description = self.GetCustomAttribute<AssemblyDescriptionAttribute>().Description;
-    string author = self.GetCustomAttribute<AssemblyCompanyAttribute>().Company;
-    string copyright = self.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
+    private static Assembly self = Assembly.GetExecutingAssembly();
+    private string name = self.GetName().Version.ToString();
+    private string description = self.GetCustomAttribute<AssemblyDescriptionAttribute>().Description;
+    private string author = self.GetCustomAttribute<AssemblyCompanyAttribute>().Company;
+    private string copyright = self.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
+    private string servername = System.Environment.MachineName;
+    private string os = System.Environment.OSVersion.ToString();
+    private string threads = System.Environment.ProcessorCount.ToString();
+    private string netversion = System.Environment.Version.ToString();
+    private Timer timer = new Timer();
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timer.Interval = 1000;
+            timer.AutoReset = true;
+            timer.Elapsed += RefreshTime;
+            timer.Start();
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+    private void RefreshTime(object o, ElapsedEventArgs e)
+    {
+        InvokeAsync(() => {
+            StateHasChanged();
+        });
+    }
+    public void Dispose()
+    {
+        timer.Elapsed -= RefreshTime;
+        timer.Stop();
+        timer.Dispose();
+    }
 }
