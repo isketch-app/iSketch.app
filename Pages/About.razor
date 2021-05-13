@@ -1,0 +1,59 @@
+﻿@page "/About";
+@using System.Reflection;
+
+<div class="page">
+    <div class="logo"></div>
+    <h2>iSketch.app</h2>
+    <hr />
+    <p>@description</p>
+    <hr />
+    <table>
+        <tr>
+            <td>Version:</td>
+            <td>@name.Version.ToString()</td>
+        </tr>
+        <tr>
+            <td>Author:</td>
+            <td>@author</td>
+        </tr>
+        <tr>
+            <td>Copyright:</td>
+            <td>@copyright</td>
+        </tr>
+        <tr>
+            <td>Repository:</td>
+            <td><a target="_blank" href="https://github.com/isketch-app/iSketch.app">GitHub</a></td>
+        </tr>
+    </table>
+    <hr />
+    <table>
+        <tr>
+            <td>Server Time:</td>
+            <td>@DateTime.Now.ToString()</td>
+        </tr>
+        <tr>
+            <td>Server Name:</td>
+            <td>@System.Environment.MachineName</td>
+        </tr>
+        <tr>
+            <td>OS:</td>
+            <td>@System.Environment.OSVersion.ToString()</td>
+        </tr>
+        <tr>
+            <td>CPU Threads:</td>
+            <td>@System.Environment.ProcessorCount</td>
+        </tr>
+        <tr>
+            <td>.NET Version:</td>
+            <td>@System.Environment.Version</td>
+        </tr>
+    </table>
+</div>
+
+@code {
+    static Assembly self = Assembly.GetExecutingAssembly();
+    AssemblyName name = self.GetName();
+    string description = self.GetCustomAttribute<AssemblyDescriptionAttribute>().Description;
+    string author = self.GetCustomAttribute<AssemblyCompanyAttribute>().Company;
+    string copyright = self.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
+}

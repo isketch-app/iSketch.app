@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Version>0.0.0.0</Version>
+    <Authors>Dylan Bickerstaff</Authors>
+    <Company>iSketch.app</Company>
+    <Description>iSketch.app is a free, open source, Pictionary-style, online drawing game!</Description>
+    <RepositoryUrl>https://github.com/isketch-app/iSketch.app</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/isketch-app/iSketch.app</PackageProjectUrl>
+    <Copyright>Dylan Bickerstaff (C) 2021</Copyright>
+    <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

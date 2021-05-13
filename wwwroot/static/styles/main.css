@@ -7,9 +7,20 @@
     src: url('../fonts/noto.ttf');
 }
 body {
-    font-family:noto;
-    margin:0px;
-    padding:0px;
-    color:white;
-    background-color:black;
+    font-family: noto;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    background-color: black;
+    background-image: url('../images/bg.svg');
+    background-size:cover;
+}
+hr {
+    border:0px;
+    background-color:#353535;
+    height:1px;
+}
+a {
+    color:gray;
+    text-decoration:none;
 }
