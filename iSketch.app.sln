@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iSketch.app", "iSketch.app.csproj", "{587C80BF-680F-4285-9C2B-23A37BA2784E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iSketch.app", "iSketch.app.csproj", "{587C80BF-680F-4285-9C2B-23A37BA2784E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,18 @@
+﻿@inject IJSRuntime JS
+
+<div class="isketch-timer-frame">
+    <canvas width="110" height="110" class="isketch-timer" id="@GUID"></canvas>
+</div>
+
+@code {
+    public string GUID = Guid.NewGuid().ToString();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("iSketchGame.NewISketchTimer", "#" + GUID, GUID);
+            await JS.InvokeVoidAsync("iSketchGame.GameObjects." + GUID + ".startTimer");
+        }
+    }
+}

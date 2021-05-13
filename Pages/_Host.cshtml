@@ -13,6 +13,10 @@
         <base href="~/" />
         <link href="~/static/styles/main.css" rel="stylesheet" />
         <link href="iSketch.app.styles.css" rel="stylesheet" />
+        <script type="module">
+            import iSketchGame from "./static/scripts/iSketchGame.js";
+            window.iSketchGame = new iSketchGame();
+        </script>
     </head>
     <body>
         <component type="typeof(App)" render-mode="ServerPrerendered" />
