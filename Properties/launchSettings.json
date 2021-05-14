@@ -11,8 +11,13 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "/Administration/Words",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "IS_SQL_Pass": "iSketch.app",
+        "IS_SQL_ServerHost": "10.0.5.8",
+        "IS_SQL_User": "iSketch.app",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "IS_SQL_DatabaseName": "iSketch.app"
       },
       "use64Bit": true
     },
