@@ -1,16 +1,23 @@
 ﻿.menuitem {
     cursor: pointer;
     user-select: none;
-    line-height: 60px;
     height: 60px;
     margin: 0px 15px;
-    font-weight:bolder;
-    font-size:18px;
-    color:gray;
+    font-weight: bolder;
+    font-size: 18px;
+    color: gray;
+    line-height: 60px;
+    display:inline-block;
 }
 .menuitem:hover {
     color:white;
 }
 .menuitem.selected {
     color:white;
+}
+.icon {
+    font-family: icons;
+    vertical-align: -4px;
+    font-weight: normal;
+    font-size: 22px;
 }

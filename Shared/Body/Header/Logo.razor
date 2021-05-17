@@ -1,13 +1,4 @@
-﻿@inject NavigationManager NavigationManager
-
-<span @onclick="LogoClick" class="logo">
+﻿<a href="/" class="logo">
     <span class="img"></span>
     <span class="text">iSketch.app</span>
-</span>
-
-@code {
-    public void LogoClick()
-    {
-        NavigationManager.NavigateTo("/");
-    }
-}
+</a>
