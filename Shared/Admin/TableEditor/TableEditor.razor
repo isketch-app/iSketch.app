@@ -59,14 +59,23 @@
         SVRows = SVRows.Substring(0, SVRows.Length - 1);
         SqlCommand cmd = new SqlCommand("SELECT " + SVRows + " FROM " + TableName, SQLCon);
         int filterIndex = 0;
+        int validFilters = 0;
         foreach (string filter in RowFilters)
         {
             int i = filterIndex;
             if (filterIndex++ == 0) continue;
             if (RowFilters[i] != null && RowFilters[i] != "")
             {
-                cmd.Parameters.AddWithValue("@FilterString", filter);
-                cmd.CommandText += " WHERE " + VisibleRows[i] + " LIKE @FilterString";
+                cmd.Parameters.AddWithValue("@FilterString" + i, filter);
+                if (validFilters++ == 0) 
+                { 
+                    cmd.CommandText += " WHERE ";
+                }
+                else
+                {
+                    cmd.CommandText += " AND ";
+                }
+                cmd.CommandText += VisibleRows[i] + " LIKE @FilterString" + i;
             }
         }
         SqlDataReader rdr = await cmd.ExecuteReaderAsync();
