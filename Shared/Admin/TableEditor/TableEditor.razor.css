@@ -1,6 +1,7 @@
 ﻿.row-link {
     font-family:icons;
     text-align:right;
+    font-size:20px;
 }
 table {
     width:100%;
@@ -10,10 +11,13 @@ table {
     padding: 10px;
     font-size: 18px;
     width: calc(100% - 20px);
-    background-color: rgb(0 0 0 / 0.66);
+    background-color: rgb(0 0 0 / 0.2);
 }
 th {
     text-align:left;
+}
+td {
+    font-size:14px;
 }
 td, th {
     padding:5px;
@@ -26,4 +30,37 @@ tr:not(:last-child), td:not(:last-child) {
 }
 tr:nth-child(2n+2) {
     background-color:rgb(255 255 255 / 0.04);
+}
+input[type=text] {
+    width:74px;
+    height:20px;
+    font-size:14px;
+    line-height:20px;
+    outline:0px;
+    color:white;
+    border:0px;
+    padding:0px 23px 0px `3px;
+    position:absolute;
+    top:0px;
+    left:0px;
+    background-color:transparent;
+}
+.filter {
+    width: 100px;
+    height: 20px;
+    background-color: rgb(255 255 255 / 0.16);
+    position: relative;
+}
+.filter .icon {
+    position:absolute;
+    right:0px;
+    top:0px;
+    width:18px;
+    height:20px;
+    font-family:icons;
+    line-height:20px;
+    font-size:14px;
+    font-weight:normal;
+    text-align:right;
+    padding-right:2px;
 }

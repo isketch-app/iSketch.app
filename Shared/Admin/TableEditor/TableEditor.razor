@@ -6,8 +6,18 @@
             @{int i = 0;}
             @foreach (string title in VisibleRowsTitles)
             {
+                int index = i;
                 if (i++ == 0) continue;
-                <th>@title</th>
+                <th>
+                    <div>@title</div>
+                    <div class="filter">
+                        <input @onchange="@((e) => {
+                            RowFilters[index] = e.Value.ToString();
+                            OnFilterChange();
+                        })" type="text" />
+                        <div class="icon"></div>
+                    </div>
+                </th>
             }
             <th></th>
         </tr>
@@ -31,22 +41,39 @@
     public string TableName;
     public List<string> VisibleRows = new List<string>();
     public List<string> VisibleRowsTitles = new List<string>();
+    private string[] RowFilters;
     private List<List<string>> TableData = new List<List<string>>();
     public async void TableInit()
     {
+        RowFilters = new string[VisibleRows.Count];
+        await ReQueryTable();
+    }
+    private async Task ReQueryTable()
+    {
         string SVRows = "";
-        foreach(string vRow in VisibleRows)
+        TableData = new List<List<string>>();
+        foreach (string vRow in VisibleRows)
         {
             SVRows += vRow + ",";
         }
         SVRows = SVRows.Substring(0, SVRows.Length - 1);
-
         SqlCommand cmd = new SqlCommand("SELECT " + SVRows + " FROM " + TableName, SQLCon);
+        int filterIndex = 0;
+        foreach (string filter in RowFilters)
+        {
+            int i = filterIndex;
+            if (filterIndex++ == 0) continue;
+            if (RowFilters[i] != null && RowFilters[i] != "")
+            {
+                cmd.Parameters.AddWithValue("@FilterString", filter);
+                cmd.CommandText += " WHERE " + VisibleRows[i] + " LIKE @FilterString";
+            }
+        }
         SqlDataReader rdr = await cmd.ExecuteReaderAsync();
-        while(await rdr.ReadAsync())
+        while (await rdr.ReadAsync())
         {
             List<string> fields = new List<string>();
-            for(int i = 0; rdr.FieldCount > i; i++)
+            for (int i = 0; rdr.FieldCount > i; i++)
             {
                 fields.Add(rdr.GetValue(i).ToString());
             }
@@ -54,5 +81,9 @@
         }
         await rdr.CloseAsync();
         StateHasChanged();
+    }
+    private void OnFilterChange()
+    {
+        ReQueryTable();
     }
 }
