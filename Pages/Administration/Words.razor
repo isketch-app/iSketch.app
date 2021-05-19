@@ -1,6 +1,5 @@
 ﻿@page "/Administration/Words";
 @inject Services.Database db;
-@using System.Data.SqlClient;
 @using iSketch.app.Shared.Admin.TableEditor;
 
 <h3>Words</h3>
@@ -9,28 +8,8 @@
 
 <TableEditor @ref="Table" />
 
-<ul>
-    @foreach (string word in WordList)
-    {
-        <li>@word</li>
-    }
-</ul>
-
 @code {
-    private List<string> WordList = new List<string>();
     private TableEditor Table;
-    protected override async Task OnInitializedAsync()
-    {
-        /*SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.Words", db.DBCon);
-        SqlDataReader reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            WordList.Add(reader.GetString(1));
-        }
-        await reader.CloseAsync();
-        await base.OnInitializedAsync();*/
-
-    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)

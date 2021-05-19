@@ -1,5 +1,11 @@
 ﻿.body {
     flex:1;
+    max-width:1400px;
+    width:calc(100% - 60px);
+    margin-left:auto;
+    margin-right:auto;
+    padding-left:30px;
+    padding-right:30px;
 }
 .main {
     display: flex;

@@ -1,29 +1,36 @@
 ﻿@using System.Data.SqlClient;
 
-<table>
-    <tr>
-        @foreach (string title in VisibleRowsTitles)
-        {
-            <th>@title</th>
-        }
-    </tr>
-    @foreach (List<string> row in TableData)
-    {
-        <tr @onclick="() => RowClicked(row[0])">
-            @foreach (string field in row)
+<div class="table-body">
+    <table>
+        <tr>
+            @{int i = 0;}
+            @foreach (string title in VisibleRowsTitles)
             {
-                <td>@field</td>
+                if (i++ == 0) continue;
+                <th>@title</th>
             }
+            <th></th>
         </tr>
-    }
-</table>
+        @foreach (List<string> row in TableData)
+        {
+            <tr>
+                @{i = 0;}
+                @foreach (string field in row)
+                {
+                    if (i++ == 0) continue;
+                    <td>@field</td>
+                }
+                <td class="row-link"><a href="/Administration/Words/Word/@row[0]"></a></td>
+            </tr>
+        }
+    </table>
+</div>
 
 @code {
     public SqlConnection SQLCon;
     public string TableName;
     public List<string> VisibleRows = new List<string>();
     public List<string> VisibleRowsTitles = new List<string>();
-    public List<string> EditableRows = new List<string>();
     private List<List<string>> TableData = new List<List<string>>();
     public async void TableInit()
     {
@@ -47,9 +54,5 @@
         }
         await rdr.CloseAsync();
         StateHasChanged();
-    }
-    private void RowClicked(string guid)
-    {
-        
     }
 }

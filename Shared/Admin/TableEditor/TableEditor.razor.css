@@ -1,0 +1,29 @@
+﻿.row-link {
+    font-family:icons;
+    text-align:right;
+}
+table {
+    width:100%;
+    border-spacing:1px;
+}
+.table-body {
+    padding: 10px;
+    font-size: 18px;
+    width: calc(100% - 20px);
+    background-color: rgb(0 0 0 / 0.66);
+}
+th {
+    text-align:left;
+}
+td, th {
+    padding:5px;
+}
+th:last-child {
+    width:100%;
+}
+tr:not(:last-child), td:not(:last-child) {
+    padding-right:20px;
+}
+tr:nth-child(2n+2) {
+    background-color:rgb(255 255 255 / 0.04);
+}
