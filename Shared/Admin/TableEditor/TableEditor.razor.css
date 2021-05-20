@@ -31,24 +31,26 @@ tr:not(:last-child), td:not(:last-child) {
 tr:nth-child(2n+2) {
     background-color:rgb(255 255 255 / 0.04);
 }
+input[type=number], input[type=text] {
+    width: 74px;
+    height: 20px;
+    font-size: 14px;
+    line-height: 20px;
+    outline: 0px;
+    color: white;
+    border: 0px;
+    padding: 0px 3px 0px 3px;
+    background-color: rgb(255 255 255 / 0.16);
+}
 input[type=text] {
-    width:74px;
-    height:20px;
-    font-size:14px;
-    line-height:20px;
-    outline:0px;
-    color:white;
-    border:0px;
-    padding:0px 23px 0px `3px;
-    position:absolute;
-    top:0px;
-    left:0px;
-    background-color:transparent;
+    padding: 0px 23px 0px 3px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
 }
 .filter {
     width: 100px;
     height: 20px;
-    background-color: rgb(255 255 255 / 0.16);
     position: relative;
 }
 .filter .icon {

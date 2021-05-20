@@ -1,6 +1,16 @@
 ﻿@using System.Data.SqlClient;
 
 <div class="table-body">
+    <div class="toolbar">
+        <span>
+            <span>Start: </span>
+            <input min="0" @onchange="@((e) => {
+                if (!uint.TryParse(e.Value.ToString(), out uint val)) val = 0;
+                ResultOffset = val;
+                OnFilterChange();
+            })" type="number" />
+        </span>
+    </div>
     <table>
         <tr>
             @{int i = 0;}
@@ -41,6 +51,8 @@
     public string TableName;
     public List<string> VisibleRows = new List<string>();
     public List<string> VisibleRowsTitles = new List<string>();
+    public uint ResultOffset = 0;
+    public uint MaxResults = 100;
     private string[] RowFilters;
     private List<List<string>> TableData = new List<List<string>>();
     public async void TableInit()
@@ -67,8 +79,8 @@
             if (RowFilters[i] != null && RowFilters[i] != "")
             {
                 cmd.Parameters.AddWithValue("@FilterString" + i, '%' + filter + '%');
-                if (validFilters++ == 0) 
-                { 
+                if (validFilters++ == 0)
+                {
                     cmd.CommandText += " WHERE ";
                 }
                 else
@@ -78,6 +90,8 @@
                 cmd.CommandText += VisibleRows[i] + " LIKE @FilterString" + i;
             }
         }
+        cmd.CommandText += " ORDER BY " + VisibleRows[1];
+        cmd.CommandText += " OFFSET " + ResultOffset + " ROWS FETCH NEXT " + MaxResults + " ROWS ONLY";
         SqlDataReader rdr = await cmd.ExecuteReaderAsync();
         while (await rdr.ReadAsync())
         {
@@ -91,8 +105,8 @@
         await rdr.CloseAsync();
         StateHasChanged();
     }
-    private void OnFilterChange()
+    private async void OnFilterChange()
     {
-        ReQueryTable();
+        await ReQueryTable();
     }
 }

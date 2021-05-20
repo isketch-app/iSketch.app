@@ -15,9 +15,9 @@
         if(firstRender)
         {
             Table.SQLCon = db.DBCon;
-            Table.TableName = "Words";
-            Table.VisibleRows.AddRange(new string[] { "WordID", "Word", "Score" });
-            Table.VisibleRowsTitles.AddRange(new string[] { "WordID", "Word", "Score" });
+            Table.TableName = "[Words.Difficulty]";
+            Table.VisibleRows.AddRange(new string[] { "WordID", "Word", "Difficulty", "Score" });
+            Table.VisibleRowsTitles.AddRange(new string[] { "WordID", "Word", "Difficulty", "Score" });
             Table.TableInit();
         }
         await base.OnAfterRenderAsync(firstRender);
