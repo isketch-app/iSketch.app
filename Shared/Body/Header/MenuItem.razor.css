@@ -8,6 +8,7 @@
     color: gray;
     line-height: 60px;
     display:inline-block;
+    transition:.3s;
 }
 .menuitem:hover {
     color:white;

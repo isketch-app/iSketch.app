@@ -9,21 +9,23 @@ table {
 }
 .table-body {
     padding: 10px;
-    font-size: 18px;
+    font-size: 14px;
     width: calc(100% - 20px);
     background-color: rgb(0 0 0 / 0.2);
+    overflow-x: auto;
 }
 th {
-    text-align:left;
+    text-align: left;
+    font-weight: normal;
+    padding: 0px;
 }
 td {
-    font-size:14px;
-}
-td, th {
-    padding:5px;
+    color: rgb(255 255 255 / 0.80);
+    padding: 5px;
 }
 th:last-child {
     width:100%;
+    text-align:right;
 }
 tr:not(:last-child), td:not(:last-child) {
     padding-right:20px;
@@ -32,30 +34,31 @@ tr:nth-child(2n+2) {
     background-color:rgb(255 255 255 / 0.04);
 }
 input[type=number], input[type=text] {
-    width: 74px;
+    width: 120px;
     height: 20px;
     font-size: 14px;
     line-height: 20px;
     outline: 0px;
     color: white;
     border: 0px;
-    padding: 0px 3px 0px 3px;
+    padding: 0px 0px 0px 3px;
     background-color: rgb(255 255 255 / 0.16);
 }
 input[type=text] {
-    padding: 0px 23px 0px 3px;
+    width: 74px;
+    padding: 0px 43px 0px 3px;
     position: absolute;
     top: 0px;
     left: 0px;
 }
 .filter {
-    width: 100px;
+    width: 120px;
     height: 20px;
     position: relative;
 }
 .filter .icon {
     position:absolute;
-    right:0px;
+    right:20px;
     top:0px;
     width:18px;
     height:20px;
@@ -65,4 +68,36 @@ input[type=text] {
     font-weight:normal;
     text-align:right;
     padding-right:2px;
+}
+.sort-up, .sort-dn {
+    width: 20px;
+    height: 10px;
+    font-size: 10px;
+    line-height: 10px;
+    font-family: icons;
+    font-weight: normal;
+    cursor:pointer;
+    display:block;
+    transition:.3s;
+}
+.sort-up:hover, .sort-dn:hover {
+    background-color:rgb(255 255 255 / 0.09);
+}
+.sort-up.selected, .sort-dn.selected {
+    background-color: rgb(255 255 255 / 0.15);
+}
+.sort-btns {
+    user-select:none;
+    position: absolute;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    right: 0px;
+    top: 0px;
+    text-align: center;
+}
+.row-offset-lbl {
+    width: 123px;
+    margin-left:auto;
+    text-align:left;
 }

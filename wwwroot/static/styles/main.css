@@ -23,4 +23,8 @@ hr {
 a {
     color:gray;
     text-decoration:none;
+    transition:.3s;
+}
+a:hover {
+    color:white;
 }
