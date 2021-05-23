@@ -23,6 +23,9 @@ td {
     color: rgb(255 255 255 / 0.80);
     padding: 5px;
 }
+td:last-child {
+    width:100%;
+}
 th:last-child {
     width:100%;
     text-align:right;
@@ -100,4 +103,23 @@ input[type=text] {
     width: 123px;
     margin-left:auto;
     text-align:left;
+}
+.table-nav {
+    line-height:20px;
+    vertical-align:bottom;
+    white-space:nowrap;
+    padding-left:10px;
+}
+.table-nav * {
+    display:inline-block;
+    height:20px;
+    vertical-align:top;
+}
+.table-nav a {
+    font-family: icons;
+    font-size: 18px;
+    width:20px;
+}
+.table-nav a:hover {
+    background-color:rgb(255 255 255 / 0.14);
 }

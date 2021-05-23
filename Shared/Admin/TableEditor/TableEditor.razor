@@ -1,4 +1,5 @@
 ﻿@using System.Data.SqlClient;
+@inject NavigationManager nm; 
 
 <div class="table-body">
     <table>
@@ -33,16 +34,14 @@
                     </div>
                 </th>
             }
-        <th>
-            <div class="row-offset-lbl">Row Offset</div>
-            <div>
-                <input min="0" @onchange="@((e) => {
-                    if (!uint.TryParse(e.Value.ToString(), out uint val)) val = 0;
-                    ResultOffset = val;
-                    OnFilterChange();
-                })" type="number" />
-            </div>
-        </th>
+            <th class="table-nav">
+                <span>Records: @qTotal</span>
+                <span>|</span>
+                <span>Page: </span>
+                <a href="@PagePath/@(PageNumber - 1)"></a>
+                <span>@PageNumber</span>
+                <a href="@PagePath/@(PageNumber + 1)"></a>
+            </th>
         </tr>
         @foreach (List<string> row in TableData)
         {
@@ -53,7 +52,7 @@
                     if (i++ == 0) continue;
                     <td>@field</td>
                 }
-                <td class="row-link"><a href="/Administration/Words/Word/@row[0]"></a></td>
+                <td class="row-link"><a href="@PagePath/@row[0]"></a></td>
             </tr>
         }
     </table>
@@ -62,10 +61,25 @@
 @code {
     public SqlConnection SQLCon;
     public string TableName;
+    public string PagePath = "";
     public List<string> VisibleRows = new List<string>();
     public List<string> VisibleRowsTitles = new List<string>();
     public uint ResultOffset = 0;
     public uint MaxResults = 100;
+    [Parameter]
+    public int PageNumber {
+        get {
+            return pPageNumber;
+        }
+        set {
+            pPageNumber = value;
+            ResultOffset = (uint)(MaxResults * pPageNumber);
+            if (inited) OnPageChange();
+        }
+    }
+    private int qTotal = 0;
+    private bool inited = false;
+    private int pPageNumber = 0;
     private int SortColumnAndDirection = 1;
     private string[] RowFilters;
     private List<List<string>> TableData = new List<List<string>>();
@@ -73,6 +87,7 @@
     {
         RowFilters = new string[VisibleRows.Count];
         await ReQueryTable();
+        inited = true;
     }
     private async Task ReQueryTable()
     {
@@ -83,6 +98,7 @@
             SVRows += vRow + ",";
         }
         SVRows = SVRows.Substring(0, SVRows.Length - 1);
+        qTotal = (int)(await new SqlCommand("SELECT COUNT(*) AS Count FROM Words " + TableName, SQLCon).ExecuteScalarAsync());
         SqlCommand cmd = new SqlCommand("SELECT " + SVRows + " FROM " + TableName, SQLCon);
         int filterIndex = 0;
         int validFilters = 0;
@@ -127,6 +143,17 @@
         StateHasChanged();
     }
     private async void OnFilterChange()
+    {
+        if (PageNumber == 0)
+        {
+            await ReQueryTable();
+        }
+        else
+        {
+            nm.NavigateTo(PagePath);
+        }
+    }
+    private async void OnPageChange()
     {
         await ReQueryTable();
     }

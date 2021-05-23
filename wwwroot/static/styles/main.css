@@ -14,6 +14,7 @@ body {
     background-color: black;
     background-image: url('../images/bg.svg');
     background-size:cover;
+    overflow-y:scroll;
 }
 hr {
     border:0px;
@@ -24,6 +25,7 @@ a {
     color:gray;
     text-decoration:none;
     transition:.3s;
+    user-select:none;
 }
 a:hover {
     color:white;

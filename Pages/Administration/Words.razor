@@ -1,4 +1,5 @@
-﻿@page "/Administration/Words";
+﻿@page "/Administration/Words/";
+@page "/Administration/Words/{PageNumber:int}";
 @inject Services.Database db;
 @using iSketch.app.Shared.Admin.TableEditor;
 
@@ -7,15 +8,18 @@
     <span class="title">Word List</span>
 </div>
 
-<TableEditor @ref="Table" />
+<TableEditor PageNumber="PageNumber" @ref="Table" />
 
 @code {
+    [Parameter]
+    public int PageNumber { get; set; }
     private TableEditor Table;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
             Table.SQLCon = db.DBCon;
+            Table.PagePath = "/Administration/Words";
             Table.TableName = "[Words.Difficulty]";
             Table.VisibleRows.AddRange(new string[] { "WordID", "Word", "Difficulty", "Score" });
             Table.VisibleRowsTitles.AddRange(new string[] { "WordID", "Word", "Difficulty", "Score" });
