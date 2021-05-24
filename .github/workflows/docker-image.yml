@@ -16,6 +16,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ghcr.io/isketch-app/isketch-app:latest
+      
+    - name: Login
+      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u krisdb2009 --password-stdin
 
     - name: Publish the Docker image
       run: docker push ghcr.io/isketch-app/isketch-app:latest
