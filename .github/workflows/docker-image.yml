@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Build iSketch-app
 
 on:
   push:
@@ -16,3 +16,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag isketch-app:$(date +%s)
+
+    - name: Publish the Docker image
+      run: docker push ghcr.io/isketch-app/isketch-app:$(date +%s)
