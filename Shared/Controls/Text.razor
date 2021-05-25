@@ -1,0 +1,10 @@
+﻿<Control Label="@Label">
+    <input @bind-value="Value" type="text" />
+</Control>
+
+@code {
+    [Parameter]
+    public string Label { get; set; }
+    [Parameter]
+    public string Value { get; set; }
+} 

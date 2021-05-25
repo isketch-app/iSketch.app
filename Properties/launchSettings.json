@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "Administration/Words",
+      "launchUrl": "Administration/Words/9f5ac26c-1cd4-44ce-b2c6-72c504b380cf",
       "environmentVariables": {
         "IS_SQL_Pass": "iSketch.app",
         "IS_SQL_ServerHost": "10.0.5.8",

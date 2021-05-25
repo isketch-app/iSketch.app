@@ -2,29 +2,32 @@
 @page "/Administration/Words/{PageNumber:int}";
 @page "/Administration/Words/{WordID}";
 @inject Services.Database db;
+@using System.Data.SqlClient;
 @using iSketch.app.Shared.Admin.TableEditor;
+@using iSketch.app.Shared.Body;
 
 @if (WordID == null)
 {
-    <div class="center">
-        <span class="icon"></span>
-        <span class="title">Word List</span>
-    </div>
-    <TableEditor 
-        PageNumber="PageNumber"
-        SQLCon="db.DBCon"
-        PagePath="/Administration/Words"
-        TableName="[Words.Difficulty]"
-        VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
-        VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
-    />
+    <PageTitle Title="Word List" />
+    <TableEditor PageNumber="PageNumber"
+                 SQLCon="db.DBCon"
+                 PagePath="/Administration/Words"
+                 TableName="[Words.Difficulty]"
+                 VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
+                 VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }' />
 }
 else
 {
-    <div class="center">
-        <span class="icon"></span>
-        <span class="title">Editing word ""</span>
-    </div>
+    if (!InitEditWord())
+    {
+        <PageTitle Title="Failed to parse the WordID!" />
+        return;
+    }
+    <PageTitle Title='@("Editing word: " + @WordValue)' />
+    <hr />
+    <iSketch.app.Shared.Controls.Text Label="Word" Value="@WordValue" />
+    <iSketch.app.Shared.Controls.Number Label="Score" Value="@ScoreValue.ToString()" />
+    <iSketch.app.Shared.Controls.Text Label="Difficulty" Value="@DifficultyValue" />
 }
 
 @code {
@@ -32,4 +35,19 @@ else
     public int PageNumber { get; set; }
     [Parameter]
     public string WordID { get; set; }
+    private string WordValue { get; set; } = "";
+    private int ScoreValue { get; set; } = 0;
+    private string DifficultyValue { get; set; } = "";
+    private bool InitEditWord()
+    {
+        if (!Guid.TryParse(WordID, out Guid id)) return false;
+        SqlCommand cmd = new SqlCommand("SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + WordID.ToString() + "'", db.DBCon);
+        SqlDataReader rdr = cmd.ExecuteReader();
+        rdr.Read();
+        WordValue = rdr.GetString(0);
+        ScoreValue = rdr.GetInt32(1);
+        DifficultyValue = rdr.GetString(2);
+        rdr.Close();
+        return true;
+    }
 }
