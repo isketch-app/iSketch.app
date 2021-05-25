@@ -1,30 +1,35 @@
 ﻿@page "/Administration/Words/";
 @page "/Administration/Words/{PageNumber:int}";
+@page "/Administration/Words/{WordID}";
 @inject Services.Database db;
 @using iSketch.app.Shared.Admin.TableEditor;
 
-<div class="center">
-    <span class="icon"></span>
-    <span class="title">Word List</span>
-</div>
-
-<TableEditor PageNumber="PageNumber" @ref="Table" />
+@if (WordID == null)
+{
+    <div class="center">
+        <span class="icon"></span>
+        <span class="title">Word List</span>
+    </div>
+    <TableEditor 
+        PageNumber="PageNumber"
+        SQLCon="db.DBCon"
+        PagePath="/Administration/Words"
+        TableName="[Words.Difficulty]"
+        VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
+        VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
+    />
+}
+else
+{
+    <div class="center">
+        <span class="icon"></span>
+        <span class="title">Editing word ""</span>
+    </div>
+}
 
 @code {
     [Parameter]
     public int PageNumber { get; set; }
-    private TableEditor Table;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            Table.SQLCon = db.DBCon;
-            Table.PagePath = "/Administration/Words";
-            Table.TableName = "[Words.Difficulty]";
-            Table.VisibleRows.AddRange(new string[] { "WordID", "Word", "Difficulty", "Score" });
-            Table.VisibleRowsTitles.AddRange(new string[] { "WordID", "Word", "Difficulty", "Score" });
-            Table.TableInit();
-        }
-        await base.OnAfterRenderAsync(firstRender);
-    }
+    [Parameter]
+    public string WordID { get; set; }
 }

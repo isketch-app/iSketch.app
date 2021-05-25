@@ -59,13 +59,20 @@
 </div>
 
 @code {
-    public SqlConnection SQLCon;
-    public string TableName;
-    public string PagePath = "";
-    public List<string> VisibleRows = new List<string>();
-    public List<string> VisibleRowsTitles = new List<string>();
-    public uint ResultOffset = 0;
-    public uint MaxResults = 100;
+    [Parameter]
+    public SqlConnection SQLCon { get; set; }
+    [Parameter]
+    public string TableName { get; set; } = "";
+    [Parameter]
+    public string PagePath { get; set; } = "";
+    [Parameter]
+    public List<string> VisibleRows { get; set; } = new List<string>();
+    [Parameter]
+    public List<string> VisibleRowsTitles { get; set; } = new List<string>();
+    [Parameter]
+    public uint ResultOffset { get; set; } = 0;
+    [Parameter]
+    public uint MaxResults { get; set; } = 100;
     [Parameter]
     public int PageNumber {
         get {
@@ -88,6 +95,14 @@
         RowFilters = new string[VisibleRows.Count];
         await ReQueryTable();
         inited = true;
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            TableInit();
+        }
+        await base.OnAfterRenderAsync(firstRender);
     }
     private async Task ReQueryTable()
     {

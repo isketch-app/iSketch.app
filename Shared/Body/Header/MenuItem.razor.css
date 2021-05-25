@@ -22,3 +22,8 @@
     font-weight: normal;
     font-size: 22px;
 }
+@media screen and (max-width: 800px) {
+    .text {
+        display:none;
+    }
+}
