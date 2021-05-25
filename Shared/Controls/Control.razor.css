@@ -1,1 +1,10 @@
-﻿
+﻿div {
+    height:30px;
+}
+span {
+    height:30px;
+    line-height:30px;
+}
+.input {
+    float:right;
+}

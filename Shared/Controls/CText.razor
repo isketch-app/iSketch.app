@@ -1,0 +1,19 @@
+﻿<Control Label="@Label">
+    @if (Enabled)
+    {
+        <input @bind-value="Value" type="text" />
+    }
+    else
+    {
+        <input @bind-value="Value" type="text" disabled />
+    }
+</Control>
+
+@code {
+    [Parameter]
+    public string Label { get; set; }
+    [Parameter]
+    public string Value { get; set; }
+    [Parameter]
+    public bool Enabled { get; set; } = true;
+} 

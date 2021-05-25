@@ -5,6 +5,7 @@
 @using System.Data.SqlClient;
 @using iSketch.app.Shared.Admin.TableEditor;
 @using iSketch.app.Shared.Body;
+@using iSketch.app.Shared.Controls; 
 
 @if (WordID == null)
 {
@@ -20,14 +21,13 @@ else
 {
     if (!InitEditWord())
     {
-        <PageTitle Title="Failed to parse the WordID!" />
+        <PageTitle Title="Word does not exist!" />
         return;
     }
     <PageTitle Title='@("Editing word: " + @WordValue)' />
     <hr />
-    <iSketch.app.Shared.Controls.Text Label="Word" Value="@WordValue" />
-    <iSketch.app.Shared.Controls.Number Label="Score" Value="@ScoreValue.ToString()" />
-    <iSketch.app.Shared.Controls.Text Label="Difficulty" Value="@DifficultyValue" />
+    <CNumber Label="Score" Value="@ScoreValue.ToString()" />
+    <CText Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
 }
 
 @code {
@@ -40,14 +40,21 @@ else
     private string DifficultyValue { get; set; } = "";
     private bool InitEditWord()
     {
-        if (!Guid.TryParse(WordID, out Guid id)) return false;
-        SqlCommand cmd = new SqlCommand("SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + WordID.ToString() + "'", db.DBCon);
-        SqlDataReader rdr = cmd.ExecuteReader();
-        rdr.Read();
-        WordValue = rdr.GetString(0);
-        ScoreValue = rdr.GetInt32(1);
-        DifficultyValue = rdr.GetString(2);
-        rdr.Close();
-        return true;
+        try
+        {
+            if (!Guid.TryParse(WordID, out Guid id)) return false;
+            SqlCommand cmd = new SqlCommand("SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + WordID.ToString() + "'", db.DBCon);
+            SqlDataReader rdr = cmd.ExecuteReader();
+            rdr.Read();
+            WordValue = rdr.GetString(0);
+            ScoreValue = rdr.GetInt32(1);
+            DifficultyValue = rdr.GetString(2);
+            rdr.Close();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }
