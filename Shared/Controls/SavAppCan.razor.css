@@ -1,0 +1,8 @@
+﻿button span {
+    font-family:icons;
+    margin-top:1px;
+    float:left;
+}
+button:last-child {
+    float:right;
+}

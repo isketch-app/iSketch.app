@@ -1,10 +1,12 @@
-﻿<Control Label="@Label">
+﻿<Control Icon="@Icon" Label="@Label">
     <input @bind-value="Value" type="number" />
 </Control>
 
 @code {
     [Parameter]
     public string Label { get; set; }
+    [Parameter]
+    public string Icon { get; set; }
     [Parameter]
     public string Value { get; set; }
 } 

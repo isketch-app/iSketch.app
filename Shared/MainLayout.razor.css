@@ -4,8 +4,7 @@
     width:calc(100% - 60px);
     margin-left:auto;
     margin-right:auto;
-    padding-left:30px;
-    padding-right:30px;
+    padding:30px;
 }
 .main {
     display: flex;
@@ -14,8 +13,7 @@
 }
 @media screen and (max-width: 600px) {
     .body {
-        padding-left: 0px;
-        padding-right: 0px;
-        width: calc(100% - 0px);
+        padding:10px;
+        width: calc(100% - 20px);
     }
 }

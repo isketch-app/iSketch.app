@@ -20,6 +20,7 @@ hr {
     border:0px;
     background-color:#353535;
     height:1px;
+    margin:20px 0px;
 }
 a {
     color:gray;
@@ -29,4 +30,40 @@ a {
 }
 a:hover {
     color:white;
+}
+.form {
+    max-width: 600px;
+    width: calc(100% - 40px);
+    margin-left:auto;
+    margin-right:auto;
+    background-color:rgb(0 0 0 / 0.35);
+    padding:20px;
+}
+input[type=text], input[type=number] {
+    background-color:rgb(255 255 255 / 0.10);
+    border:0px;
+    outline:0px;
+    padding:5px;
+    color:white;
+}
+input[disabled] {
+    color:gray;
+}
+button {
+    background-color: rgb(255 255 255 / 0.05);
+    border: 0px;
+    padding: 5px 7px 5px 7px;
+    color: rgb(255 255 255 / 0.72);
+    cursor:pointer;
+    font-size:14px;
+    min-width:100px;
+    transition:.3s;
+}
+button:hover {
+    color: white;
+    background-color: rgb(255 255 255 / 0.1);
+}
+button:active {
+    color: white;
+    background-color: rgb(255 255 255 / 0.05);
 }

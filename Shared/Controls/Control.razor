@@ -1,4 +1,5 @@
 ﻿<div>
+    <span class="icon">@Icon</span>
     <span class="label">@Label</span>
     <span class="input">@ChildContent</span>
 </div>
@@ -6,6 +7,8 @@
 @code {
     [Parameter]
     public string Label { get; set; } = "";
+    [Parameter]
+    public string Icon { get; set; } = "";
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 }

@@ -19,15 +19,21 @@
 }
 else
 {
-    if (!InitEditWord())
+<div class="form">
+    @if (!InitEditWord())
     {
         <PageTitle Title="Word does not exist!" />
-        return;
     }
-    <PageTitle Title='@("Editing word: " + @WordValue)' />
-    <hr />
-    <CNumber Label="Score" Value="@ScoreValue.ToString()" />
-    <CText Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
+    else
+    {
+        <PageTitle Icon="" Title='@("Editing word: " + @WordValue)' />
+        <hr />
+        <CNumber Icon="" Label="Score" Value="@ScoreValue.ToString()" />
+        <CText Icon="" Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
+        <hr />
+        <SavAppCan />
+    }
+</div>
 }
 
 @code {
