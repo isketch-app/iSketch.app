@@ -8,5 +8,24 @@
     [Parameter]
     public string Icon { get; set; }
     [Parameter]
-    public string Value { get; set; }
+    public string Value
+    {
+        get
+        {
+            return ValueGS;
+        }
+        set
+        {
+            if(int.TryParse(value, out int num))
+            {
+                ValueGS = num.ToString();
+            }
+            else
+            {
+                ValueGS = "0";
+            }
+            StateHasChanged();
+        }
+    }
+    private string ValueGS = "0";
 } 

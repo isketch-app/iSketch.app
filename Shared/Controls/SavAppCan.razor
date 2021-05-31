@@ -1,5 +1,15 @@
 ﻿<div>
-    <button><span></span>Apply</button>
-    <button><span></span>Save</button>
-    <button><span></span>Cancel</button>
+    <button @onclick="OnApplyClick"><span></span>Apply</button>
+    <button @onclick="OnSaveClick"><span></span>Save</button>
+    <button @onclick="OnCancelClick"><span></span>Cancel
+    </button>
 </div>
+
+@code {
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnApplyClick { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnSaveClick { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnCancelClick { get; set; }
+}
