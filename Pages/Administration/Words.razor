@@ -2,11 +2,11 @@
 @page "/Administration/Words/{PageNumber:int}";
 @page "/Administration/Words/{WordID}";
 @inject Services.Database db;
-@inject NavigationManager nm; 
+@inject NavigationManager nm;
 @using System.Data.SqlClient;
 @using iSketch.app.Shared.Admin.TableEditor;
 @using iSketch.app.Shared.Body;
-@using iSketch.app.Shared.Controls; 
+@using iSketch.app.Shared.Controls;
 
 @if (WordID == null)
 {
@@ -20,30 +20,28 @@
 }
 else
 {
-<div class="form">
-    @if (!InitEditWord())
-    {
-        <PageTitle Title="Word does not exist!" />
-    }
-    <PageTitle Icon="" Title='@("Editing word: " + @WordValue)' />
-    <hr />
-    <CNumber Icon="" Label="Score" Value="@ScoreValue" @ref="ScoreValueInput" />
-    <CText Icon="" Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
-    <hr />
-    <SavAppCan
-        OnApplyClick="() => {
+    <div class="form">
+        @if (!InitEditWord())
+        {
+            <PageTitle Title="Word does not exist!" />
+        }
+        <PageTitle Icon="" Title='@("Editing word: " + @WordValue)' />
+        <hr />
+        <CNumber Icon="" Label="Score" Value="@ScoreValue" @ref="ScoreValueInput" />
+        <CText Icon="" Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
+        <hr />
+        <SavAppCan OnApplyClick="() => {
             SetWordParameters();
             StateHasChanged();
         }"
-        OnSaveClick='() => {
+                   OnSaveClick='() => {
             SetWordParameters();
             nm.NavigateTo("/Administration/Words");
         }'
-        OnCancelClick='() => {
+                   OnCancelClick='() => {
             nm.NavigateTo("/Administration/Words");
-        }'
-    />
-</div>
+        }' />
+    </div>
 }
 
 @code {
