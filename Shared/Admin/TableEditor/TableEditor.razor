@@ -54,7 +54,14 @@
                     if (i++ == 0) continue;
                     <td>@field</td>
                 }
-                <td class="row-link"><a href="@PagePath/@row[0]"></a></td>
+                @if (PathIncludePageNumber)
+                {
+                    <td class="row-link"><a href="@PagePath/@PageNumber/@row[0]"></a></td>
+                }
+                else
+                {
+                    <td class="row-link"><a href="@PagePath/@row[0]"></a></td>
+                }
             </tr>
         }
     </table>
@@ -75,6 +82,8 @@
     public uint ResultOffset { get; set; } = 0;
     [Parameter]
     public uint MaxResults { get; set; } = 100;
+    [Parameter]
+    public bool PathIncludePageNumber { get; set; } = false;
     [Parameter]
     public int PageNumber {
         get {

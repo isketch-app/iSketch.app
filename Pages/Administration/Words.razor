@@ -1,6 +1,7 @@
-﻿@page "/Administration/Words/";
+﻿@page "/Administration/Words";
 @page "/Administration/Words/{PageNumber:int}";
 @page "/Administration/Words/{WordID}";
+@page "/Administration/Words/{PageNumber:int}/{WordID}";
 @inject Services.Database db;
 @inject NavigationManager nm;
 @using System.Data.SqlClient;
@@ -10,39 +11,43 @@
 
 @if (WordID == null)
 {
-    <PageTitle Title="Word List" />
-    <TableEditor PageNumber="PageNumber"
-                 SQLCon="db.DBCon"
-                 PagePath="/Administration/Words"
-                 TableName="[Words.Difficulty]"
-                 VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
-                 VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }' />
+
 }
 else
 {
-    <div class="form">
-        @if (!InitEditWord())
-        {
-            <PageTitle Title="Word does not exist!" />
-        }
-        <PageTitle Icon="" Title='@("Editing word: " + @WordValue)' />
-        <hr />
-        <CNumber Icon="" Label="Score" Value="@ScoreValue" @ref="ScoreValueInput" />
-        <CText Icon="" Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
-        <hr />
-        <SavAppCan OnApplyClick="() => {
-            SetWordParameters();
-            StateHasChanged();
-        }"
-                   OnSaveClick='() => {
-            SetWordParameters();
-            nm.NavigateTo("/Administration/Words");
-        }'
-                   OnCancelClick='() => {
-            nm.NavigateTo("/Administration/Words");
-        }' />
+    <div class="popup">
+        <div class="form">
+            @if (!InitEditWord())
+            {
+                <PageTitle Title="Word does not exist!" />
+            }
+            <PageTitle Icon="" Title='@("Editing word: " + @WordValue)' />
+            <hr />
+            <CNumber Icon="" Label="Score" Value="@ScoreValue" @ref="ScoreValueInput" />
+            <CText Icon="" Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
+            <hr />
+            <SavAppCan OnApplyClick="() => {
+                        SetWordParameters();
+                    }"
+                       OnSaveClick='() => {
+                        SetWordParameters();
+                        nm.NavigateTo("/Administration/Words/" + PageNumber);
+                    }'
+                       OnCancelClick='() => {
+                        nm.NavigateTo("/Administration/Words/" + PageNumber);
+                    }' />
+        </div>
     </div>
 }
+
+<PageTitle Title="Word List" />
+<TableEditor PageNumber="PageNumber"
+             SQLCon="db.DBCon"
+             PagePath="/Administration/Words"
+             PathIncludePageNumber="true"
+             TableName="[Words.Difficulty]"
+             VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
+             VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }' />
 
 @code {
     [Parameter]
@@ -56,7 +61,7 @@ else
     private bool InitEditWord()
     {
         if (!Guid.TryParse(WordID, out Guid id)) return false;
-        SqlCommand cmd = new SqlCommand("SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + WordID.ToString() + "'", db.DBCon);
+        SqlCommand cmd = new SqlCommand("SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + id.ToString() + "'", db.DBCon);
         SqlDataReader rdr = cmd.ExecuteReader();
         try
         {
@@ -66,7 +71,7 @@ else
             ScoreValue = rdr.GetInt32(1).ToString();
             if (rdr.IsDBNull(2))
             {
-                DifficultyValue = "Out of range.";
+                DifficultyValue = "";
             }
             else
             {
@@ -86,7 +91,7 @@ else
         try
         {
             if (!Guid.TryParse(WordID, out Guid id)) return false;
-            SqlCommand cmd = new SqlCommand("UPDATE Words SET Score = " + ScoreValueInput.Value + " WHERE WordID = '" + WordID.ToString() + "'", db.DBCon);
+            SqlCommand cmd = new SqlCommand("UPDATE Words SET Score = " + ScoreValueInput.Value + " WHERE WordID = '" + id.ToString() + "'", db.DBCon);
             cmd.ExecuteNonQuery();
             return true;
         }
