@@ -9,34 +9,33 @@
 @using iSketch.app.Shared.Body;
 @using iSketch.app.Shared.Controls;
 
-@if (WordID == null)
-{
-
-}
-else
+@if (WordID != null)
 {
     <div class="popup">
+        <div></div>
         <div class="form">
             @if (!InitEditWord())
             {
                 <PageTitle Title="Word does not exist!" />
             }
             <PageTitle Icon="" Title='@("Editing word: " + @WordValue)' />
+            <!--<CButton Icon="">Delete</CButton>-->
             <hr />
             <CNumber Icon="" Label="Score" Value="@ScoreValue" @ref="ScoreValueInput" />
             <CText Icon="" Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
             <hr />
             <SavAppCan OnApplyClick="() => {
-                        SetWordParameters();
-                    }"
+                            SetWordParameters();
+                        }"
                        OnSaveClick='() => {
-                        SetWordParameters();
-                        nm.NavigateTo("/Administration/Words/" + PageNumber);
-                    }'
+                            SetWordParameters();
+                            nm.NavigateTo("/Administration/Words/" + PageNumber);
+                        }'
                        OnCancelClick='() => {
-                        nm.NavigateTo("/Administration/Words/" + PageNumber);
-                    }' />
+                            nm.NavigateTo("/Administration/Words/" + PageNumber);
+                        }' />
         </div>
+        <div></div>
     </div>
 }
 

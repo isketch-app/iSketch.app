@@ -1,0 +1,8 @@
+﻿button span:first-child {
+    font-family: icons;
+    margin-top: 1px;
+    float: left;
+}
+button {
+    user-select:none;
+}
