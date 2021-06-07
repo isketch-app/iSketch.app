@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
 using iSketch.app.Data;
 using System.IO;
@@ -74,7 +73,7 @@ namespace iSketch.app.Services
         }
         public void UpdateDBSchema()
         {
-
+            this.SetProperty("IS_SQL_SchemaVersion", SchemaVersion.ToString());
         }
         public void RunSQLScript(FileInfo fileInfo)
         {
