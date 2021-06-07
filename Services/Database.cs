@@ -78,10 +78,7 @@ namespace iSketch.app.Services
         public void InitializeDBSchema()
         {
             Logger.Info("Database: Initializing schema...");
-            foreach(FileInfo filei in new DirectoryInfo(@".\SQL\Schema").GetFiles())
-            {
-                RunSQLScript(filei);
-            }
+            RunSQLScript(new FileInfo("./SQL/Schema/iSketch.app.sql"));
             this.SetProperty("IS_SQL_SchemaVersion", SchemaVersion.ToString());
             Logger.Info("Database: Initialization done.");
         }
