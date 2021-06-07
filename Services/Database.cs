@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using iSketch.app.Data;
+using System.IO;
+using System.Collections.Generic;
 
 namespace iSketch.app.Services
 {
     public class Database
     {
+        public int SchemaVersion = 0;
         public SqlConnection Connection;
         public Database()
         {
@@ -22,9 +26,10 @@ namespace iSketch.app.Services
                     }.ToString()
                 };
                 Connection.Open();
-                this.SetProperty("TEST", null);
+                if (!IsDBSetUp()) InitializeDBSchema();
+                if (!IsSchemaUpToDate()) UpdateDBSchema();
             }
-            catch(ArgumentNullException e)
+            catch (ArgumentNullException e)
             {
                 throw new Exception(
                     "iSketch.app needs the following Environment Variables set in order to connect to the database:\n" +
@@ -34,9 +39,72 @@ namespace iSketch.app.Services
                     "IS_SQL_Pass"
                 , e);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new Exception("iSketch.app failed to open a connection to the database!", e);
+            }
+        }
+        public bool IsSchemaUpToDate()
+        {
+            if (int.TryParse(this.GetProperty("IS_SQL_SchemaVersion"), out int sv))
+            {
+                if (sv == SchemaVersion) return true;
+            }
+            return false;
+        }
+        public bool IsDBSetUp()
+        {
+            try
+            {
+                int.TryParse(this.GetProperty("IS_SQL_SchemaVersion"), out int _);
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+        public void InitializeDBSchema()
+        {
+            foreach(FileInfo filei in new DirectoryInfo(@".\SQL\Schema").GetFiles())
+            {
+                RunSQLScript(filei);
+            }
+            this.SetProperty("IS_SQL_SchemaVersion", SchemaVersion.ToString());
+        }
+        public void UpdateDBSchema()
+        {
+
+        }
+        public void RunSQLScript(FileInfo fileInfo)
+        {
+            List<string> scripts = new List<string>();
+            string file = File.ReadAllText(fileInfo.FullName);
+            string scriptGen = "";
+            foreach (string line in file.Split("\r\n"))
+            {
+                if (line.ToLower().StartsWith("use ")) continue;
+                if (line.ToLower() == "go")
+                {
+                    if (scriptGen.Trim() != "") scripts.Add(scriptGen);
+                    scriptGen = "";
+                    continue;
+                }
+                scriptGen += line + "\r\n";
+            }
+            foreach (string script in scripts)
+            {
+                try
+                {
+                    SqlCommand cmd = Connection.CreateCommand();
+                    cmd.CommandText = script;
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e.Message);
+                    continue;
+                }
             }
         }
     }
