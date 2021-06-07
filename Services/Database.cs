@@ -12,6 +12,7 @@ namespace iSketch.app.Services
         public SqlConnection Connection;
         public Database()
         {
+            Logger.Info("Database: Initializing database connnection...");
             try
             {
                 Connection = new SqlConnection()
@@ -24,7 +25,9 @@ namespace iSketch.app.Services
                         Password = Environment.GetEnvironmentVariable("IS_SQL_Pass")
                     }.ToString()
                 };
+                Logger.Info("Database: Connecting...");
                 Connection.Open();
+                Logger.Info("Database: Connected.");
                 if (!IsDBSetUp()) InitializeDBSchema();
                 if (!IsSchemaUpToDate()) UpdateDBSchema();
             }
@@ -45,39 +48,52 @@ namespace iSketch.app.Services
         }
         public bool IsSchemaUpToDate()
         {
+            Logger.Info("Database: Checking if schema is up to date...");
             if (int.TryParse(this.GetProperty("IS_SQL_SchemaVersion"), out int sv))
             {
-                if (sv == SchemaVersion) return true;
+                if (sv == SchemaVersion)
+                {
+                    Logger.Info("Database: The schema is up to date.");
+                    return true; 
+                }
             }
+            Logger.Info("Database: The schema is NOT up to date.");
             return false;
         }
         public bool IsDBSetUp()
         {
+            Logger.Info("Database: Checking if database is setup...");
             try
             {
                 int.TryParse(this.GetProperty("IS_SQL_SchemaVersion"), out int _);
             }
             catch(Exception)
             {
+                Logger.Info("Database: Database is not setup.");
                 return false;
             }
+            Logger.Info("Database: Database is already setup.");
             return true;
         }
         public void InitializeDBSchema()
         {
+            Logger.Info("Database: Initializing schema...");
             foreach(FileInfo filei in new DirectoryInfo(@".\SQL\Schema").GetFiles())
             {
-                Logger.Info("Database: Running file: " + filei.Name);
                 RunSQLScript(filei);
             }
             this.SetProperty("IS_SQL_SchemaVersion", SchemaVersion.ToString());
+            Logger.Info("Database: Initialization done.");
         }
         public void UpdateDBSchema()
         {
+            Logger.Info("Database: Updating schema...");
             this.SetProperty("IS_SQL_SchemaVersion", SchemaVersion.ToString());
+            Logger.Info("Database: Schema update done.");
         }
         public void RunSQLScript(FileInfo fileInfo)
         {
+            Logger.Info("Database: Running file: " + fileInfo.Name);
             List<string> scripts = new List<string>();
             string file = File.ReadAllText(fileInfo.FullName);
             string scriptGen = "";
@@ -106,6 +122,7 @@ namespace iSketch.app.Services
                     continue;
                 }
             }
+            Logger.Info("Database: File: " + fileInfo.Name + " done executing.");
         }
     }
 }

@@ -26,8 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SQL\Schema\" />
     <Folder Include="SQL\Upgrade\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="SQL\Schema\isketch.app.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
