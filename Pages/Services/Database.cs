@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Data.SqlClient;
+using iSketch.app.Data;
 
 namespace iSketch.app.Services
 {
     public class Database
     {
-        public SqlConnection DBCon;
+        public SqlConnection Connection;
         public Database()
         {
             try
             {
-                DBCon = new SqlConnection()
+                Connection = new SqlConnection()
                 {
                     ConnectionString = new SqlConnectionStringBuilder()
                     {
@@ -20,7 +21,8 @@ namespace iSketch.app.Services
                         Password = Environment.GetEnvironmentVariable("IS_SQL_Pass")
                     }.ToString()
                 };
-                DBCon.Open();
+                Connection.Open();
+                this.SetProperty("TEST", null);
             }
             catch(ArgumentNullException e)
             {

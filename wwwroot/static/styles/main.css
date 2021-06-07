@@ -12,9 +12,18 @@ body {
     padding: 0px;
     color: white;
     background-color: black;
-    background-image: url('../images/bg.svg');
-    background-size:cover;
     overflow-y:scroll;
+}
+body::before {
+    content:'';
+    position:fixed;
+    z-index:-100;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
+    background-image: url('../images/bg.svg');
+    background-size: cover;
 }
 hr {
     border:0px;

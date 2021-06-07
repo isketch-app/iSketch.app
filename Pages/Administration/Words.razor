@@ -41,7 +41,7 @@
 
 <PageTitle Title="Word List" />
 <TableEditor PageNumber="PageNumber"
-             SQLCon="db.DBCon"
+             SQLCon="db.Connection"
              PagePath="/Administration/Words"
              PathIncludePageNumber="true"
              TableName="[Words.Difficulty]"
@@ -60,7 +60,7 @@
     private bool InitEditWord()
     {
         if (!Guid.TryParse(WordID, out Guid id)) return false;
-        SqlCommand cmd = new SqlCommand("SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + id.ToString() + "'", db.DBCon);
+        SqlCommand cmd = new SqlCommand("SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + id.ToString() + "'", db.Connection);
         SqlDataReader rdr = cmd.ExecuteReader();
         try
         {
@@ -90,7 +90,7 @@
         try
         {
             if (!Guid.TryParse(WordID, out Guid id)) return false;
-            SqlCommand cmd = new SqlCommand("UPDATE Words SET Score = " + ScoreValueInput.Value + " WHERE WordID = '" + id.ToString() + "'", db.DBCon);
+            SqlCommand cmd = new SqlCommand("UPDATE Words SET Score = " + ScoreValueInput.Value + " WHERE WordID = '" + id.ToString() + "'", db.Connection);
             cmd.ExecuteNonQuery();
             return true;
         }
