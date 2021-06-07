@@ -67,6 +67,7 @@ namespace iSketch.app.Services
         {
             foreach(FileInfo filei in new DirectoryInfo(@".\SQL\Schema").GetFiles())
             {
+                Logger.Info("Database: Running file: " + filei.Name);
                 RunSQLScript(filei);
             }
             this.SetProperty("IS_SQL_SchemaVersion", SchemaVersion.ToString());
@@ -101,7 +102,7 @@ namespace iSketch.app.Services
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e.Message);
+                    Logger.Error("Database: " + e.Message);
                     continue;
                 }
             }
