@@ -17,7 +17,7 @@
 mkdir iSketch.app
 cd iSketch.app
 wget -O docker-compose.yml https://raw.githubusercontent.com/isketch-app/iSketch.app/master/docker-compose.yml
-docker-compose up
+docker-compose up -d
 ```
 
 Browse to http://docker-host:8080
