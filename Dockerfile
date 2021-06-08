@@ -7,7 +7,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /iSketch.app
 COPY --from=iSketchBuild /iSketch.app .
 ENV IS_SQL_Pass="iSketch.app"
-ENV IS_SQL_ServerHost="10.0.5.8"
+ENV IS_SQL_ServerHost="127.0.0.1"
 ENV IS_SQL_User="iSketch.app"
 ENV IS_SQL_DatabaseName="iSketch.app"
 ENTRYPOINT ./iSketch.app
