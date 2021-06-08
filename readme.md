@@ -13,4 +13,11 @@
 </p>
 <h2>Hosting your own instance of iSketch.app:</h2>
 
-`docker run -p 8080:80 ghcr.io/isketch-app/isketch-app:latest`
+```bash
+mkdir iSketch.app
+cd iSketch.app
+wget https://raw.githubusercontent.com/isketch-app/iSketch.app/master/docker-compose.yml
+docker-compose up
+```
+
+Browse to http://docker-host:8080
