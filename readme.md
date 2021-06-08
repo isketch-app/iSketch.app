@@ -16,7 +16,7 @@
 ```bash
 mkdir iSketch.app
 cd iSketch.app
-wget https://raw.githubusercontent.com/isketch-app/iSketch.app/master/docker-compose.yml
+wget -O docker-compose.yml https://raw.githubusercontent.com/isketch-app/iSketch.app/master/docker-compose.yml
 docker-compose up
 ```
 
