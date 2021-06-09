@@ -4,42 +4,69 @@
 @page "/Administration/Words/{PageNumber:int}/{WordID}";
 @inject Services.Database db;
 @inject NavigationManager nm;
+@inject IJSRuntime js;
 @using System.Data.SqlClient;
 @using iSketch.app.Shared.Admin.TableEditor;
 @using iSketch.app.Shared.Body;
 @using iSketch.app.Shared.Controls;
+@using System.Text.RegularExpressions;
 
 @if (WordID != null)
 {
     <div class="popup">
         <div></div>
         <div class="form">
-            @if (!InitEditWord())
+            @{ InitStat = InitEditWord(); }
+            @if (InitStat == 0)
             {
-                <PageTitle Title="Word does not exist!" />
+                <PageTitle Icon="" Title='@("Word: " + InitWordValue)' />
+                <hr />
+                <CAreYouSure ButtonText="Delete" ButtonIcon="" OnYesClick="() => DeleteWord()" />
             }
-            <PageTitle Icon="" Title='@("Editing word: " + @WordValue)' />
-            <!--<CButton Icon="">Delete</CButton>-->
-            <hr />
-            <CNumber Icon="" Label="Score" Value="@ScoreValue" @ref="ScoreValueInput" />
-            <CText Icon="" Enabled="false" Label="Difficulty" Value="@DifficultyValue" />
-            <hr />
-            <SavAppCan OnApplyClick="() => {
-                            SetWordParameters();
-                        }"
-                       OnSaveClick='() => {
-                            SetWordParameters();
-                            nm.NavigateTo("/Administration/Words/" + PageNumber);
-                        }'
-                       OnCancelClick='() => {
-                            nm.NavigateTo("/Administration/Words/" + PageNumber);
-                        }' />
+            @if (InitStat == 1)
+            {
+                <PageTitle Icon="" Title="Add a new word" />
+            }
+            @if (InitStat == 2)
+            {
+                <PageTitle Icon="" Title="Word not found" />
+                <hr />
+                <CButton OnClick="() => NavBackToList()">Back</CButton>
+            }
+            @if (InitStat == 0 || InitStat == 1)
+            {
+                <hr />
+                <CText Icon="" Label="Word" Value="@InitWordValue" @ref="WordValue" />
+                <CNumber Icon="" Label="Score" Value="@InitScoreValue" @ref="ScoreValue" />
+            }
+            @if (InitStat == 0)
+            {
+                <CText Icon="" Enabled="false" Label="Difficulty" Value="@InitDifficultyValue" />
+                <hr />
+                <SavAppCan OnApplyClick="() => SetWordParameters()"
+                           OnSaveClick="() => {
+                                            SetWordParameters();
+                                            NavBackToList();
+                                         }"
+                           OnCancelClick="() => NavBackToList()" />
+            }
+            @if (InitStat == 1)
+            {
+                <hr />
+                <CButton OnClick="() => AddWord()" Icon="">Add</CButton>
+                <CButton OnClick="() => NavBackToList()" Icon="">Done</CButton>
+            }
         </div>
         <div></div>
     </div>
 }
 
 <PageTitle Title="Word List" />
+<hr />
+<a href="/Administration/Words/@PageNumber/Add">
+    <CButton Icon="">New Word</CButton>
+</a>
+<hr />
 <TableEditor PageNumber="PageNumber"
              SQLCon="db.Connection"
              PagePath="/Administration/Words"
@@ -53,50 +80,96 @@
     public int PageNumber { get; set; }
     [Parameter]
     public string WordID { get; set; }
-    private string WordValue = "";
-    private string ScoreValue = "";
-    private CNumber ScoreValueInput;
-    private string DifficultyValue = "";
-    private bool InitEditWord()
+    private CText WordValue;
+    private CNumber ScoreValue;
+    private string InitWordValue = "";
+    private string InitScoreValue = "";
+    private string InitDifficultyValue = "";
+    private int InitStat = 0;
+    private int InitEditWord()
     {
-        if (!Guid.TryParse(WordID, out Guid id)) return false;
-        SqlCommand cmd = new SqlCommand("SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + id.ToString() + "'", db.Connection);
+        InitDifficultyValue = InitWordValue = InitScoreValue = "";
+        if (!Guid.TryParse(WordID, out Guid id)) return 1;
+        SqlCommand cmd = db.Connection.CreateCommand();
+        cmd.CommandText = "SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + id.ToString() + "'";
         SqlDataReader rdr = cmd.ExecuteReader();
+        if (!rdr.HasRows)
+        {
+            rdr.Close();
+            return 2;
+        }
         try
         {
             rdr.Read();
-            DifficultyValue = ScoreValue = WordValue = "";
-            WordValue = rdr.GetString(0);
-            ScoreValue = rdr.GetInt32(1).ToString();
+            InitWordValue = rdr.GetString(0);
+            InitScoreValue = rdr.GetInt32(1).ToString();
             if (rdr.IsDBNull(2))
             {
-                DifficultyValue = "";
+                InitDifficultyValue = "";
             }
             else
             {
-                DifficultyValue = rdr.GetString(2);
+                InitDifficultyValue = rdr.GetString(2);
             }
             rdr.Close();
-            return true;
+            return 0;
         }
         catch (Exception)
         {
             rdr.Close();
-            return false;
+            return 0;
         }
     }
-    private bool SetWordParameters()
+    private void SetWordParameters()
     {
         try
         {
-            if (!Guid.TryParse(WordID, out Guid id)) return false;
-            SqlCommand cmd = new SqlCommand("UPDATE Words SET Score = " + ScoreValueInput.Value + " WHERE WordID = '" + id.ToString() + "'", db.Connection);
+            if (!Guid.TryParse(WordID, out Guid id)) return;
+            string word = FilterWord(WordValue.Value);
+            if (word == "") return;
+            SqlCommand cmd = db.Connection.CreateCommand();
+            cmd.CommandText = "UPDATE Words SET Word = @WORD, Score = " + ScoreValue.Value + " WHERE WordID = '" + id.ToString() + "'";
+            cmd.Parameters.AddWithValue("@WORD", word);
             cmd.ExecuteNonQuery();
-            return true;
+            return;
         }
         catch (Exception)
         {
-            return false;
+            return;
         }
+    }
+    private void DeleteWord()
+    {
+        if (!Guid.TryParse(WordID, out Guid id)) return;
+        SqlCommand cmd = db.Connection.CreateCommand();
+        cmd.CommandText = "DELETE FROM Words WHERE WordID = '" + id.ToString() + "'";
+        cmd.ExecuteNonQuery();
+        NavBackToList();
+    }
+    private void AddWord()
+    {
+        string word = FilterWord(WordValue.Value);
+        if (word == "") return;
+        try
+        {
+            SqlCommand cmd = db.Connection.CreateCommand();
+            cmd.CommandText = "INSERT INTO Words (Word, Score) VALUES(@WORD, @SCORE)";
+            cmd.Parameters.AddWithValue("@WORD", word);
+            cmd.Parameters.AddWithValue("@SCORE", ScoreValue.Value);
+            cmd.ExecuteNonQuery();
+            js.InvokeVoidAsync("eval", "document.querySelectorAll('.popup .form input').forEach(function(i) { i.value = ''; });");
+        }
+        catch (Exception)
+        {
+            return;
+        }
+    }
+    private string FilterWord(string Word)
+    {
+        return Regex.Replace(Word, "[^a-z]", "");
+    }
+    private void NavBackToList()
+    {
+        nm.NavigateTo("/Administration/Words/" + PageNumber);
     }
 }

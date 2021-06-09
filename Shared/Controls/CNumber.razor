@@ -1,5 +1,5 @@
 ﻿<Control Icon="@Icon" Label="@Label">
-    <input @bind-value="Value" type="number" />
+    <input @onchange="OnChange" value="@Value" type="number" />
 </Control>
 
 @code {
@@ -8,24 +8,37 @@
     [Parameter]
     public string Icon { get; set; }
     [Parameter]
-    public string Value
-    {
+    public EventCallback<string> ValueChanged { get; set; }
+    [Parameter]
+    public string Value {
         get
         {
-            return ValueGS;
+            return rValue;
         }
         set
         {
-            if(int.TryParse(value, out int num))
+            if (int.TryParse(value, out int num))
             {
-                ValueGS = num.ToString();
+                rValue = num.ToString();
             }
             else
             {
-                ValueGS = "0";
+                rValue = "0";
             }
-            StateHasChanged();
         }
     }
-    private string ValueGS = "0";
+    private string rValue = "0";
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        if (int.TryParse((string)e.Value, out int num))
+        {
+            Value = num.ToString();
+            await ValueChanged.InvokeAsync(num.ToString());
+        }
+        else
+        {
+            Value = "0";
+            await ValueChanged.InvokeAsync("0");
+        }
+    }
 } 

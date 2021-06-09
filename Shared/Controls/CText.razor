@@ -1,11 +1,11 @@
 ﻿<Control Icon="@Icon" Label="@Label">
     @if (Enabled)
     {
-        <input @bind-value="Value" type="text" />
+        <input @onchange="OnChange" value="@Value" type="text" />
     }
     else
     {
-        <input @bind-value="Value" type="text" disabled />
+        <input @onchange="OnChange" value="@Value" type="text" disabled />
     }
 </Control>
 
@@ -18,4 +18,11 @@
     public string Value { get; set; }
     [Parameter]
     public bool Enabled { get; set; } = true;
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        Value = (string)e.Value;
+        await ValueChanged.InvokeAsync((string)e.Value);
+    }
 } 

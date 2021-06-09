@@ -1,0 +1,32 @@
+﻿<div>
+    @if (Status == 0)
+    {
+        <CButton OnClick="() => { Status = 1; }" Icon="@ButtonIcon">@ButtonText</CButton>
+    }
+    @if (Status == 1)
+    {
+        <CButton OnClick="() => { Status = 0; }" Icon="@NoIcon">@NoText</CButton>
+        <CButton OnClick="OnYesClick" Icon="@YesIcon">@YesText</CButton>
+        <span>@AreYouSureText</span>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string ButtonText { get; set; } = "Do a thing.";
+    [Parameter]
+    public string ButtonIcon { get; set; } = "";
+    [Parameter]
+    public string AreYouSureText { get; set; } = "Are you sure?";
+    [Parameter]
+    public string YesText { get; set; } = "Yes";
+    [Parameter]
+    public string YesIcon { get; set; } = "";
+    [Parameter]
+    public string NoText { get; set; } = "No";
+    [Parameter]
+    public string NoIcon { get; set; } = "";
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnYesClick { get; set; }
+    private int Status = 0;
+}
