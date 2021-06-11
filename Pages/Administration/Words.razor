@@ -6,59 +6,65 @@
 @inject NavigationManager nm;
 @inject IJSRuntime js;
 @using System.Data.SqlClient;
-@using iSketch.app.Shared.Admin.TableEditor;
-@using iSketch.app.Shared.Body;
-@using iSketch.app.Shared.Controls;
 @using System.Text.RegularExpressions;
 
 @if (WordID != null)
 {
-    <div class="popup">
-        <div></div>
-        <div class="form">
-            @{ InitStat = InitEditWord(); }
-            @if (InitStat == 0)
-            {
-                <PageTitle Icon="" Title='@("Word: " + InitWordValue)' />
-                <hr />
-                <CAreYouSure ButtonText="Delete" ButtonIcon="" OnYesClick="() => DeleteWord()" />
-            }
-            @if (InitStat == 1)
-            {
-                <PageTitle Icon="" Title="Add a new word" />
-            }
-            @if (InitStat == 2)
-            {
-                <PageTitle Icon="" Title="Word not found" />
-                <hr />
-                <CButton OnClick="() => NavBackToList()">Back</CButton>
-            }
-            @if (InitStat == 0 || InitStat == 1)
-            {
-                <hr />
-                <CText Icon="" Label="Word" Value="@InitWordValue" @ref="WordValue" />
-                <CNumber Icon="" Label="Score" Value="@InitScoreValue" @ref="ScoreValue" />
-            }
-            @if (InitStat == 0)
-            {
-                <CText Icon="" Enabled="false" Label="Difficulty" Value="@InitDifficultyValue" />
-                <hr />
-                <SavAppCan OnApplyClick="() => SetWordParameters()"
-                           OnSaveClick="() => {
-                                            SetWordParameters();
-                                            NavBackToList();
-                                         }"
-                           OnCancelClick="() => NavBackToList()" />
-            }
-            @if (InitStat == 1)
-            {
-                <hr />
-                <CButton OnClick="() => AddWord()" Icon="">Add</CButton>
-                <CButton OnClick="() => NavBackToList()" Icon="">Done</CButton>
-            }
-        </div>
-        <div></div>
-    </div>
+    <Popup>
+        @{ InitStat = InitEditWord(); }
+        @if (InitStat == 0)
+        {
+            <PageTitle Icon="" Title='@("Word: " + InitWordValue)' />
+            <hr />
+            <CAreYouSure ButtonText="Delete" ButtonIcon="" OnYesClick="() => DeleteWord()" />
+        }
+        @if (InitStat == 1)
+        {
+            <PageTitle Icon="" Title="Add a new word" />
+        }
+        @if (InitStat == 2)
+        {
+            <PageTitle Icon="" Title="Word not found" />
+            <hr />
+            <a href="@("/Administration/Words/" + PageNumber)">
+                <CButton>Back</CButton>
+            </a>
+        }
+        @if (InitStat == 0 || InitStat == 1)
+        {
+            <hr />
+            <CText Icon="" Label="Word" Value="@InitWordValue" @ref="WordValue" />
+            <CNumber Icon="" Label="Score" Value="@InitScoreValue" @ref="ScoreValue" />
+        }
+        @if (InitStat == 0)
+        {
+            <CText Icon="" Enabled="false" Label="Difficulty" Value="@InitDifficultyValue" />
+            <hr />
+            <SavAppCan OnApplyClick="() => SetWordParameters()"
+                       OnSaveClick="() => {
+                    SetWordParameters();
+                    NavBackToList();
+                }"
+                       OnCancelClick="() => NavBackToList()" />
+        }
+        @if (InitStat == 1)
+        {
+            <hr />
+            <CButton OnClick="() => AddWord()" Icon="">Add</CButton>
+            <a href="@("/Administration/Words/" + PageNumber)">
+                <CButton Icon="">Done</CButton>
+            </a>
+        }
+    </Popup>
+}
+
+@if (Error != "")
+{
+    <Popup>
+        <div style="color:#ff6161;">@Error</div>
+        <hr />
+        <CButton OnClick='() => { Error = ""; }'>Dismiss</CButton>
+    </Popup>
 }
 
 <PageTitle Title="Word List" />
@@ -67,13 +73,15 @@
     <CButton Icon="">New Word</CButton>
 </a>
 <hr />
-<TableEditor PageNumber="PageNumber"
-             SQLCon="db.Connection"
-             PagePath="/Administration/Words"
-             PathIncludePageNumber="true"
-             TableName="[Words.Difficulty]"
-             VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
-             VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }' />
+<div class="table-container">
+    <TableEditor PageNumber="PageNumber"
+                 SQLCon="db.Connection"
+                 PagePath="/Administration/Words"
+                 PathIncludePageNumber="true"
+                 TableName="[Words.Difficulty]"
+                 VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
+                 VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }' />
+</div>
 
 @code {
     [Parameter]
@@ -86,6 +94,7 @@
     private string InitScoreValue = "";
     private string InitDifficultyValue = "";
     private int InitStat = 0;
+    private string Error = "";
     private int InitEditWord()
     {
         InitDifficultyValue = InitWordValue = InitScoreValue = "";
@@ -133,8 +142,15 @@
             cmd.ExecuteNonQuery();
             return;
         }
+        catch (SqlException e)
+        {
+            Error = "Unknown error setting this word.";
+            if (e.Number == 2627) Error = "This word already exists.";
+            return;
+        }
         catch (Exception)
         {
+            Error = "Unknown error setting this word.";
             return;
         }
     }
@@ -157,16 +173,24 @@
             cmd.Parameters.AddWithValue("@WORD", word);
             cmd.Parameters.AddWithValue("@SCORE", ScoreValue.Value);
             cmd.ExecuteNonQuery();
-            js.InvokeVoidAsync("eval", "document.querySelectorAll('.popup .form input').forEach(function(i) { i.value = ''; });");
+            WordValue.SetValue("");
+            ScoreValue.SetValue("");
+        }
+        catch (SqlException e)
+        {
+            Error = "Unknown error adding this word.";
+            if (e.Number == 2627) Error = "This word already exists.";
+            return;
         }
         catch (Exception)
         {
+            Error = "Unknown error adding this word.";
             return;
         }
     }
     private string FilterWord(string Word)
     {
-        return Regex.Replace(Word, "[^a-z]", "");
+        return Regex.Replace(Word.ToLower(), "[^a-z]", "");
     }
     private void NavBackToList()
     {

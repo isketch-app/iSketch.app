@@ -1,5 +1,7 @@
-﻿<Control Icon="@Icon" Label="@Label">
-    <input @onchange="OnChange" value="@Value" type="number" />
+﻿@inject IJSRuntime js;
+
+<Control Icon="@Icon" Label="@Label">
+    <input id="@GUID" value="@Value" @onchange="OnChange" type="number" />
 </Control>
 
 @code {
@@ -10,7 +12,8 @@
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
     [Parameter]
-    public string Value {
+    public string Value
+    {
         get
         {
             return rValue;
@@ -25,20 +28,18 @@
             {
                 rValue = "0";
             }
+            js.InvokeVoidAsync("eval", "document.getElementById('" + GUID + "').value = '" + rValue + "';");
         }
     }
+    public void SetValue(string Value)
+    {
+        this.Value = Value;
+    }
     private string rValue = "0";
+    private string GUID = "x" + Guid.NewGuid().ToString();
     private async Task OnChange(ChangeEventArgs e)
     {
-        if (int.TryParse((string)e.Value, out int num))
-        {
-            Value = num.ToString();
-            await ValueChanged.InvokeAsync(num.ToString());
-        }
-        else
-        {
-            Value = "0";
-            await ValueChanged.InvokeAsync("0");
-        }
+        Value = e.Value.ToString();
+        await ValueChanged.InvokeAsync(Value);
     }
 } 

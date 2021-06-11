@@ -40,14 +40,6 @@ a {
 a:hover {
     color:white;
 }
-.form {
-    max-width: 600px;
-    width: calc(100% - 40px);
-    margin-left:auto;
-    margin-right:auto;
-    background-color:rgb(0 0 0 / 0.35);
-    padding:20px;
-}
 input[type=text], input[type=number] {
     background-color:rgb(255 255 255 / 0.10);
     border:0px;
@@ -75,22 +67,6 @@ button:hover {
 button:active {
     color: white;
     background-color: rgb(255 255 255 / 0.05);
-}
-.popup {
-    position:fixed;
-    display:flex;
-    z-index:100;
-    top:0px;
-    left:0px;
-    width:100%;
-    height:100%;
-    background-color:rgb(50 50 50 / 0.3);
-    backdrop-filter:blur(30px);
-    overflow-y:auto;
-    flex-direction:column;
-}
-.popup div:first-child, .popup div:last-child {
-    flex:1;
 }
 @keyframes fade-in {
     from {

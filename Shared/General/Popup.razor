@@ -1,0 +1,14 @@
+﻿<div style="z-index:@ZIndex;" class="popup">
+    <div></div>
+    <div class="form">
+        @ChildContent
+    </div>
+    <div></div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public int ZIndex { get; set; } = 100;
+}

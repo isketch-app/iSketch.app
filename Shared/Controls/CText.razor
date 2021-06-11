@@ -1,11 +1,13 @@
-﻿<Control Icon="@Icon" Label="@Label">
+﻿@inject IJSRuntime js;
+
+<Control Icon="@Icon" Label="@Label">
     @if (Enabled)
     {
-        <input @onchange="OnChange" value="@Value" type="text" />
+        <input id="@GUID" value="@Value" @onchange="OnChange" type="text" />
     }
     else
     {
-        <input @onchange="OnChange" value="@Value" type="text" disabled />
+        <input id="@GUID" value="@Value" @onchange="OnChange" type="text" disabled />
     }
 </Control>
 
@@ -15,11 +17,28 @@
     [Parameter]
     public string Icon { get; set; }
     [Parameter]
-    public string Value { get; set; }
+    public string Value
+    {
+        get
+        {
+            return rValue;
+        }
+        set
+        {
+            js.InvokeVoidAsync("eval", "document.getElementById('" + GUID + "').value = '" + value + "';");
+            rValue = value;
+        }
+    }
     [Parameter]
     public bool Enabled { get; set; } = true;
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
+    public void SetValue(string Value)
+    {
+        this.Value = Value;
+    }
+    private string rValue = "";
+    private string GUID = "x" + Guid.NewGuid().ToString();
     private async Task OnChange(ChangeEventArgs e)
     {
         Value = (string)e.Value;
