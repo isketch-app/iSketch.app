@@ -24,7 +24,10 @@ self.addEventListener('fetch', function (event) {
                     return response;
                 }
                 return fetch(event.request.clone()).then(function (response) {
-                    if (response.status == 200) {
+                    if (
+                        response.status == 200 &&
+                        !response.url.includes('/_blazor/')
+                    ) {
                         cache.put(event.request, response.clone());
                     }
                     return response;
