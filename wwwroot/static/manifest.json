@@ -34,10 +34,10 @@
       "purpose": "maskable"
     }
   ],
-  "start_url": "../",
+  "start_url": "/",
   "background_color": "#000000",
   "display": "standalone",
-  "scope": "../",
+  "scope": "/",
   "theme_color": "#000000",
   "version": "0.0.0",
   "orientation": "portrait-primary"
