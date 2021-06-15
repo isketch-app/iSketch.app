@@ -1,4 +1,4 @@
-var CACHE_VERSION = '0.0.0;
+var CACHE_VERSION = '0.0.0';
 var CURRENT_CACHES = {
     cache: 'isketch-v' + CACHE_VERSION
 };
@@ -24,10 +24,7 @@ self.addEventListener('fetch', function (event) {
                     return response;
                 }
                 return fetch(event.request.clone()).then(function (response) {
-                    if (
-                        response.status == 200 &&
-                        !response.url.includes('/api/')
-                    ) {
+                    if (response.status == 200) {
                         cache.put(event.request, response.clone());
                     }
                     return response;

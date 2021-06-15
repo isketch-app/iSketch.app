@@ -1,44 +1,44 @@
 {
   "short_name": "iSketch.app",
   "name": "iSketch.app",
-  "description": "",
+  "description": "iSketch.app is a free, open source, Pictionary-style, online drawing game!",
   "icons": [
     {
-      "src": "./img/logo_32_square.png",
+      "src": "./images/logo_32_square.png",
       "type": "image/png",
       "sizes": "32x32",
       "purpose": "any"
     },
     {
-      "src": "./img/logo_192_circle.png",
+      "src": "./images/logo_192_circle.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "./img/logo_192_mask.png",
+      "src": "./images/logo_192_mask.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable"
     },
     {
-      "src": "./img/logo_512_circle.png",
+      "src": "./images/logo_512_circle.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "./img/logo_512_mask.png",
+      "src": "./images/logo_512_mask.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
     }
   ],
   "start_url": "../",
-  "background_color": "#ffffff",
+  "background_color": "#000000",
   "display": "standalone",
   "scope": "../",
-  "theme_color": "#ffffff",
-  "version": "0.0.0.0",
+  "theme_color": "#000000",
+  "version": "0.0.0",
   "orientation": "portrait-primary"
 }
