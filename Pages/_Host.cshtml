@@ -23,7 +23,9 @@
     </script>
 </head>
 <body>
-    <component type="typeof(App)" render-mode="ServerPrerendered" />
+    <div id="is_body">
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
+    </div>
     <div style="display:none;" id="blazor-error-ui">
         <environment include="Staging,Production">
             An error has occurred. This application may no longer respond until reloaded.

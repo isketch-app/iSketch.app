@@ -13,9 +13,9 @@
       "launchBrowser": true,
       "launchUrl": "Administration/Words/9f5ac26c-1cd4-44ce-b2c6-72c504b380cf",
       "environmentVariables": {
-        "IS_SQL_Pass": "iSketch.app",
-        "IS_SQL_ServerHost": "10.0.5.8",
-        "IS_SQL_User": "iSketch.app",
+        "IS_SQL_Pass": "iSketch.app123!",
+        "IS_SQL_ServerHost": "(local)\\SQLEXPRESS",
+        "IS_SQL_User": "sa",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "IS_SQL_DatabaseName": "iSketch.app"
       },
