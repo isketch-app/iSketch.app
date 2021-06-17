@@ -6,40 +6,40 @@
 }
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="theme-color" content="#000000">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="icon" type="image/svg+xml" href="./static/images/logo_512_square.svg">
-    <link rel="alternate icon" type="image/png" href="./static/images/logo_32_square.png">
-    <title>iSketch.app</title>
-    <base href="~/" />
-    <link rel="manifest" href="~/static/manifest.json" />
-    <link href="~/static/styles/main.css" rel="stylesheet" />
-    <link href="iSketch.app.styles.css" rel="stylesheet" />
-    <script type="module">
-        import iSketchGame from "./static/scripts/iSketchGame.js";
-        window.iSketchGame = new iSketchGame();
-    </script>
-</head>
-<body>
-    <div id="is_body">
-        <component type="typeof(App)" render-mode="ServerPrerendered" />
-    </div>
-    <div style="display:none;" id="blazor-error-ui">
-        <environment include="Staging,Production">
-            An error has occurred. This application may no longer respond until reloaded.
-        </environment>
-        <environment include="Development">
-            An unhandled exception has occurred. See browser dev tools for details.
-        </environment>
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-    <script src="_framework/blazor.server.js"></script>
-    <script src="./static/scripts/iSketchSite.js"></script>
-    <script>
-        navigator.serviceWorker.register("/serviceworker.js");
-    </script>
-</body>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="theme-color" content="#000000">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="icon" type="image/svg+xml" href="./static/images/logo_512_square.svg">
+        <link rel="alternate icon" type="image/png" href="./static/images/logo_32_square.png">
+        <title>iSketch.app</title>
+        <base href="~/" />
+        <link rel="manifest" href="~/static/manifest.json" />
+        <link href="~/static/styles/main.css" rel="stylesheet" />
+        <link href="iSketch.app.styles.css" rel="stylesheet" />
+        <script type="module">
+            import iSketchGame from "./static/scripts/iSketchGame.js";
+            window.iSketchGame = new iSketchGame();
+        </script>
+    </head>
+    <body>
+        <div id="is_body">
+            <component type="typeof(App)" render-mode="ServerPrerendered" />
+        </div>
+        <div style="display:none;" id="blazor-error-ui">
+            <environment include="Staging,Production">
+                An error has occurred. This application may no longer respond until reloaded.
+            </environment>
+            <environment include="Development">
+                An unhandled exception has occurred. See browser dev tools for details.
+            </environment>
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>
+        </div>
+        <script src="_framework/blazor.server.js"></script>
+        <script src="./static/scripts/iSketchSite.js"></script>
+        <script>
+            navigator.serviceWorker.register("/serviceworker.js");
+        </script>
+    </body>
 </html>
