@@ -6,6 +6,9 @@
     font-family: noto;
     src: url('../fonts/noto.ttf');
 }
+* {
+    -webkit-tap-highlight-color: transparent;
+}
 body {
     font-family: noto;
     margin: 0px;
