@@ -3,6 +3,45 @@
     margin-top: 1px;
     float: left;
 }
+
 button {
-    user-select:none;
+    user-select: none;
+    position: relative;
+}
+
+    button .load {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(55 55 55 / 0.35);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        display: none;
+    }
+
+    button.clicked .load {
+        display: block;
+    }
+
+    button .load span {
+        font-family: icons;
+        font-size: 20px;
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: calc(50% - 10px);
+        top: calc(50% - 10px);
+        animation: 1s spin infinite;
+    }
+
+@keyframes spin {
+    from {
+        transform: rotate(540deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
 }
