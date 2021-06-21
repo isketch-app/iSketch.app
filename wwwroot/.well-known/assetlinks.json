@@ -1,8 +1,10 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target" : {
-            "namespace": "android_app",
-            "package_name": "app.isketch.play.twa",
-            "sha256_cert_fingerprints": ["13:D4:83:B0:9F:DA:E0:B7:49:B5:87:EB:DE:63:BB:EA:B5:74:9B:F2:F7:F1:9C:88:2B:15:05:97:FF:94:AA:F5"]
-      }
-}]
+[
+  {
+    "relation": [ "delegate_permission/common.handle_all_urls" ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.isketch.play.twa",
+      "sha256_cert_fingerprints": [ "13:D4:83:B0:9F:DA:E0:B7:49:B5:87:EB:DE:63:BB:EA:B5:74:9B:F2:F7:F1:9C:88:2B:15:05:97:FF:94:AA:F5" ]
+    }
+  }
+]
