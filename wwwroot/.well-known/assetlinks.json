@@ -1,0 +1,5 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target" : { "namespace": "android_app", "package_name": "app.isketch.play.twa",
+                   "sha256_cert_fingerprints": ["2C:AD:BF:14:37:62:CF:1E:A6:4A:26:65:20:86:B1:04:F1:B6:09:82:0A:26:D2:34:5C:A5:9C:29:86:CA:92:54"] }
+    }]
