@@ -10,6 +10,7 @@
     user-select: none;
     position: relative;
     border: 1px solid #420042;
+    margin:0px;
 }
 
 button .icon {
@@ -22,6 +23,7 @@ button .icon {
 
 button.em1 {
     border: 1px solid transparent;
+    padding: 8px;
 }
 
 button.em1, button.em2 {

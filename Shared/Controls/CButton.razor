@@ -15,11 +15,11 @@
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Parameter]
-    public string Icon { get; set; }
+    public string Icon { get; set; } = "";
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     [Parameter]
-    public EmphasisStyles Emphasis { get; set; } = EmphasisStyles.Low;
+    public EmphasisStyles Emphasis { get; set; } = EmphasisStyles.High;
     private string ID = "x" + Guid.NewGuid().ToString();
     private async void CButtClick(MouseEventArgs e)
     {

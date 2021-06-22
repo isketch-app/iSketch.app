@@ -7,15 +7,20 @@
 Welcome to your new app.
 
 
-<Timer @ref="timer" />
+<!--<Timer @ref="timer" />-->
+@if (ShowDialog)
+{
+    <Dialog OnDismiss="@(() => ShowDialog = false)" Header="Reset settings?">This will reset your device to <br /> its default factory settings.</Dialog>
+}
 
 <a href="/Administration/Words">Words</a>
 
 @code {
+    public bool ShowDialog = true;
     public iSketchTimer timer;
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        timer.TimerInitialized += TimerReady;
+        //timer.TimerInitialized += TimerReady;
         return base.OnAfterRenderAsync(firstRender);
     }
     private async void TimerReady(object o, EventArgs e)

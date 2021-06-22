@@ -10,36 +10,28 @@
 
 @if (WordID != null)
 {
-    <Popup>
-        @{ InitStat = InitEditWord(); }
+    string Title = "";
+    InitStat = InitEditWord();
+    if (InitStat == 1) Title = "Add a new word.";
+    <Dialog Header="@Title">
         @if (InitStat == 0)
         {
-            <PageTitle Icon="" Title='@("Word: " + InitWordValue)' />
-            <hr />
             <CAreYouSure ButtonText="Delete" ButtonIcon="" OnYesClick="() => DeleteWord()" />
-        }
-        @if (InitStat == 1)
-        {
-            <PageTitle Icon="" Title="Add a new word" />
         }
         @if (InitStat == 2)
         {
-            <PageTitle Icon="" Title="Word not found" />
-            <hr />
             <a href="@("/Administration/Words/" + PageNumber)">
                 <CButton>Back</CButton>
             </a>
         }
         @if (InitStat == 0 || InitStat == 1)
         {
-            <hr />
             <CText Icon="" Label="Word" Value="@InitWordValue" @ref="WordValue" />
             <CNumber Icon="" Label="Score" Value="@InitScoreValue" @ref="ScoreValue" />
         }
         @if (InitStat == 0)
         {
             <CText Icon="" Enabled="false" Label="Difficulty" Value="@InitDifficultyValue" />
-            <hr />
             <SavAppCan OnApplyClick="() => SetWordParameters()"
                        OnSaveClick="() => {
                     SetWordParameters();
@@ -49,22 +41,19 @@
         }
         @if (InitStat == 1)
         {
-            <hr />
-            <CButton OnClick="() => AddWord()" Icon="">Add</CButton>
-            <a href="@("/Administration/Words/" + PageNumber)">
-                <CButton Icon="">Done</CButton>
-            </a>
+            <DialogButtonContainer>
+                <CButton Emphasis="Emphasis.Low" OnClick="() => AddWord()" Icon="">Add</CButton>
+                <a href="@("/Administration/Words/" + PageNumber)">
+                    <CButton Emphasis="Emphasis.Low" Icon="">Done</CButton>
+                </a>
+            </DialogButtonContainer>
         }
-    </Popup>
+    </Dialog>
 }
 
 @if (Error != "")
 {
-    <Popup>
-        <div style="color:#ff6161;">@Error</div>
-        <hr />
-        <CButton OnClick='() => { Error = ""; }'>Dismiss</CButton>
-    </Popup>
+    <Dialog OnDismiss='@(() => Error = "")' Header="An error occured.">@Error</Dialog>
 }
 
 <PageTitle Title="Word List" />

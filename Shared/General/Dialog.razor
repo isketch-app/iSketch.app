@@ -1,0 +1,34 @@
+﻿<Popup>
+    @if (Header != "")
+    {
+        <div class="header">@Header</div>
+    }
+    <div class="content">@ChildContent</div>
+    @if (OnDismissSet)
+    {
+        <DialogButtonContainer>
+            <CButton OnClick="OnDismiss" Emphasis="Emphasis.Low">Dismiss</CButton>
+        </DialogButtonContainer>
+    }
+</Popup>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public string Header { get; set; } = "";
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnDismiss {
+        get
+        {
+            return pOnDismiss;
+        }
+        set
+        {
+            pOnDismiss = value;
+            OnDismissSet = true;
+        } 
+    }
+    private EventCallback<MouseEventArgs> pOnDismiss;
+    private bool OnDismissSet = false;
+}
