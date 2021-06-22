@@ -35,10 +35,10 @@
     }
   ],
   "start_url": "/",
-  "background_color": "#000000",
+  "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#000000",
+  "theme_color": "#ffffff",
   "version": "0.0.0",
   "orientation": "portrait-primary"
 }

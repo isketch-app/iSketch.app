@@ -13,10 +13,10 @@ body {
     font-family: noto;
     margin: 0px;
     padding: 0px;
-    color: white;
-    background-color: black;
+    color: #1e1e1e;
+    background-color: white;
 }
-body::before {
+/*body::before {
     content:'';
     position:fixed;
     z-index:-100;
@@ -26,7 +26,7 @@ body::before {
     height:100%;
     background-image: url('../images/bg.svg');
     background-size: cover;
-}
+}*/
 #is_body {
     overflow-y: scroll;
     position: fixed;
@@ -37,7 +37,7 @@ body::before {
 }
 hr {
     border:0px;
-    background-color:#353535;
+    background-color:#e0e0e0;
     height:1px;
     margin:20px 0px;
 }
@@ -51,32 +51,14 @@ a:hover {
     color:white;
 }
 input[type=text], input[type=number] {
-    background-color:rgb(255 255 255 / 0.10);
+    background-color:white;
     border:0px;
     outline:0px;
     padding:5px;
-    color:white;
+    color:#313131;
 }
 input[disabled] {
     color:gray;
-}
-button {
-    background-color: rgb(255 255 255 / 0.05);
-    border: 0px;
-    padding: 5px 7px 5px 7px;
-    color: rgb(255 255 255 / 0.72);
-    cursor:pointer;
-    font-size:14px;
-    min-width:100px;
-    transition:.3s;
-}
-button:hover {
-    color: white;
-    background-color: rgb(255 255 255 / 0.1);
-}
-button:active {
-    color: white;
-    background-color: rgb(255 255 255 / 0.05);
 }
 @keyframes fade-in {
     from {

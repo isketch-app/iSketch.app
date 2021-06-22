@@ -1,12 +1,12 @@
 ﻿<div>
     @if (Status == 0)
     {
-        <CButton OnClick="() => { Status = 1; }" Icon="@ButtonIcon">@ButtonText</CButton>
+        <CButton Emphasis="Emphasis.Low" OnClick="() => { Status = 1; }" Icon="@ButtonIcon">@ButtonText</CButton>
     }
     @if (Status == 1)
     {
-        <CButton OnClick="() => { Status = 0; }" Icon="@NoIcon">@NoText</CButton>
-        <CButton OnClick="OnYesClick" Icon="@YesIcon">@YesText</CButton>
+        <CButton Emphasis="Emphasis.Medium" OnClick="() => { Status = 0; }" Icon="@NoIcon">@NoText</CButton>
+        <CButton Emphasis="Emphasis.Medium" OnClick="OnYesClick" Icon="@YesIcon">@YesText</CButton>
         <span>@AreYouSureText</span>
     }
 </div>

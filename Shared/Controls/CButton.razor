@@ -1,8 +1,11 @@
 ﻿@inject IJSRuntime js;
 
-<button id="@ID" class="CButton" @onclick="CButtClick">
-    <span>@Icon</span>
-    <span>@ChildContent</span>
+<button id="@ID" class="CButton @("em" + (int)Emphasis)" @onclick="CButtClick">
+    @if (Icon != "")
+    {
+        <span class="icon">@Icon</span>
+    }
+    <span class="text">@ChildContent</span>
     <div class="load">
         <span></span>
     </div>
@@ -15,10 +18,18 @@
     public string Icon { get; set; }
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public EmphasisStyles Emphasis { get; set; } = EmphasisStyles.Low;
     private string ID = "x" + Guid.NewGuid().ToString();
     private async void CButtClick(MouseEventArgs e)
     {
         await OnClick.InvokeAsync(e);
         await js.InvokeVoidAsync("eval", "document.getElementById('" + ID + "').classList.remove('clicked');");
+    }
+    public enum EmphasisStyles : int
+    {
+        Low = 1,
+        Medium = 2,
+        High = 3
     }
 }
