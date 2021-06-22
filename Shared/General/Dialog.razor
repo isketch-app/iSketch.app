@@ -1,4 +1,4 @@
-﻿<Popup>
+﻿<Popup OnFadeOut="OnFadeOut" @ref="Popup">
     @if (Header != "")
     {
         <div class="header">@Header</div>
@@ -7,7 +7,7 @@
     @if (OnDismissSet)
     {
         <DialogButtonContainer>
-            <CButton OnClick="OnDismiss" Emphasis="Emphasis.Low">Dismiss</CButton>
+            <CButton OnClick="@(() => OnDismiss.InvokeAsync(this))" Emphasis="Emphasis.Low">Dismiss</CButton>
         </DialogButtonContainer>
     }
 </Popup>
@@ -18,7 +18,9 @@
     [Parameter]
     public string Header { get; set; } = "";
     [Parameter]
-    public EventCallback<MouseEventArgs> OnDismiss {
+    public EventCallback OnFadeOut { get; set; }
+    [Parameter]
+    public EventCallback<Dialog> OnDismiss {
         get
         {
             return pOnDismiss;
@@ -27,8 +29,13 @@
         {
             pOnDismiss = value;
             OnDismissSet = true;
-        } 
+        }
     }
-    private EventCallback<MouseEventArgs> pOnDismiss;
+    public async Task FadeOut()
+    {
+        await Popup.FadeOut();
+    }
+    private Popup Popup;
+    private EventCallback<Dialog> pOnDismiss;
     private bool OnDismissSet = false;
 }

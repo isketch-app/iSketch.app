@@ -1,4 +1,6 @@
-﻿<div style="z-index:@ZIndex;" class="popup">
+﻿@inject IJSRuntime js;
+
+<div id="@ID" style="z-index:@ZIndex;" class="popup">
     <div></div>
     <div class="form">
         @ChildContent
@@ -11,4 +13,13 @@
     public RenderFragment ChildContent { get; set; }
     [Parameter]
     public int ZIndex { get; set; } = 100;
+    [Parameter]
+    public EventCallback OnFadeOut { get; set; }
+    private string ID = "x" + Guid.NewGuid().ToString();
+    public async Task FadeOut()
+    {
+        await js.InvokeVoidAsync("eval", "document.getElementById('" + ID + "').classList.add('closing');");
+        await Task.Delay(300);
+        await OnFadeOut.InvokeAsync();
+    }
 }

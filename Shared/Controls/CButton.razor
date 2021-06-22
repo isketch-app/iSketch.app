@@ -23,8 +23,8 @@
     private string ID = "x" + Guid.NewGuid().ToString();
     private async void CButtClick(MouseEventArgs e)
     {
-        await OnClick.InvokeAsync(e);
         await js.InvokeVoidAsync("eval", "document.getElementById('" + ID + "').classList.remove('clicked');");
+        await OnClick.InvokeAsync(e);
     }
     public enum EmphasisStyles : int
     {

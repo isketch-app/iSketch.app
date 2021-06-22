@@ -2,15 +2,13 @@
 @using iSketch.app.Shared.Game.Timer; 
 @using iSketchTimer = iSketch.app.Shared.Game.Timer.Timer; 
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
 
 
 <!--<Timer @ref="timer" />-->
 @if (ShowDialog)
 {
-    <Dialog OnDismiss="@(() => ShowDialog = false)" Header="Reset settings?">This will reset your device to <br /> its default factory settings.</Dialog>
+    <Dialog OnFadeOut="@(() => ShowDialog = false)" OnDismiss="@((e) =>  e.FadeOut())" Header="Reset settings?">This will reset your device to <br /> its default factory settings.</Dialog>
 }
 
 <a href="/Administration/Words">Words</a>

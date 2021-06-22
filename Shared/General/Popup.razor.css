@@ -10,13 +10,16 @@
     flex-direction: column;
     animation: 0.3s fade-in;
 }
+.popup.closing {
+    animation: 0.3s fade-out forwards;
+}
 .popup div:first-child, .popup div:last-child {
     flex: 1;
 }
 .form {
     width: auto;
-    max-width:560px;
-    min-width:280px;
+    max-width: 560px;
+    min-width: 280px;
     margin-left: auto;
     margin-right: auto;
     background-color: white;
@@ -24,6 +27,9 @@
     box-shadow: 0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
     border-radius: 5px;
     animation: 0.3s pop-up;
+}
+.closing .form {
+    animation: 0.3s pop-down forwards;
 }
 @keyframes pop-up {
     from {
@@ -34,5 +40,16 @@
     to {
         opacity: 1;
         transform: scale(1);
+    }
+}
+@keyframes pop-down {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.9);
     }
 }
