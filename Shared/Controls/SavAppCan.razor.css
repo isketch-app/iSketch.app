@@ -1,3 +1,8 @@
-﻿::deep button:last-child {
-    float:right;
+﻿div {
+    position: relative;
+    text-align: left;
+}
+::deep button:last-child {
+    position: absolute;
+    right: 0px;
 }

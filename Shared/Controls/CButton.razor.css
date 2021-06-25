@@ -99,7 +99,7 @@ button .text {
 button .load {
     position: absolute;
     transition: .3s;
-    transition-delay: .3s;
+    transition-delay: .2s;
     top: 0px;
     left: 0px;
     width: 100%;

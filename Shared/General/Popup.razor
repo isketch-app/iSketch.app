@@ -18,7 +18,7 @@
     private string ID = "x" + Guid.NewGuid().ToString();
     public async Task FadeOut()
     {
-        await js.InvokeVoidAsync("eval", "document.getElementById('" + ID + "').classList.add('closing');");
+        _ = js.InvokeVoidAsync("eval", "document.getElementById('" + ID + "').classList.add('closing');");
         await Task.Delay(300);
         await OnFadeOut.InvokeAsync();
     }

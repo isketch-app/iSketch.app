@@ -12,17 +12,18 @@
 {
     string Title = "";
     InitStat = InitEditWord();
+    if (InitStat == 0) Title = "Modify word.";
     if (InitStat == 1) Title = "Add a new word.";
-    <Dialog Header="@Title">
+    if (InitStat == 2) Title = "Word not found!";
+    <Dialog OnFadeOut="NavBackToList" Header="@Title" @ref="Dialog">
         @if (InitStat == 0)
         {
-            <CAreYouSure ButtonText="Delete" ButtonIcon="" OnYesClick="() => DeleteWord()" />
+            <CAreYouSure ButtonText="Delete" ButtonIcon="" OnYesClick="DeleteWord" />
+            <br />
         }
         @if (InitStat == 2)
         {
-            <a href="@("/Administration/Words/" + PageNumber)">
-                <CButton>Back</CButton>
-            </a>
+            <CButton OnClick="Dialog.FadeOut">Back</CButton>
         }
         @if (InitStat == 0 || InitStat == 1)
         {
@@ -32,20 +33,20 @@
         @if (InitStat == 0)
         {
             <CText Icon="" Enabled="false" Label="Difficulty" Value="@InitDifficultyValue" />
-            <SavAppCan OnApplyClick="() => SetWordParameters()"
-                       OnSaveClick="() => {
-                    SetWordParameters();
-                    NavBackToList();
-                }"
-                       OnCancelClick="() => NavBackToList()" />
+            <DialogButtonContainer>
+                <SavAppCan OnApplyClick="SetWordParameters" OnCancelClick="Dialog.FadeOut" OnSaveClick="
+                    async () => {
+                        SetWordParameters();
+                        await Dialog.FadeOut();
+                    }
+                " />
+            </DialogButtonContainer>
         }
         @if (InitStat == 1)
         {
             <DialogButtonContainer>
-                <CButton Emphasis="Emphasis.Low" OnClick="() => AddWord()" Icon="">Add</CButton>
-                <a href="@("/Administration/Words/" + PageNumber)">
-                    <CButton Emphasis="Emphasis.Low" Icon="">Done</CButton>
-                </a>
+                <CButton Emphasis="Emphasis.Low" OnClick="AddWord" Icon="">Add</CButton>
+                <CButton Emphasis="Emphasis.Low" Icon="" OnClick="Dialog.FadeOut">Done</CButton>
             </DialogButtonContainer>
         }
     </Dialog>
@@ -53,7 +54,7 @@
 
 @if (Error != "")
 {
-    <Dialog OnDismiss='@(() => Error = "")' Header="An error occured.">@Error</Dialog>
+    <Dialog OnFadeOut='@(() => Error = "")' OnDismiss='@((t) => t.FadeOut())' Header="An error occured.">@Error</Dialog>
 }
 
 <PageTitle Title="Word List" />
@@ -79,6 +80,7 @@
     public string WordID { get; set; }
     private CText WordValue;
     private CNumber ScoreValue;
+    private Dialog Dialog;
     private string InitWordValue = "";
     private string InitScoreValue = "";
     private string InitDifficultyValue = "";
@@ -143,13 +145,13 @@
             return;
         }
     }
-    private void DeleteWord()
+    private async void DeleteWord()
     {
         if (!Guid.TryParse(WordID, out Guid id)) return;
         SqlCommand cmd = db.Connection.CreateCommand();
         cmd.CommandText = "DELETE FROM Words WHERE WordID = '" + id.ToString() + "'";
         cmd.ExecuteNonQuery();
-        NavBackToList();
+        await Dialog.FadeOut();
     }
     private void AddWord()
     {

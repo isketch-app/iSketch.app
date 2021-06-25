@@ -12,6 +12,7 @@
 }
 .popup.closing {
     animation: 0.3s fade-out forwards;
+    pointer-events: none;
 }
 .popup div:first-child, .popup div:last-child {
     flex: 1;
@@ -33,23 +34,19 @@
 }
 @keyframes pop-up {
     from {
-        opacity: 0;
         transform: scale(0.9);
     }
 
     to {
-        opacity: 1;
         transform: scale(1);
     }
 }
 @keyframes pop-down {
     from {
-        opacity: 1;
         transform: scale(1);
     }
 
     to {
-        opacity: 0;
         transform: scale(0.9);
     }
 }
