@@ -5,6 +5,7 @@
 @inject Services.Database db;
 @inject NavigationManager nm;
 @inject IJSRuntime js;
+@inject Services.EventHook eh;
 @using System.Data.SqlClient;
 @using System.Text.RegularExpressions;
 
@@ -131,6 +132,7 @@
             cmd.CommandText = "UPDATE Words SET Word = @WORD, Score = " + ScoreValue.Value + " WHERE WordID = '" + id.ToString() + "'";
             cmd.Parameters.AddWithValue("@WORD", word);
             cmd.ExecuteNonQuery();
+            eh.OnAdminWordsChanged();
             return;
         }
         catch (SqlException e)
@@ -151,6 +153,7 @@
         SqlCommand cmd = db.Connection.CreateCommand();
         cmd.CommandText = "DELETE FROM Words WHERE WordID = '" + id.ToString() + "'";
         cmd.ExecuteNonQuery();
+        eh.OnAdminWordsChanged();
         await Dialog.FadeOut();
     }
     private void AddWord()
@@ -166,6 +169,7 @@
             cmd.ExecuteNonQuery();
             WordValue.SetValue("");
             ScoreValue.SetValue("");
+            eh.OnAdminWordsChanged();
         }
         catch (SqlException e)
         {
@@ -186,5 +190,17 @@
     private void NavBackToList()
     {
         nm.NavigateTo("/Administration/Words/" + PageNumber);
+    }
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            eh.AdminWordsChanged += On_AdminWordsChanged;
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+    private void On_AdminWordsChanged(object s, EventArgs e)
+    {
+        InvokeAsync(() => StateHasChanged());
     }
 }

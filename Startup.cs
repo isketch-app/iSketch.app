@@ -22,7 +22,8 @@ namespace iSketch.app
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<Services.Database>();
+            services.AddSingleton(new Services.EventHook());
+            services.AddSingleton(new Services.Database());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
