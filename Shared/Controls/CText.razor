@@ -1,15 +1,22 @@
 ﻿@inject IJSRuntime js;
 
-<Control Icon="@Icon" Label="@Label">
-    @if (Enabled)
-    {
-        <input id="@GUID" value="@Value" @onchange="OnChange" type="text" />
-    }
-    else
-    {
-        <input id="@GUID" value="@Value" @onchange="OnChange" type="text" disabled />
-    }
-</Control>
+<div class="input">
+    <div class="lbl">@Label</div>
+    <div class="container">
+        @if (Enabled)
+        {
+            <input id="@GUID" value="@Value" @onchange="OnChange" type="text" />
+        }
+        else
+        {
+            <input id="@GUID" value="@Value" @onchange="OnChange" type="text" disabled />
+        }
+        @if (IconSpecified)
+        {
+            <div class="icon">@Icon</div>
+        }
+    </div>
+</div>
 
 @code {
     [Parameter]
@@ -43,5 +50,11 @@
     {
         Value = (string)e.Value;
         await ValueChanged.InvokeAsync((string)e.Value);
+    }
+    private bool IconSpecified { 
+        get
+        {
+            return (Icon != "");
+        }
     }
 } 

@@ -50,16 +50,6 @@ a {
 a:hover {
     color:white;
 }
-input[type=text], input[type=number] {
-    background-color:white;
-    border:0px;
-    outline:0px;
-    padding:5px;
-    color:#313131;
-}
-input[disabled] {
-    color:gray;
-}
 @keyframes fade-in {
     from {
         opacity: 0;

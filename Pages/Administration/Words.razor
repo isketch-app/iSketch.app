@@ -15,7 +15,7 @@
     InitStat = InitEditWord();
     if (InitStat == 0) Title = "Modify word.";
     if (InitStat == 1) Title = "Add a new word.";
-    if (InitStat == 2) Title = "Word not found!";
+    if (InitStat == 2) Title = "An error occured.";
     <Dialog OnFadeOut="NavBackToList" Header="@Title" @ref="Dialog">
         @if (InitStat == 0)
         {
@@ -24,15 +24,20 @@
         }
         @if (InitStat == 2)
         {
-            <CButton OnClick="Dialog.FadeOut">Back</CButton>
+            <div>This word does not exist.</div>
+            <DialogButtonContainer>
+                <CButton Emphasis="Emphasis.Low" OnClick="Dialog.FadeOut">Dismiss</CButton>
+            </DialogButtonContainer>
         }
         @if (InitStat == 0 || InitStat == 1)
         {
             <CText Icon="" Label="Word" Value="@InitWordValue" @ref="WordValue" />
-            <CNumber Icon="" Label="Score" Value="@InitScoreValue" @ref="ScoreValue" />
+            <br />
+            <CText Icon="" Label="Score" Value="@InitScoreValue" @ref="ScoreValue" />
         }
         @if (InitStat == 0)
         {
+            <br />
             <CText Icon="" Enabled="false" Label="Difficulty" Value="@InitDifficultyValue" />
             <DialogButtonContainer>
                 <SavAppCan OnApplyClick="SetWordParameters" OnCancelClick="Dialog.FadeOut" OnSaveClick="
@@ -80,7 +85,7 @@
     [Parameter]
     public string WordID { get; set; }
     private CText WordValue;
-    private CNumber ScoreValue;
+    private CText ScoreValue;
     private Dialog Dialog;
     private string InitWordValue = "";
     private string InitScoreValue = "";
