@@ -19,7 +19,9 @@
     <Dialog OnFadeOut="NavBackToList" Header="@Title" @ref="Dialog">
         @if (InitStat == 0)
         {
-            <CAreYouSure ButtonText="Delete" ButtonIcon="" OnYesClick="DeleteWord" />
+            <div style="text-align:right;">
+                <CAreYouSure ButtonText="Delete" ButtonIcon="" OnYesClick="DeleteWord" />
+            </div>
             <br />
         }
         @if (InitStat == 2)
