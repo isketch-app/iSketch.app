@@ -1,27 +1,30 @@
 ﻿.logo {
-    height:60px;
-    cursor:pointer;
-    user-select:none;
+    height: 60px;
+    cursor: pointer;
+    user-select: none;
 }
+
 .img {
-    display:inline-block;
-    height:60px;
-    width:20px;
-    background-image:url('./static/images/isketch.svg');
-    background-size:60px 60px;
-    background-position:center center;
-    background-repeat:no-repeat;
-    vertical-align:top;
+    display: inline-block;
+    height: 60px;
+    width: 20px;
+    background-image: url('./static/images/isketch.svg');
+    background-size: 60px 60px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    vertical-align: top;
 }
+
 .text {
-    font-size:18px;
-    height:60px;
-    line-height:60px;
-    display:inline-block;
-    vertical-align:top;
-    color:white;
+    font-size: 18px;
+    height: 60px;
+    line-height: 60px;
+    display: inline-block;
+    vertical-align: top;
+    color: #525252;
 }
+
 .text span {
-    font-size: 12px;
-    color:#aaaaaa;
+    font-size: 10px;
+    color: #bbbbbb;
 }

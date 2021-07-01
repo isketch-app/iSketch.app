@@ -5,23 +5,21 @@
 }
 table {
     width:100%;
-    border-spacing:1px;
+    border-spacing:0px;
+    border-collapse:collapse;
 }
 .table-body {
-    padding: 10px;
     font-size: 14px;
-    width: calc(100% - 20px);
-
+    width: 100%;
     overflow-x: auto;
+    border: 1px solid #e1e1e1;
+    background-color: white;
+    border-radius: 4px;
 }
 th {
     text-align: left;
-    font-weight: normal;
+    font-weight: bolder;
     padding: 0px;
-}
-td {
-    padding: 5px;
-    height:50px;
 }
 td:last-child {
     width:100%;
@@ -30,11 +28,18 @@ th:last-child {
     width:100%;
     text-align:right;
 }
-tr:not(:last-child), td:not(:last-child) {
-    padding-right:20px;
+tr {
+    color: #2c2c2c;
 }
-tr:nth-child(2n+2) {
-
+tr:not(:first-child):hover {
+    background-color:#f7f7f7;
+}
+tr:not(:last-child) {
+    border-bottom: 1px solid #e1e1e1;
+}
+td, th {
+    padding: 1px 16px 1px 16px;
+    height: 50px;
 }
 input[type=number], input[type=text] {
     width: 120px;
@@ -44,7 +49,6 @@ input[type=number], input[type=text] {
     outline: 0px;
     border: 0px;
     padding: 0px 0px 0px 3px;
-
 }
 input[type=text] {
     width: 74px;
