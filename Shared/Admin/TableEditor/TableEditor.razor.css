@@ -21,18 +21,18 @@ th {
     font-weight: bolder;
     padding: 0px;
 }
-td:last-child {
-    width:100%;
-}
-th:last-child {
-    width:100%;
-    text-align:right;
+td:last-child, th:last-child {
+    width: 100%;
 }
 tr {
     color: #2c2c2c;
+    transition:.3s;
 }
-tr:not(:first-child):hover {
-    background-color:#f7f7f7;
+tr:not(:nth-child(-n+2)) {
+    cursor:pointer;
+}
+tr:not(:nth-child(-n+2)):hover {
+    background-color: #f7f7f7;
 }
 tr:not(:last-child) {
     border-bottom: 1px solid #e1e1e1;

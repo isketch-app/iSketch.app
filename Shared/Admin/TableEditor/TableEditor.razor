@@ -1,5 +1,5 @@
 ﻿@using System.Data.SqlClient;
-@inject NavigationManager nm; 
+@inject NavigationManager nm;
 
 @{ if (!inited) TableInit(); }
 
@@ -11,8 +11,24 @@
             {
                 int index = i;
                 if (i++ == 0) continue;
+                <th>@title</th>
+            }
+            <!--<th class="table-nav">
+                <span>Records: @qTotal</span>
+                <span>|</span>
+                <span>Page: </span>
+                <a href="@PagePath/@(PageNumber - 1)"></a>
+                <span>@PageNumber</span>
+                <a href="@PagePath/@(PageNumber + 1)"></a>
+            </th>-->
+        </tr>
+        <tr>
+            @{i = 0;}
+            @foreach (string title in VisibleRowsTitles)
+            {
+                int index = i;
+                if (i++ == 0) continue;
                 <th>
-                    <div>@title</div>
                     <div class="filter">
                         <input @onchange="@((e) => {
                             RowFilters[index] = e.Value.ToString();
@@ -36,31 +52,15 @@
                     </div>
                 </th>
             }
-            <th class="table-nav">
-                <span>Records: @qTotal</span>
-                <span>|</span>
-                <span>Page: </span>
-                <a href="@PagePath/@(PageNumber - 1)"></a>
-                <span>@PageNumber</span>
-                <a href="@PagePath/@(PageNumber + 1)"></a>
-            </th>
         </tr>
         @foreach (List<string> row in TableData)
         {
-            <tr>
+            <tr onclick="Blazor.navigateTo('@PrintMorePath(row[0])')">
                 @{i = 0;}
                 @foreach (string field in row)
                 {
                     if (i++ == 0) continue;
                     <td>@field</td>
-                }
-                @if (PathIncludePageNumber)
-                {
-                    <td class="row-link"><a href="@PagePath/@PageNumber/@row[0]"></a></td>
-                }
-                else
-                {
-                    <td class="row-link"><a href="@PagePath/@row[0]"></a></td>
                 }
             </tr>
         }
@@ -85,11 +85,14 @@
     [Parameter]
     public bool PathIncludePageNumber { get; set; } = false;
     [Parameter]
-    public int PageNumber {
-        get {
+    public int PageNumber
+    {
+        get
+        {
             return pPageNumber;
         }
-        set {
+        set
+        {
             pPageNumber = value;
             ResultOffset = (uint)(MaxResults * pPageNumber);
             if (inited) OnPageChange();
@@ -179,5 +182,16 @@
     {
         SortColumnAndDirection = sortColumnAndDirection;
         ReQueryTable();
+    }
+    private string PrintMorePath(string ID)
+    {
+        @if (PathIncludePageNumber)
+        {
+            return PagePath + "/" + PageNumber + "/" + ID;
+        }
+        else
+        {
+            return PagePath + "/" + ID;
+        }
     }
 }
