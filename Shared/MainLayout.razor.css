@@ -2,9 +2,7 @@
     flex: 1;
     max-width: 1400px;
     width: calc(100% - 60px);
-    margin-left: auto;
-    margin-right: auto;
-    padding: 30px;
+    margin: 30px auto 30px auto;
     position: relative;
 }
 
@@ -14,9 +12,15 @@
     min-height: 100vh;
 }
 
+@media screen and (max-width: 1400px) {
+    .body {
+        margin: 30px;
+    }
+}
+
 @media screen and (max-width: 600px) {
     .body {
-        padding: 10px;
+        margin: 10px;
         width: calc(100% - 20px);
     }
 }

@@ -33,7 +33,7 @@ body {
     background-size: cover;
 }*/
 #is_body {
-    overflow-y: scroll;
+    overflow-y: auto;
     position: fixed;
     top: 0px;
     left: 0px;
@@ -54,6 +54,19 @@ a {
 }
 a:hover {
     color:white;
+}
+::-webkit-scrollbar,
+::-webkit-scrollbar-thumb {
+    width: 12px;
+    border-radius: 6px;
+    background-clip: padding-box;
+    border: 3px solid transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+:hover::-webkit-scrollbar-thumb {
+    background-color: #949494;
 }
 @keyframes fade-in {
     from {
