@@ -52,12 +52,23 @@
         }
     </table>
     <div class="pagination">
+        @{ 
+            string star, prev, next, last;
+            string page = PagePath + "/";
+            int lastPage = (qTotal / (int)MaxResults);
+            star = page + 0;
+            prev = page + (PageNumber - 1);
+            next = page + (PageNumber + 1);
+            last = page + lastPage;
+            if (PageNumber <= 0) star = prev = "";
+            if (PageNumber >= lastPage) next = last = "";
+        }
         <span class="details">@(ResultOffset + 1)-@(ResultOffset + MaxResults) of @qTotal</span>
         <span class="buttons">
-            <a href="@(PagePath + "/0")"></a>
-            <a href="@(PagePath + "/" + (PageNumber - 1))"></a>
-            <a href="@(PagePath + "/" + (PageNumber + 1))"></a>
-            <a href="@(PagePath + "/0")"></a>
+            <a href="@star"></a>
+            <a href="@prev"></a>
+            <a href="@next"></a>
+            <a href="@last"></a>
         </span>
     </div>
 </div>

@@ -188,6 +188,11 @@ input[type=text] {
     z-index: -1;
 }
 
+.pagination .buttons a[href=''] {
+    pointer-events: none;
+    color: #adadad;
+}
+
 .pagination .buttons a:hover::before {
     background-color: #e4e4e4;
 }
