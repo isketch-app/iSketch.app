@@ -49,7 +49,7 @@
         </tr>-->
         @foreach (List<string> row in TableData)
         {
-            <tr onclick="Blazor.navigateTo('@PrintMorePath(row[0])')">
+            <tr @onclick="() => nm.NavigateTo(PrintMorePath(row[0]))">
                 @{i = 0;}
                 @foreach (string field in row)
                 {

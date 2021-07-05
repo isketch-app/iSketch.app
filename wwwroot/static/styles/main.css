@@ -58,6 +58,7 @@ a:hover {
 ::-webkit-scrollbar,
 ::-webkit-scrollbar-thumb {
     width: 12px;
+    height: 12px;
     border-radius: 6px;
     background-clip: padding-box;
     border: 3px solid transparent;
