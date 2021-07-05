@@ -1,8 +1,8 @@
 ﻿@inject IJSRuntime js;
 
-<div id="@ID" style="z-index:@ZIndex;" class="popup">
+<div @onclick="FadeOut" id="@ID" style="z-index:@ZIndex;" class="popup">
     <div></div>
-    <div class="form">
+    <div @onclick:stopPropagation="true" class="form">
         @ChildContent
     </div>
     <div></div>
@@ -19,7 +19,7 @@
     public async Task FadeOut()
     {
         _ = js.InvokeVoidAsync("eval", "document.getElementById('" + ID + "').classList.add('closing');");
-        await Task.Delay(300);
+        await Task.Delay(75);
         await OnFadeOut.InvokeAsync();
     }
 }

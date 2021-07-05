@@ -8,10 +8,10 @@
     background-color: rgba(0,0,0,0.32);
     overflow-y: auto;
     flex-direction: column;
-    animation: 0.3s fade-in;
+    animation: 0.15s fade-in;
 }
 .popup.closing {
-    animation: 0.3s fade-out forwards;
+    animation: 0.075s fade-out forwards;
     pointer-events: none;
 }
 .popup div:first-child, .popup div:last-child {
@@ -27,26 +27,17 @@
     padding: 24px;
     box-shadow: 0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
     border-radius: 5px;
-    animation: 0.3s pop-up;
+    animation: 0.15s pop-up;
 }
 .closing .form {
-    animation: 0.3s pop-down forwards;
+    animation: 0.075s pop-down forwards;
 }
 @keyframes pop-up {
     from {
-        transform: scale(0.9);
+        transform: scale(0.8);
     }
 
     to {
         transform: scale(1);
-    }
-}
-@keyframes pop-down {
-    from {
-        transform: scale(1);
-    }
-
-    to {
-        transform: scale(0.9);
     }
 }
