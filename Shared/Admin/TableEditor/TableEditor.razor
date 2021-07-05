@@ -11,7 +11,15 @@
             {
                 int index = i;
                 if (i++ == 0) continue;
-                <th>@title</th>
+                <th @onclick="() => OnSortClick(index)">
+                    @{
+                        string sorticn = "";
+                        if (SortColumnAndDirection == index) sorticn = "";
+                        if (SortColumnAndDirection * -1 == index) sorticn = "";
+                    }
+                    <span>@title</span>
+                    <span class="sort-btn">@sorticn</span>
+                </th>
             }
             <!--<th class="table-nav">
                 <span>Records: @qTotal</span>
@@ -22,7 +30,7 @@
                 <a href="@PagePath/@(PageNumber + 1)"></a>
             </th>-->
         </tr>
-        <tr>
+        <!--<tr>
             @{i = 0;}
             @foreach (string title in VisibleRowsTitles)
             {
@@ -35,24 +43,10 @@
                             OnFilterChange();
                         })" type="text" />
                         <span class="icon"></span>
-                        <span class="sort-btns">
-                            @{
-                                string sortup = "";
-                                string sortdn = "";
-                                if (SortColumnAndDirection == index) sortup = "selected";
-                                if (SortColumnAndDirection * -1 == index) sortdn = "selected";
-                            }
-                            <span class="sort-up @sortup" @onclick="@(() => {
-                                OnSortClick(index);
-                            })"></span>
-                            <span class="sort-dn @sortdn" @onclick="@(() => {
-                                OnSortClick(index * -1);
-                            })"></span>
-                        </span>
                     </div>
                 </th>
             }
-        </tr>
+        </tr>-->
         @foreach (List<string> row in TableData)
         {
             <tr onclick="Blazor.navigateTo('@PrintMorePath(row[0])')">
@@ -180,6 +174,7 @@
     }
     private void OnSortClick(int sortColumnAndDirection)
     {
+        if (SortColumnAndDirection == sortColumnAndDirection) sortColumnAndDirection = sortColumnAndDirection * -1;
         SortColumnAndDirection = sortColumnAndDirection;
         ReQueryTable();
     }

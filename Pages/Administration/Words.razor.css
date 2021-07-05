@@ -1,0 +1,13 @@
+﻿.page {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: calc(100% - 60px);
+    height: calc(100% - 60px);
+    padding: 30px;
+}
+.action-bar {
+    margin-bottom:20px;
+}

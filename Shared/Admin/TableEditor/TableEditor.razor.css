@@ -10,23 +10,18 @@ table {
 }
 .table-body {
     font-size: 14px;
-    width: 100%;
+    width: calc(100% - 2px);
     overflow-x: auto;
     border: 1px solid #e1e1e1;
     background-color: white;
     border-radius: 4px;
 }
-th {
-    text-align: left;
-    font-weight: bolder;
-    padding: 0px;
-}
 td:last-child, th:last-child {
     width: 100%;
 }
 tr {
-    color: #2c2c2c;
-    transition:.3s;
+    color: #212121;
+    transition: .3s;
 }
 tr:not(:nth-child(-n+2)) {
     cursor:pointer;
@@ -40,6 +35,14 @@ tr:not(:last-child) {
 td, th {
     padding: 1px 16px 1px 16px;
     height: 50px;
+}
+th {
+    text-align: left;
+    font-weight: bolder;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    height: 52px;
 }
 input[type=number], input[type=text] {
     width: 120px;
@@ -86,21 +89,12 @@ input[type=text] {
     display:block;
     transition:.3s;
 }
-.sort-up:hover, .sort-dn:hover {
-
-}
-.sort-up.selected, .sort-dn.selected {
-
-}
-.sort-btns {
-    user-select:none;
-    position: absolute;
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    right: 0px;
-    top: 0px;
-    text-align: center;
+.sort-btn {
+    font-family: icons;
+    color: #a9a9a9;
+    font-weight: normal;
+    font-size: 20px;
+    vertical-align: -4px;
 }
 .row-offset-lbl {
     width: 123px;
