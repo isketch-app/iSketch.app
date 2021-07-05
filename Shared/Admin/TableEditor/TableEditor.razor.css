@@ -1,13 +1,15 @@
 ﻿.row-link {
-    font-family:icons;
-    text-align:right;
-    font-size:20px;
+    font-family: icons;
+    text-align: right;
+    font-size: 20px;
 }
+
 table {
-    width:100%;
-    border-spacing:0px;
-    border-collapse:collapse;
+    width: 100%;
+    border-spacing: 0px;
+    border-collapse: collapse;
 }
+
 .table-body {
     font-size: 14px;
     width: calc(100% - 2px);
@@ -15,27 +17,35 @@ table {
     border: 1px solid #e1e1e1;
     background-color: white;
     border-radius: 4px;
+    position: relative;
 }
+
 td:last-child, th:last-child {
     width: 100%;
 }
+
 tr {
     color: #212121;
     transition: .3s;
 }
+
 tr:not(:nth-child(-n+2)) {
-    cursor:pointer;
+    cursor: pointer;
 }
+
 tr:not(:nth-child(-n+2)):hover {
     background-color: #f7f7f7;
 }
+
 tr:not(:last-child) {
     border-bottom: 1px solid #e1e1e1;
 }
+
 td, th {
     padding: 1px 16px 1px 16px;
     height: 50px;
 }
+
 th {
     text-align: left;
     font-weight: bolder;
@@ -44,6 +54,7 @@ th {
     user-select: none;
     height: 52px;
 }
+
 input[type=number], input[type=text] {
     width: 120px;
     height: 20px;
@@ -53,6 +64,7 @@ input[type=number], input[type=text] {
     border: 0px;
     padding: 0px 0px 0px 3px;
 }
+
 input[type=text] {
     width: 74px;
     padding: 0px 43px 0px 3px;
@@ -60,24 +72,27 @@ input[type=text] {
     top: 0px;
     left: 0px;
 }
+
 .filter {
     width: 120px;
     height: 20px;
     position: relative;
 }
+
 .filter .icon {
-    position:absolute;
-    right:20px;
-    top:0px;
-    width:18px;
-    height:20px;
-    font-family:icons;
-    line-height:20px;
-    font-size:14px;
-    font-weight:normal;
-    text-align:right;
-    padding-right:2px;
+    position: absolute;
+    right: 20px;
+    top: 0px;
+    width: 18px;
+    height: 20px;
+    font-family: icons;
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: right;
+    padding-right: 2px;
 }
+
 .sort-up, .sort-dn {
     width: 20px;
     height: 10px;
@@ -85,10 +100,11 @@ input[type=text] {
     line-height: 10px;
     font-family: icons;
     font-weight: normal;
-    cursor:pointer;
-    display:block;
-    transition:.3s;
+    cursor: pointer;
+    display: block;
+    transition: .3s;
 }
+
 .sort-btn {
     font-family: icons;
     color: #a9a9a9;
@@ -96,27 +112,82 @@ input[type=text] {
     font-size: 20px;
     vertical-align: -4px;
 }
+
 .row-offset-lbl {
     width: 123px;
-    margin-left:auto;
-    text-align:left;
+    margin-left: auto;
+    text-align: left;
 }
+
 .table-nav {
-    line-height:20px;
-    vertical-align:bottom;
-    white-space:nowrap;
-    padding-left:10px;
+    line-height: 20px;
+    vertical-align: bottom;
+    white-space: nowrap;
+    padding-left: 10px;
 }
+
 .table-nav * {
-    display:inline-block;
-    height:20px;
-    vertical-align:top;
+    display: inline-block;
+    height: 20px;
+    vertical-align: top;
 }
+
 .table-nav a {
     font-family: icons;
     font-size: 18px;
-    width:20px;
+    width: 20px;
 }
-.table-nav a:hover {
 
+.pagination {
+    position: sticky;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 50px;
+    background-color: white;
+    border-top: 1px solid #e1e1e1;
+    text-align: right;
+    line-height: 50px;
+}
+
+.pagination * {
+    display:inline-block;
+    height:50px;
+    vertical-align:top;
+}
+
+.pagination .details {
+    margin-right: 32px;
+}
+
+.pagination .buttons {
+    font-family: icons;
+    font-size: 0px;
+    user-select: none;
+}
+
+.pagination .buttons a {
+    width: 50px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    font-size: 24px;
+    color: inherit;
+}
+
+.pagination .buttons a::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: transparent;
+    transition: .3s;
+    z-index: -1;
+}
+
+.pagination .buttons a:hover::before {
+    background-color: #e4e4e4;
 }

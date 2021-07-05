@@ -21,14 +21,6 @@
                     <span class="sort-btn">@sorticn</span>
                 </th>
             }
-            <!--<th class="table-nav">
-                <span>Records: @qTotal</span>
-                <span>|</span>
-                <span>Page: </span>
-                <a href="@PagePath/@(PageNumber - 1)"></a>
-                <span>@PageNumber</span>
-                <a href="@PagePath/@(PageNumber + 1)"></a>
-            </th>-->
         </tr>
         <!--<tr>
             @{i = 0;}
@@ -59,6 +51,15 @@
             </tr>
         }
     </table>
+    <div class="pagination">
+        <span class="details">@(ResultOffset + 1)-@(ResultOffset + MaxResults) of @qTotal</span>
+        <span class="buttons">
+            <a href="@(PagePath + "/0")"></a>
+            <a href="@(PagePath + "/" + (PageNumber - 1))"></a>
+            <a href="@(PagePath + "/" + (PageNumber + 1))"></a>
+            <a href="@(PagePath + "/0")"></a>
+        </span>
+    </div>
 </div>
 
 @code {
@@ -75,7 +76,7 @@
     [Parameter]
     public uint ResultOffset { get; set; } = 0;
     [Parameter]
-    public uint MaxResults { get; set; } = 100;
+    public uint MaxResults { get; set; } = 25;
     [Parameter]
     public bool PathIncludePageNumber { get; set; } = false;
     [Parameter]
