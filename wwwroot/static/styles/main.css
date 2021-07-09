@@ -66,6 +66,9 @@ a:hover {
 ::-webkit-scrollbar-thumb {
     background-color: #949494;
 }
+:focus-visible {
+    outline: 2px solid black;
+}
 @keyframes fade-in {
     from {
         opacity: 0;
