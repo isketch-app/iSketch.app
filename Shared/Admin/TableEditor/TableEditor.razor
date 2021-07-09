@@ -6,6 +6,7 @@
 <div class="table-body">
     <table>
         <tr>
+            <td class="icon"></td>
             @{int i = 0;}
             @foreach (string title in VisibleRowsTitles)
             {
@@ -21,33 +22,35 @@
                     <span class="sort-btn">@sorticn</span>
                 </th>
             }
+            <th></th>
         </tr>
-        <!--<tr>
+        <tr>
+            <td class="icon"></td>
             @{i = 0;}
             @foreach (string title in VisibleRowsTitles)
             {
                 int index = i;
                 if (i++ == 0) continue;
-                <th>
-                    <div class="filter">
-                        <input @onchange="@((e) => {
-                            RowFilters[index] = e.Value.ToString();
-                            OnFilterChange();
-                        })" type="text" />
-                        <span class="icon"></span>
-                    </div>
-                </th>
+                <td class="filter">
+                    <input @onchange="@((e) => {
+                        RowFilters[index] = e.Value.ToString();
+                        OnFilterChange();
+                    })" type="text" />
+                </td>
             }
-        </tr>-->
+            <td></td>
+        </tr>
         @foreach (List<string> row in TableData)
         {
             <tr @onclick="() => nm.NavigateTo(PrintMorePath(row[0]))">
+                <td class="icon"></td>
                 @{i = 0;}
                 @foreach (string field in row)
                 {
                     if (i++ == 0) continue;
                     <td>@field</td>
                 }
+                <td></td>
             </tr>
         }
     </table>
