@@ -1,40 +1,31 @@
-var CACHE_VERSION = '0.0.0';
-var CURRENT_CACHES = {
-    cache: 'isketch-v' + CACHE_VERSION
-};
-self.addEventListener('activate', function (event) {
-    var expectedCacheNamesSet = new Set(Object.values(CURRENT_CACHES));
+var CACHE_NAME = 'is-cache-v0';
+
+var assets = [
+    '/static/pages/offline.html',
+    '/static/images/isketch.svg',
+    '/static/images/logo_512_square.svg',
+    '/static/images/logo_32_square.png',
+    '/static/fonts/icons.otf',
+    '/static/fonts/Roboto.woff2',
+    '/static/styles/main.css',
+    '/static/styles/offline.css'
+];
+
+self.addEventListener('install', function (event) {
     event.waitUntil(
-        caches.keys().then(function (cacheNames) {
-            return Promise.all(
-                cacheNames.map(function (cacheName) {
-                    if (!expectedCacheNamesSet.has(cacheName)) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
+        caches.open(CACHE_NAME).then(function (cache) {
+            return cache.addAll(assets);
         })
     );
 });
+
 self.addEventListener('fetch', function (event) {
     event.respondWith(
-        caches.open(CURRENT_CACHES.cache).then(function (cache) {
-            return cache.match(event.request).then(function (response) {
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request.clone()).then(function (response) {
-                    if (
-                        response.status == 200 &&
-                        !response.url.includes('/_blazor/')
-                    ) {
-                        //cache.put(event.request, response.clone());
-                    }
-                    return response;
-                });
-            }).catch(function (error) {
-                throw error;
-            });
+        caches.match(event.request).then(function (response) {
+            if (response) return response;
+            return fetch(event.request);
+        }).catch(function () {
+            return caches.match('/static/pages/offline.html');
         })
     );
 });

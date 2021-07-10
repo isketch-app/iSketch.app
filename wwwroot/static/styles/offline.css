@@ -1,0 +1,64 @@
+﻿html, body {
+    height: 100%;
+}
+
+body {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+}
+
+.message {
+}
+
+img {
+    margin-bottom: 20px;
+}
+
+body > div:not(.message) {
+    flex: 1;
+}
+
+button {
+    margin-top: 50px;
+    width: 100px;
+    height: 30px;
+    background-color: white;
+    border: 1px solid #70306d;
+    font-weight: bolder;
+    border-radius: 4px;
+    color: #461d44;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ffdafd;
+}
+
+button:active {
+    background-color: white;
+}
+
+.trying div {
+    font-family: icons;
+    animation: 1s infinite spin ;
+    width: 60px;
+    height: 60px;
+    font-size: 60px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(540deg)
+    }
+}
+
+.hidden {
+    display: none;
+}

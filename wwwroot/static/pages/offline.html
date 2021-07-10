@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="theme-color" content="#ffffff">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="icon" type="image/svg+xml" href="./static/images/logo_512_square.svg">
+        <link rel="alternate icon" type="image/png" href="./static/images/logo_32_square.png">
+        <title>iSketch.app</title>
+        <base href="/" />
+        <link href="./static/styles/main.css" rel="stylesheet" />
+        <link href="./static/styles/offline.css" rel="stylesheet" />
+        <script>
+            function reload() {
+                document.querySelector('.retry').classList.add('hidden');
+                document.querySelector('.trying').classList.remove('hidden');
+                document.location.reload();
+            }
+        </script>
+    </head>
+    <body>
+        <div></div>
+        <div class="message">
+            <img src="./static/images/isketch.svg" />
+            <h2>iSketch.app</h2>
+            <div class="retry">
+                <p>The server is currently un-reachable.</p>
+                <button onclick="reload()">RETRY</button>
+            </div>
+            <div class="trying hidden">
+                <p>Attempting to connect...</p>
+                <div></div>
+            </div>
+        </div>
+        <div></div>
+    </body>
+</html>
