@@ -2,6 +2,7 @@
     height: 60px;
     cursor: pointer;
     user-select: none;
+    width: 125px;
 }
 
 .img {
