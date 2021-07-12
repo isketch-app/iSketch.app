@@ -1,4 +1,4 @@
-var CACHE_NAME = 'is-cache-v0';
+var CACHE_NAME = 'is-cache-v1';
 
 var assets = [
     '/static/pages/offline.html',
