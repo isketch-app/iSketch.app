@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/isketch-app/iSketch.app/master/wwwroot/static/images/isketch_animated.svg">
+<img width="150" height="150" src="https://raw.githubusercontent.com/isketch-app/iSketch.app/master/wwwroot/static/images/isketch_animated.svg">
 <h1>iSketch.app</h1>
 <p>
   iSketch was a browser-based drawing game similar to Pictionary.
