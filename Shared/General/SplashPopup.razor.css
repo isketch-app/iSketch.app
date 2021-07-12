@@ -8,7 +8,7 @@
     z-index: 1000;
     opacity: 1;
     animation: .3s splash-fade-out;
-    animation-delay: 2s;
+    animation-delay: 1.3s;
     animation-fill-mode: forwards;
     user-select: none;
 }
