@@ -40,20 +40,16 @@ namespace iSketch.app
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 //app.UseHsts();
             }
-
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseiSketchHeaders();
-
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/dynamic/{File}.{Ext}", Dynamic.Delegate);
                 endpoints.MapHealthChecks("/_Health");
-                endpoints.MapGet("/dynamic/{file}.{ext}", Dynamic.Delegate);
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+            app.UseStaticFiles();
         }
     }
 }

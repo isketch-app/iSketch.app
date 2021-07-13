@@ -4,31 +4,31 @@
   "description": "iSketch.app is a free, open source, Pictionary-style, online drawing game!",
   "icons": [
     {
-      "src": "./images/logo_32_square.png",
+      "src": "../static/images/logo_32_square.png",
       "type": "image/png",
       "sizes": "32x32",
       "purpose": "any"
     },
     {
-      "src": "./images/logo_192_circle.png",
+      "src": "../static/images/logo_192_circle.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "./images/logo_192_mask.png",
+      "src": "../static/images/logo_192_mask.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable"
     },
     {
-      "src": "./images/logo_512_circle.png",
+      "src": "../static/images/logo_512_circle.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "./images/logo_512_mask.png",
+      "src": "../static/images/logo_512_mask.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"

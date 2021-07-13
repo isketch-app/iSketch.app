@@ -14,7 +14,7 @@
         <link rel="alternate icon" type="image/png" href="./static/images/logo_32_square.png">
         <title>iSketch.app</title>
         <base href="~/" />
-        <link rel="manifest" href="~/static/manifest.json" />
+        <link rel="manifest" href="~/dynamic/sw.manifest.json" />
         <link href="~/static/styles/main.css" rel="stylesheet" />
         <link href="iSketch.app.styles.css" rel="stylesheet" />
         <script type="module">
@@ -40,7 +40,7 @@
         <script src="_framework/blazor.server.js"></script>
         <script src="./static/scripts/iSketchSite.js"></script>
         <script>
-            navigator.serviceWorker.register("/serviceworker.js");
+            navigator.serviceWorker.register("./dynamic/sw.serviceworker.js", { scope: "/" });
         </script>
     </body>
 </html>

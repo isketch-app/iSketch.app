@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>0.0.0.0</Version>
+    <Version>0.0.0.5</Version>
+	<AssemblyVersion>0.0.0.5</AssemblyVersion>
+	<FileVersion>0.0.0.5</FileVersion>
     <Authors>Dylan Bickerstaff</Authors>
     <Company>iSketch.app</Company>
     <Description>iSketch.app is a free, open source, Pictionary-style, online drawing game!</Description>
@@ -11,8 +13,6 @@
     <Copyright>Dylan Bickerstaff (C) 2021</Copyright>
     <RepositoryType>Git</RepositoryType>
     <UserSecretsId>a33985b7-df42-40fb-b627-368dd17a4cf6</UserSecretsId>
-    <AssemblyVersion>0.0.0.4</AssemblyVersion>
-    <FileVersion>0.0.0.4</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -22,12 +22,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="wwwroot\.well-known\assetlinks.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
