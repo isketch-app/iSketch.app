@@ -20,6 +20,7 @@ namespace iSketch.app
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton(new Services.EventHook());
@@ -48,6 +49,8 @@ namespace iSketch.app
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/_Health");
+                endpoints.MapGet("/dynamic/{file}.{ext}", Dynamic.Delegate);
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });

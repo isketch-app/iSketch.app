@@ -11,8 +11,8 @@
     <Copyright>Dylan Bickerstaff (C) 2021</Copyright>
     <RepositoryType>Git</RepositoryType>
     <UserSecretsId>a33985b7-df42-40fb-b627-368dd17a4cf6</UserSecretsId>
-    <AssemblyVersion>0.0.0.3</AssemblyVersion>
-    <FileVersion>0.0.0.3</FileVersion>
+    <AssemblyVersion>0.0.0.4</AssemblyVersion>
+    <FileVersion>0.0.0.4</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -1,12 +1,12 @@
 ﻿.menuitem {
     cursor: pointer;
     user-select: none;
-    height: 60px;
+    height: 36px;
     padding: 0px 5px 5px 5px;
     margin: 0px 10px;
-    font-size: 18px;
+    font-size: 16px;
     color: #707070;
-    line-height: 60px;
+    line-height: 36px;
     display: inline-block;
     transition: .3s;
     border-bottom: 3px solid white;
@@ -20,7 +20,7 @@
 }
 .icon {
     font-family: icons;
-    vertical-align: -4px;
+    vertical-align: -5px;
     font-size: 22px;
 }
 @media screen and (max-width: 800px) {

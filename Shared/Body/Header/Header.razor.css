@@ -2,7 +2,7 @@
     position: fixed;
     top: 0px;
     left: 0px;
-    height: 60px;
+    height: 36px;
     width: calc(100% - 20px);
     background-color: white;
     display: flex;
@@ -18,5 +18,5 @@
 
 .items {
     display: inline-block;
-    height: 60px;
+    height: 36px;
 }
