@@ -1,3 +1,5 @@
-﻿<div>
-    <img src="./static/images/isketch_animated.svg" />
-</div>
+﻿<div class="backdrop">@SVG</div>
+
+@code {
+    MarkupString SVG = (MarkupString)System.IO.File.ReadAllText(@".\wwwroot\static\images\isketch_animated.svg");
+}

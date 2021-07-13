@@ -1,4 +1,4 @@
-﻿div {
+﻿.backdrop {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -7,19 +7,23 @@
     background-color: white;
     z-index: 1000;
     opacity: 1;
-    animation: .3s splash-fade-out;
-    animation-delay: 1.3s;
+    animation: 0.3s splash-fade-out;
+    animation-delay: 1.5s;
     animation-fill-mode: forwards;
     user-select: none;
 }
 
-img {
+::deep svg {
     position: absolute;
     top: calc(50% - 200px);
     left: calc(50% - 200px);
     width: 400px;
     height: 400px;
     pointer-events: none;
+    opacity: 0;
+    animation: .3s splash-show-logo;
+    animation-delay: 0.1s;
+    animation-fill-mode: forwards;
 }
 
 @keyframes splash-fade-out {
@@ -29,5 +33,15 @@ img {
     to {
         opacity: 0;
         pointer-events: none;
+    }
+}
+
+@keyframes splash-show-logo {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }
