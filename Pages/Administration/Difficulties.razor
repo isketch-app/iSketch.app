@@ -1,0 +1,25 @@
+﻿@page "/Administration/Difficulties";
+@page "/Administration/Difficulties/{PageNumber:int}";
+@page "/Administration/Difficulties/{DifficultyID}";
+@page "/Administration/Difficulties/{PageNumber:int}/{DifficultyID}";
+@inject Services.Database db;
+@inject NavigationManager nm;
+@inject IJSRuntime js;
+@inject Services.EventHook eh;
+
+<ListPage 
+    PageTitle="Difficulties"
+    PageNumber="PageNumber"
+    SQLCon="db.Connection"
+    PagePath="/Administration/Difficulties"
+    TableName="[Words.Difficulties]"
+    VisibleRows='new List<string>() { "[DifficultyID]", "[Name]", "[From]", "[To]" }'
+    VisibleRowsTitles='new List<string>() { "DifficultyID", "Name", "Range Start", "Range End" }'
+/>
+
+@code {
+    [Parameter]
+    public int PageNumber { get; set; }
+    [Parameter]
+    public string DifficultyID { get; set; }
+}

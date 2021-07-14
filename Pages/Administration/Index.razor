@@ -1,7 +1,29 @@
 ﻿@page "/Administration"
 
-<h3>Index</h3>
+<PageTitle Icon="" Title="System Administration" />
 
-@code {
+<div class="group">
+    <Card Title="Properties"
+          SecondaryText="A list of all server properties." />
 
-}
+    <Card Title="Words"
+          SecondaryText="A list of all the drawable words."
+          HREF="/Administration/Words" />
+
+    <Card Title="Difficulties"
+          SecondaryText="A list of word difficutly definitions."
+          HREF="/Administration/Difficulties" />
+
+    <Card Title="Banned Words"
+          SecondaryText="A list of banned words."
+          HREF="/Administration/BannedWords" />
+
+    <Card Title="Users"
+          SecondaryText="A list of all registered users." />
+
+    <Card Title="Banned Users"
+          SecondaryText="A list of all banned users." />
+
+    <Card Title="Rooms"
+          SecondaryText="A list of all registered rooms." />
+</div>

@@ -1,0 +1,11 @@
+﻿.group {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -10px;
+    width: calc(100% + 20px);
+}
+
+::deep .card {
+    margin: 10px;
+    flex-grow: 1;
+}

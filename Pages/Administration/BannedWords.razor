@@ -1,0 +1,25 @@
+﻿@page "/Administration/BannedWords";
+@page "/Administration/BannedWords/{PageNumber:int}";
+@page "/Administration/BannedWords/{BID}";
+@page "/Administration/BannedWords/{PageNumber:int}/{BID}";
+@inject Services.Database db;
+@inject NavigationManager nm;
+@inject IJSRuntime js;
+@inject Services.EventHook eh;
+
+<ListPage 
+    PageTitle="Banned Words"
+    PageNumber="PageNumber"
+    SQLCon="db.Connection"
+    PagePath="/Administration/BannedWords"
+    TableName="[Words.Banned]"
+    VisibleRows='new List<string>() { "[WordID]", "[Word]", "[Contains]" }'
+    VisibleRowsTitles='new List<string>() { "WordID", "Word", "Contains" }'
+/>
+
+@code {
+    [Parameter]
+    public int PageNumber { get; set; }
+    [Parameter]
+    public string BID { get; set; }
+}

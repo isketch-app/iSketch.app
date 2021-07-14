@@ -65,23 +65,15 @@
     <Dialog OnFadeOut='@(() => Error = "")' OnDismiss='@((t) => t.FadeOut())' Header="An error occured.">@Error</Dialog>
 }
 
-<div class="page">
-    <div class="top-bar">
-        <PageTitle Title="Word List" />
-        <a href="/Administration/Words/@PageNumber/Add">
-            <CButton Emphasis="Emphasis.Medium" Icon="">New Word</CButton>
-        </a>
-    </div>
-    <TableEditor 
-        PageNumber="PageNumber"
-        SQLCon="db.Connection"
-        PagePath="/Administration/Words"
-        PathIncludePageNumber="true"
-        TableName="[Words.Difficulty]"
-        VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
-        VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
-    />
-</div>
+<ListPage 
+    PageTitle="Words List"
+    PageNumber="PageNumber"
+    SQLCon="db.Connection"
+    PagePath="/Administration/Words"
+    TableName="[Words.Difficulty]"
+    VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
+    VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
+/>
 
 @code {
     [Parameter]

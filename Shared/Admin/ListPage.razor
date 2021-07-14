@@ -1,0 +1,38 @@
+﻿@using System.Data.SqlClient;
+
+<div class="page">
+    <div class="top-bar">
+        <PageTitle Icon="@PageTitleIcon" Title="@PageTitle" />
+        <a href="@PagePath/@PageNumber/Add">
+            <CButton Emphasis="Emphasis.Medium" Icon="">Add</CButton>
+        </a>
+    </div>
+    <TableEditor 
+        PageNumber="PageNumber"
+        SQLCon="SQLCon"
+        PagePath="@PagePath"
+        PathIncludePageNumber="true"
+        TableName="@TableName"
+        VisibleRows='VisibleRows'
+        VisibleRowsTitles='VisibleRowsTitles'
+    />
+</div>
+
+@code {
+    [Parameter]
+    public int PageNumber { get; set; }
+    [Parameter]
+    public string PageTitle { get; set; }
+    [Parameter]
+    public string PageTitleIcon { get; set; }
+    [Parameter]
+    public SqlConnection SQLCon { get; set; }
+    [Parameter]
+    public string PagePath { get; set; }
+    [Parameter]
+    public string TableName { get; set; }
+    [Parameter]
+    public List<string> VisibleRows { get; set; }
+    [Parameter]
+    public List<string> VisibleRowsTitles { get; set; }
+} 

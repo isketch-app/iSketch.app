@@ -1,0 +1,21 @@
+﻿<a href="@HREF" class="card">
+    @if (MediaURL != "")
+    {
+        <div class="media" style="background-image:url('@MediaURL');"></div>
+    }
+    <div class="text">
+        <div class="title">@Title</div>
+        <div class="secondary-txt">@SecondaryText</div>
+    </div>
+</a>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string SecondaryText { get; set; }
+    [Parameter]
+    public string MediaURL { get; set; } = "";
+    [Parameter]
+    public string HREF { get; set; }
+}
