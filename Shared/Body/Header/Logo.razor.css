@@ -1,5 +1,5 @@
 ﻿.logo {
-    height: 36px;
+    height: 44px;
     cursor: pointer;
     user-select: none;
     width: 100px;
@@ -7,19 +7,19 @@
 
 .img {
     display: inline-block;
-    height: 36px;
-    width: 10px;
+    height: 44px;
+    width: 12px;
     background-image: url('./static/images/isketch.svg');
-    background-size: 36px 36px;
+    background-size: 44px 44px;
     background-position: center center;
     background-repeat: no-repeat;
     vertical-align: top;
 }
 
 .text {
-    font-size: 16px;
-    height: 36px;
-    line-height: 36px;
+    font-size: 18px;
+    height: 44px;
+    line-height: 44px;
     display: inline-block;
     vertical-align: top;
     color: black;

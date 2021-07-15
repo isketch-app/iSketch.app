@@ -3,10 +3,16 @@
     {
         <div class="media" style="background-image:url('@MediaURL');"></div>
     }
+<div class="base">
+    @if (Icon != "")
+    {
+        <div class="icon">@Icon</div>
+    }
     <div class="text">
         <div class="title">@Title</div>
         <div class="secondary-txt">@SecondaryText</div>
     </div>
+</div>
 </a>
 
 @code {
@@ -18,4 +24,6 @@
     public string MediaURL { get; set; } = "";
     [Parameter]
     public string HREF { get; set; }
+    [Parameter]
+    public string Icon { get; set; } = "";
 }

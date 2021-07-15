@@ -13,6 +13,7 @@
 }
 
 * {
+    -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -22,7 +23,7 @@ body {
     margin: 0px;
     padding: 0px;
     color: #1e1e1e;
-    background-color: whitesmoke;
+    background-color: white;
 }
 
 #is_body {
@@ -31,8 +32,8 @@ body {
     top: 0px;
     left: 0px;
     width: 100%;
-    margin-top: 56px;
-    height: calc(100% - 56px);
+    margin-top: 64px;
+    height: calc(100% - 64px);
 }
 
 hr {
@@ -43,14 +44,10 @@ hr {
 }
 
 a {
-    color: #707070;
+    color: #6d006d;
     text-decoration: none;
     transition: .3s;
     user-select: none;
-}
-
-a:hover {
-    color: black;
 }
 
 ::-webkit-scrollbar,

@@ -5,8 +5,10 @@
     display: block;
 }
 
-.text {
+.base {
+    display: flex;
     padding: 16px;
+    align-items: center;
 }
 
 .title {
@@ -27,4 +29,16 @@
     height: 194px;
     background-size: cover;
     background-position: center;
+}
+
+.icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    font-family: icons;
+    margin-right: 16px;
+}
+
+.text {
+    flex: 1;
 }
