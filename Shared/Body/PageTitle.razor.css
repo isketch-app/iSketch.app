@@ -1,8 +1,8 @@
 ﻿.center {
     font-size: 25px;
-    margin-bottom: 25px;
-    margin-top: 10px;
+    margin: 25px 0px 25px 0px;
 }
+
 .icon {
     font-family: icons;
     vertical-align: -5px;

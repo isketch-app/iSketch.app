@@ -2,7 +2,7 @@
     cursor: pointer;
     user-select: none;
     height: 36px;
-    padding: 0px 5px 5px 5px;
+    padding: 0px 5px 7px 5px;
     margin: 0px 10px;
     font-size: 16px;
     color: #707070;
@@ -11,20 +11,24 @@
     transition: .3s;
     border-bottom: 3px solid white;
 }
+
 .menuitem:hover {
-    color:black;
+    color: black;
 }
+
 .menuitem.selected {
     color: black;
-    border-bottom: 3px solid black;
+    border-bottom: 3px solid #454545;
 }
+
 .icon {
     font-family: icons;
     vertical-align: -5px;
     font-size: 22px;
 }
+
 @media screen and (max-width: 800px) {
     .text {
-        display:none;
+        display: none;
     }
 }

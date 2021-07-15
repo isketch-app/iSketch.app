@@ -6,3 +6,11 @@
         }
     });
 });
+
+document.getElementById('is_body').addEventListener('scroll', function (e) {
+    if (e.srcElement.scrollTop > 0) {
+        e.srcElement.classList.add('scrolled');
+    } else {
+        e.srcElement.classList.remove('scrolled');
+    }
+});
