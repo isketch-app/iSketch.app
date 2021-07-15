@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>0.0.0.5</Version>
-	<AssemblyVersion>0.0.0.5</AssemblyVersion>
-	<FileVersion>0.0.0.5</FileVersion>
+    <Version>0.0.0.6</Version>
+	<AssemblyVersion>0.0.0.6</AssemblyVersion>
+	<FileVersion>0.0.0.6</FileVersion>
     <Authors>Dylan Bickerstaff</Authors>
     <Company>iSketch.app</Company>
     <Description>iSketch.app is a free, open source, Pictionary-style, online drawing game!</Description>
