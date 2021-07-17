@@ -1,6 +1,7 @@
-﻿var iSketchSite = {
+var iSketchSite = {
     WebSocket: null,
-    onconnect: function () { }
+    onconnect: function () { },
+    Blazor: {}
 }
 
 document.body.addEventListener('click', function (e) {
