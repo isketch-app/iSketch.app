@@ -18,6 +18,9 @@ table {
     background-color: white;
     border-radius: 4px;
     position: relative;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
 }
 
 td:last-child, th:last-child {
@@ -37,7 +40,7 @@ tr:not(:nth-child(-n+2)):hover {
     background-color: #f7f7f7;
 }
 
-tr:not(:last-child) {
+tr {
     border-bottom: 1px solid #e1e1e1;
 }
 
@@ -98,6 +101,7 @@ th {
     border-top: 1px solid #e1e1e1;
     text-align: right;
     line-height: 50px;
+    margin-top: -1px;
 }
 
 .pagination * {
