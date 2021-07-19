@@ -49,9 +49,7 @@ namespace iSketch.app
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-            app.UseStaticFiles(new StaticFileOptions() {
-                ServeUnknownFileTypes = true
-            });
+            app.UseStaticFiles();
         }
     }
 }
