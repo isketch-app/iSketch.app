@@ -10,11 +10,11 @@
     z-index: 10;
     transition-property: box-shadow;
     transition: .3s;
-    box-shadow: 0px 1px 0px rgb(0 0 0 / 12%);
+    box-shadow: 0px 0px 4px rgb(0 0 0 / 20%);
 }
 
 #is_body.scrolled .header {
-    box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%);
+    box-shadow: 0px 0px 6px rgb(0 0 0 / 35%);
 }
 
 .center {
