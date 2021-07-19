@@ -1,0 +1,21 @@
+﻿.floater-menu {
+    width: calc(100% - 40px);
+    max-width: 350px;
+    max-height: 450px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 16px rgb(0 0 0 / 30%);
+    position: fixed;
+    top: 64px;
+    right: 10px;
+    overflow: auto;
+    background-color: white;
+    padding: 10px;
+    pointer-events: none;
+    opacity: 0;
+    transition: .3s;
+}
+
+.floater-menu.visible {
+    opacity: 1;
+    pointer-events: all;
+}

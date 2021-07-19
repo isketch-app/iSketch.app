@@ -1,0 +1,15 @@
+﻿@{
+    string classHighlight = "";
+    if (Highlight) classHighlight = "highlight";
+}
+
+<span @onclick="@OnClick" class="mi @classHighlight">@Icon</span>
+
+@code {
+    [Parameter]
+    public string Icon { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+    [Parameter]
+    public bool Highlight { get; set; }
+}

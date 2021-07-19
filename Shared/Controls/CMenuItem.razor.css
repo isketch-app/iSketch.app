@@ -1,0 +1,22 @@
+﻿div {
+    font-size: 14px;
+    line-height: 30px;
+    color: #3c3c3c;
+    width: calc(100% - 20px);
+    padding: 5px 10px 5px 10px;
+    transition: .3s;
+    user-select: none;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 5px;
+}
+.icon {
+    font-family: icons;
+    margin-right: 5px;
+    font-size: 20px;
+    vertical-align: top;
+    color: #676767;
+}
+div:hover {
+    background-color: whitesmoke;
+}

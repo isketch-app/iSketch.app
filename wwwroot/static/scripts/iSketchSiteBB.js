@@ -1,7 +1,8 @@
 var iSketchSite = {
     WebSocket: null,
     onconnect: function () { },
-    Blazor: {}
+    Blazor: {},
+    JSInteropHelpers: {}
 }
 
 document.body.addEventListener('click', function (e) {
@@ -39,3 +40,7 @@ iSketchSite.onconnect = function () {
         //window.location.reload();
     });
 }
+
+iSketchSite.registerJSInteropHelper = function (componentID, dotNetHelper) {
+    iSketchSite.JSInteropHelpers[componentID] = dotNetHelper;
+};

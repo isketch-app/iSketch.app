@@ -1,0 +1,13 @@
+﻿<div @onclick="OnClick">
+    <span class="icon">@Icon</span>
+    <span class="text">@Text</span>
+</div>
+
+@code {
+    [Parameter]
+    public string Icon { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+} 

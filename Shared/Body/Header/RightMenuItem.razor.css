@@ -1,9 +1,4 @@
-﻿span {
-    width: 100px;
-    text-align: right;
-}
-
-.user-icon {
+﻿.mi {
     display: inline-block;
     width: 34px;
     height: 34px;
@@ -12,24 +7,16 @@
     margin-top: 2px;
     transition: .3s;
     cursor: pointer;
-    position: relative;
-}
-
-.user-icon:hover {
-    border: 3px solid #d6d6d6;
-}
-.user-icon::before {
-    display: block;
-    width: 34px;
-    height: 34px;
-    top: 0px;
-    left: 0px;
-    border-radius: 17px;
-    content: '';
+    margin-left: 5px;
     background-color: #835683;
     color: white;
     font-family: icons;
     font-size: 22px;
     line-height: 34px;
     text-align: center;
+    vertical-align: top;
+}
+
+.mi:hover, .mi.highlight {
+    border: 3px solid #d6d6d6;
 }

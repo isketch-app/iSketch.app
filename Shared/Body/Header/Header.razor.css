@@ -11,6 +11,7 @@
     transition-property: box-shadow;
     transition: .3s;
     box-shadow: 0px 0px 4px rgb(0 0 0 / 20%);
+    user-select: none;
 }
 
 #is_body.scrolled .header {
