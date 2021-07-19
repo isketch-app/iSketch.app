@@ -1,0 +1,10 @@
+[
+  {
+    "relation": [ "delegate_permission/common.handle_all_urls" ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.isketch.play",
+      "sha256_cert_fingerprints": [ "25:05:CE:C2:49:E2:53:F8:E1:CB:8C:8F:D0:C0:8C:96:04:E4:B8:9B:A9:5B:A0:4E:43:CF:88:96:D1:F2:77:AF" ]
+    }
+  }
+]
