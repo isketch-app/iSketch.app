@@ -36,7 +36,7 @@
   ],
   "start_url": "/",
   "background_color": "#ffffff",
-  "display": "minimal-ui",
+  "display": "standalone",
   "scope": "/",
   "theme_color": "#ffffff",
   "version": "$VERSION$",
