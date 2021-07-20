@@ -34,19 +34,12 @@
       "purpose": "maskable"
     }
   ],
-  "related_applications": [
-    {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=app.isketch.play"
-    }
-  ],
-  "prefer_related_applications": true,
   "start_url": "/",
   "background_color": "#ffffff",
-  "display": "standalone",
+  "display": "minimal-ui",
   "scope": "/",
   "theme_color": "#ffffff",
   "version": "$VERSION$",
   "orientation": "any",
-  "categories": [ "game", "drawing", "multiplayer" ]
+  "categories": [ "game", "drawing", "multiplayer", "word" ]
 }
