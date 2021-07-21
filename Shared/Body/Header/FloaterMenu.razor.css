@@ -19,3 +19,9 @@
     opacity: 1;
     pointer-events: all;
 }
+
+@media screen and (max-width: 500px) {
+    .floater-menu {
+        max-width: calc(100% - 40px);
+    }
+}

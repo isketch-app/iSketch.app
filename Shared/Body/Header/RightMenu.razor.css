@@ -3,3 +3,52 @@
     font-size: 0px;
     text-align: right;
 }
+
+.u-top {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+}
+
+.u-bg {
+    background-image: url('./static/images/banner-bg.svg');
+    background-size: cover;
+    background-position: center;
+    height: 70px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 50px;
+}
+
+.u-image {
+    position: absolute;
+    bottom: -40px;
+    left: calc(50% - 40px);
+    width: 70px;
+    height: 70px;
+    border-radius: 40px;
+    overflow: hidden;
+    z-index: 1;
+    border: 5px solid white;
+}
+
+.u-menu {
+    margin-top: 150px;
+}
+
+.u-image::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 70px;
+    height: 70px;
+    color: white;
+    font-family: icons;
+    z-index: -1;
+    line-height: 70px;
+    background-color: #48284e;
+    font-size: 45px;
+}
