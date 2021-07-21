@@ -1,11 +1,6 @@
 ﻿@inject IJSRuntime JS; 
 
-@{
-    string visClass = "visible";
-    if (!Visible) visClass = "";
-}
-
-<div id="@GUID" class="floater-menu @visClass">
+<div fmid="@FMID" class="floater-menu">
     @ChildContent
 </div>
 
@@ -13,32 +8,5 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     [Parameter]
-    public EventCallback<bool> VisibleChanged { get; set; }
-    [Parameter]
-    public bool Visible { get; set; } = true;
-    public string GUID = "x" + Guid.NewGuid().ToString();
-    [JSInvokable]
-    public async Task Hide()
-    {
-        Visible = false;
-        await VisibleChanged.InvokeAsync(Visible);
-        StateHasChanged();
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("iSketchSite.registerJSInteropHelper", GUID, DotNetObjectReference.Create(this));
-            await JS.InvokeVoidAsync("eval",
-                "document.addEventListener('click', function(e) {" +
-                "   var fm = document.getElementById('" + GUID + "');" +
-                "   if(e.path.includes(fm)) return;" +
-                "   if(fm.classList.contains('visible')) {" +
-                "       iSketchSite.JSInteropHelpers['" + GUID + "'].invokeMethodAsync('Hide');" +
-                "   }" +
-                "});"
-            );
-        }
-    }
+    public string FMID { get; set; }
 }

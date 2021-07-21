@@ -2,15 +2,30 @@ var iSketchSite = {
     WebSocket: null,
     onconnect: function () { },
     Blazor: {},
-    JSInteropHelpers: {}
+    JSInteropHelpers: {},
+    Elements: {
+        FloaterMenuF: {}
+    }
 }
 
-document.body.addEventListener('click', function (e) {
-    e.path.forEach(function (t) {
+document.addEventListener('click', function (e) {
+    e.path.every(function (t) {
         if (t.classList != undefined && t.classList.contains('CButton')) {
             t.classList.add('clicked');
-            return true;
+            return false;
         }
+        return true;
+    });
+    var fmid = "";
+    e.path.every(function (t) {
+        if (t.attributes != undefined && t.attributes.fmid != undefined) {
+            fmid = t.attributes.fmid.value;
+            return false;
+        }
+        return true;
+    });
+    document.querySelectorAll('.floater-menu, .rmi-mi').forEach(function (t) {
+        if (t.attributes.fmid.value != fmid) t.classList.remove('visible');
     });
 });
 
@@ -43,4 +58,17 @@ iSketchSite.onconnect = function () {
 
 iSketchSite.registerJSInteropHelper = function (componentID, dotNetHelper) {
     iSketchSite.JSInteropHelpers[componentID] = dotNetHelper;
+};
+
+iSketchSite.Elements.FloaterMenuF.Toggle = function (item) {
+    var FMID = item.attributes.fmid.value;
+    var FM = document.querySelector('.floater-menu[fmid=' + FMID + ']');
+    var RMI = document.querySelector('.rmi-mi[fmid=' + FMID + ']');
+    if (FM.classList.contains('visible')) {
+        FM.classList.remove('visible');
+        RMI.classList.remove('visible');
+    } else {
+        FM.classList.add('visible');
+        RMI.classList.add('visible');
+    }
 };

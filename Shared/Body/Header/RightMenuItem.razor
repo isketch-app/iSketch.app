@@ -1,15 +1,8 @@
-﻿@{
-    string classHighlight = "";
-    if (Highlight) classHighlight = "highlight";
-}
-
-<span @onclick="@OnClick" class="mi @classHighlight">@Icon</span>
+﻿<span onclick="iSketchSite.Elements.FloaterMenuF.Toggle(this)" fmid="@FMID" class="rmi-mi">@Icon</span>
 
 @code {
     [Parameter]
     public string Icon { get; set; }
     [Parameter]
-    public EventCallback<MouseEventArgs> OnClick { get; set; }
-    [Parameter]
-    public bool Highlight { get; set; }
+    public string FMID { get; set; }
 }

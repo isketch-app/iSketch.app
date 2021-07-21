@@ -1,24 +1,24 @@
 ﻿<span>
-    <RightMenuItem Highlight="UserMenuVisible" Icon="" OnClick="() => { UserMenuVisible = !UserMenuVisible; }" />
-    <RightMenuItem Highlight="GeneralMenuVisible" Icon="" OnClick="() => { GeneralMenuVisible = !GeneralMenuVisible; }" />
+    <RightMenuItem FMID="user" Icon="" />
+    <RightMenuItem FMID="general" Icon="" />
 </span>
 
-<FloaterMenu @bind-Visible="UserMenuVisible">
+<FloaterMenu FMID="user">
     <div class="u-top">
         <div class="u-image"></div>
     </div>
     <div class="u-text">
         <!--<div class="u-name">@@BabySmith</div>-->
     </div>
-    <div class="u-menu" @onclick="() => UserMenuVisible = false">
+    <div fmid class="u-menu">
         <CMenuItem Icon="" Text="Change username" />
         <CMenuItem Icon="" Text="Sign in" />
         <CMenuItem Icon="" Text="Sign up" />
     </div>
 </FloaterMenu>
 
-<FloaterMenu @bind-Visible="GeneralMenuVisible">
-    <div @onclick="() => GeneralMenuVisible = false">
+<FloaterMenu FMID="general">
+    <div fmid>
         <a href="/About"><CMenuItem Icon="" Text="About iSketch.app" /></a>
     </div>
 </FloaterMenu>
