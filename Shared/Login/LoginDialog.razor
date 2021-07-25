@@ -1,40 +1,61 @@
-﻿<Dialog Header="@(Headers[(int)CurrentStage])">
-    <div class="scale-box stage@((int)CurrentStage)">
-        @if (CurrentStage == Stage.UserName)
-        {
-            <p>This will be your identity throughout the game.</p>
-            <br />
-            <CText Icon="" Label="Username" />
-        }
-        @if (CurrentStage == Stage.PasswordExisting)
-        {
-            <p>This username is already registered with a password,</p>
-            <p>please enter it below.</p>
-            <br />
-            <CText Icon="" Label="Password" Type="password" />
-        }
-        @if (CurrentStage == Stage.PasswordNew)
-        {
-            <p>Optionally, lock your username with a password.</p>
-            <br />
-            <CText Icon="" Label="Password (Optional)" Type="password" />
-            <br />
-            <CText Icon="" Label="Password (Confirm)" Type="password" />
-        }
-    </div>
-    <DialogButtonContainer>
-        <CButton Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage++">Next</CButton>
-    </DialogButtonContainer>
+﻿<Dialog Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
+    @if (CurrentStage == Stage.UserName)
+    {
+        <p>This will be your screen-name throughout the game.</p>
+        <br />
+        <CText Icon="" Label="Username" />
+        <DialogButtonContainer>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage++">Next</CButton>
+        </DialogButtonContainer>
+    }
+    @if (CurrentStage == Stage.PasswordExisting)
+    {
+        <p>The username you selected is locked with a password, please enter it below.</p>
+        <br />
+        <CText Icon="" Label="Password" Type="password" />
+        <DialogButtonContainer>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage++">Login</CButton>
+        </DialogButtonContainer>
+    }
+    @if (CurrentStage == Stage.PasswordNew)
+    {
+        <p>Optionally, lock your username with a password or a third party account.</p>
+        <br />
+        <CText Icon="" Label="Password (Optional)" Type="password" />
+        <br />
+        <CText Icon="" Label="Password (Confirm)" Type="password" />
+        <br />
+        <CText Icon="" Label="Recovery Email (Optional)" />
+        <DialogButtonContainer>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ThirdParty">Use a third party</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage++">Done</CButton>
+        </DialogButtonContainer>
+    }
+    @if (CurrentStage == Stage.ThirdParty)
+    {
+        <div class="idp-buttons">
+            <CButton Emphasis="CButton.EmphasisStyles.Medium">Google</CButton>
+            <CButton Emphasis="CButton.EmphasisStyles.Medium">Microsoft</CButton>
+        </div>
+        <DialogButtonContainer>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Cancel</CButton>
+        </DialogButtonContainer>
+    }
 </Dialog>
 
 @code {
     private Stage CurrentStage = Stage.UserName;
+    private Dialog Dialog;
     private string[] Headers = new string[]
     {
         "Unknown",
         "Choose a username",
         "Enter your password",
-        "Sign up"
+        "Sign up (recommended)",
+        "Choose an identity provider"
     };
     private enum Stage : int
     {

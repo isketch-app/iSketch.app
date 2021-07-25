@@ -1,6 +1,6 @@
 ﻿USE [iSketch.app]
 GO
-/****** Object:  Table [dbo].[Words.Difficulties]    Script Date: 6/7/2021 4:54:24 PM ******/
+/****** Object:  Table [dbo].[Words.Difficulties]    Script Date: 7/25/2021 6:00:14 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[Words.Difficulties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words]    Script Date: 6/7/2021 4:54:24 PM ******/
+/****** Object:  Table [dbo].[Words]    Script Date: 7/25/2021 6:00:14 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -39,7 +39,7 @@ CREATE TABLE [dbo].[Words](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Words.Difficulty]    Script Date: 6/7/2021 4:54:24 PM ******/
+/****** Object:  View [dbo].[Words.Difficulty]    Script Date: 7/25/2021 6:00:14 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,7 +52,7 @@ SELECT        WordID, Word, Score,
                                WHERE        ([From] <= dbo.Words.Score) AND ([To] >= dbo.Words.Score)) AS Difficulty
 FROM            dbo.Words
 GO
-/****** Object:  Table [dbo].[Bans]    Script Date: 6/7/2021 4:54:24 PM ******/
+/****** Object:  Table [dbo].[Bans]    Script Date: 7/25/2021 6:00:14 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -74,7 +74,7 @@ CREATE TABLE [dbo].[Bans](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Properties]    Script Date: 6/7/2021 4:54:24 PM ******/
+/****** Object:  Table [dbo].[Properties]    Script Date: 7/25/2021 6:00:14 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -88,7 +88,7 @@ CREATE TABLE [dbo].[Properties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Sessions]    Script Date: 6/7/2021 4:54:24 PM ******/
+/****** Object:  Table [dbo].[Sessions]    Script Date: 7/25/2021 6:00:14 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -101,7 +101,7 @@ CREATE TABLE [dbo].[Sessions](
 	[UserID] [uniqueidentifier] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 6/7/2021 4:54:24 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 7/25/2021 6:00:14 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -110,7 +110,7 @@ CREATE TABLE [dbo].[Users](
 	[UserID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
 	[UserName] [char](20) NOT NULL,
 	[CreatedTime] [datetime] NULL,
-	[Password] [binary](384) NOT NULL,
+	[Password] [binary](384) NULL,
 	[ResetPasswordTime] [datetime] NULL,
 	[Email] [varchar](50) NULL,
 	[Biography] [varchar](500) NULL,
@@ -118,19 +118,20 @@ CREATE TABLE [dbo].[Users](
 	[Score.Plays] [int] NOT NULL,
 	[Score.Guesses] [int] NOT NULL,
 	[Score.CorrectGuesses] [int] NOT NULL,
-	[Settings.ShowEmail] [bit] NOT NULL,
-	[Settings.RecievePromoEmails] [bit] NULL,
 	[Settings.AnonMode] [bit] NOT NULL,
-	[Settings.DarkMode] [bit] NULL,
+	[Settings.DarkMode] [bit] NOT NULL,
 	[ProfilePicture] [varbinary](max) NULL,
 	[Score.Points] [int] NOT NULL,
+	[ThirdPartyAuthID] [uniqueidentifier] NULL,
+	[LastLogonTime] [datetime] NULL,
+	[EmailVerified] [bit] NOT NULL,
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[UserID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words.Banned]    Script Date: 6/7/2021 4:54:24 PM ******/
+/****** Object:  Table [dbo].[Words.Banned]    Script Date: 7/25/2021 6:00:14 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -191,17 +192,15 @@ ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Score.Guesses]  DEFAULT ((0)
 GO
 ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Score.CorrectGuesses]  DEFAULT ((0)) FOR [Score.CorrectGuesses]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Settings.ShowEmail]  DEFAULT ((0)) FOR [Settings.ShowEmail]
-GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Settings.RecievePromoEmails]  DEFAULT ((0)) FOR [Settings.RecievePromoEmails]
-GO
 ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Settings.AnonMode]  DEFAULT ((0)) FOR [Settings.AnonMode]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Settings.DarkMode]  DEFAULT (NULL) FOR [Settings.DarkMode]
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Settings.DarkMode]  DEFAULT ((0)) FOR [Settings.DarkMode]
 GO
 ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_ProfilePicture]  DEFAULT (NULL) FOR [ProfilePicture]
 GO
 ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Score.Points]  DEFAULT ((0)) FOR [Score.Points]
+GO
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_EmailVerified]  DEFAULT ((0)) FOR [EmailVerified]
 GO
 ALTER TABLE [dbo].[Words] ADD  CONSTRAINT [DF_Words_WordID]  DEFAULT (newid()) FOR [WordID]
 GO

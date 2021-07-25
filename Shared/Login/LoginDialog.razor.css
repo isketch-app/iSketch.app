@@ -1,21 +1,9 @@
-﻿.scale-box {
-    transition: .3s;
-    overflow: hidden;
-    white-space: nowrap;
-    margin-top: -15px;
+﻿p {
+    font-size: 14px;
 }
-
-.scale-box.stage1 {
-    width: 350px;
-    height: 120px;
+::deep.idp-buttons .CButton {
+    width: 100%;
 }
-
-.scale-box.stage2 {
-    width: 400px;
-    height: 160px;
-}
-
-.scale-box.stage3 {
-    width: 370px;
-    height: 190px;
+::deep.idp-buttons .CButton:not(:last-child) {
+    margin-bottom: 15px;
 }

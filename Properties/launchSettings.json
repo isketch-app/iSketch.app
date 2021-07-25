@@ -10,7 +10,6 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
       "environmentVariables": {
         "IS_SQL_Pass": "iSketch.app",
         "IS_SQL_ServerHost": "10.0.5.8",
