@@ -5,11 +5,11 @@
     <div class="container">
         @if (Enabled)
         {
-            <input id="@GUID" value="@Value" @onchange="OnChange" type="text" />
+            <input id="@GUID" value="@Value" @onchange="OnChange" type="@Type" />
         }
         else
         {
-            <input id="@GUID" value="@Value" @onchange="OnChange" type="text" disabled />
+            <input id="@GUID" value="@Value" @onchange="OnChange" type="@Type" disabled />
         }
         @if (IconSpecified)
         {
@@ -39,6 +39,8 @@
     [Parameter]
     public bool Enabled { get; set; } = true;
     [Parameter]
+    public string Type { get; set; } = "text";
+    [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
     public void SetValue(string Value)
     {
@@ -51,7 +53,7 @@
         Value = (string)e.Value;
         await ValueChanged.InvokeAsync((string)e.Value);
     }
-    private bool IconSpecified { 
+    private bool IconSpecified {
         get
         {
             return (Icon != "");

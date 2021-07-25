@@ -25,6 +25,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Shared\Login\LoginDialog.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Shared\Login\LoginDialog.razor.css" />
     <Content Include="wwwroot\.well-known\assetlinks.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

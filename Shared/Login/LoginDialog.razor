@@ -1,0 +1,47 @@
+﻿<Dialog Header="@(Headers[(int)CurrentStage])">
+    <div class="scale-box stage@((int)CurrentStage)">
+        @if (CurrentStage == Stage.UserName)
+        {
+            <p>This will be your identity throughout the game.</p>
+            <br />
+            <CText Icon="" Label="Username" />
+        }
+        @if (CurrentStage == Stage.PasswordExisting)
+        {
+            <p>This username is already registered with a password,</p>
+            <p>please enter it below.</p>
+            <br />
+            <CText Icon="" Label="Password" Type="password" />
+        }
+        @if (CurrentStage == Stage.PasswordNew)
+        {
+            <p>Optionally, lock your username with a password.</p>
+            <br />
+            <CText Icon="" Label="Password (Optional)" Type="password" />
+            <br />
+            <CText Icon="" Label="Password (Confirm)" Type="password" />
+        }
+    </div>
+    <DialogButtonContainer>
+        <CButton Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage++">Next</CButton>
+    </DialogButtonContainer>
+</Dialog>
+
+@code {
+    private Stage CurrentStage = Stage.UserName;
+    private string[] Headers = new string[]
+    {
+        "Unknown",
+        "Choose a username",
+        "Enter your password",
+        "Sign up"
+    };
+    private enum Stage : int
+    {
+        Unknown = 0,
+        UserName = 1,
+        PasswordExisting = 2,
+        PasswordNew = 3,
+        ThirdParty = 4
+    }
+}

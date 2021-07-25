@@ -20,21 +20,6 @@ namespace iSketch.app
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(opts => {
-                opts.AddScheme("iSketch.app", builder => {
-                    builder.DisplayName = "iSketch.app";
-                    builder.HandlerType = typeof(Data.Authentication.iSketchAuthenticationHandler);
-                    builder.Build();
-                });
-                opts.DefaultScheme = "iSketch.app";
-            });
-            services.AddAuthorization(opts => {
-                opts.AddPolicy("Player", opts => {
-                    opts.RequireAuthenticatedUser();
-                    opts.Build();
-                });
-                opts.DefaultPolicy = opts.GetPolicy("Player");
-            });
             services.AddHealthChecks();
             services.AddRazorPages();
             services.AddServerSideBlazor();
@@ -45,7 +30,6 @@ namespace iSketch.app
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseAuthentication();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -58,7 +42,6 @@ namespace iSketch.app
             }
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/dynamic/{File}.{Ext}", Dynamic.Delegate);

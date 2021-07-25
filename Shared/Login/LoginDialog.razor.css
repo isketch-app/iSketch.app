@@ -1,0 +1,21 @@
+﻿.scale-box {
+    transition: .3s;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-top: -15px;
+}
+
+.scale-box.stage1 {
+    width: 350px;
+    height: 120px;
+}
+
+.scale-box.stage2 {
+    width: 400px;
+    height: 160px;
+}
+
+.scale-box.stage3 {
+    width: 370px;
+    height: 190px;
+}
