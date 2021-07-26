@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace iSketch.app.Data
+namespace iSketch.app.Data.Middleware
 {
     public static class Dynamic
     {
