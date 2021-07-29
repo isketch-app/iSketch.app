@@ -5,25 +5,25 @@ namespace iSketch.app.Data.Middleware
 {
     public static class SessionCookieHandler
     {
-        public static Guid HandleSessionCookie(this HttpContext context)
+        private const string CookieName = "IS-SessionID";
+        public static Guid HandleSessionCookie(this HttpContext con)
         {
-            Guid userID = Guid.Empty;
-            if (!context.Request.Cookies.ContainsKey("IS-Auth-Token"))
+            Guid sessionID = Guid.Empty;
+            if (!con.Request.Cookies.ContainsKey(CookieName))
             {
-                userID = Guid.NewGuid();
-                context.Response.Cookies.Append("IS-Auth-Token", userID.ToString());
+                sessionID = Guid.NewGuid();
+                con.Response.Cookies.Append(CookieName, sessionID.ToString());
             }
             else
             {
                 if (
-                    context.Request.Cookies.TryGetValue("IS-Auth-Token", out string cookieVal) &&
-                    Guid.TryParse(cookieVal, out Guid cookieGuid)
-                )
-                {
-                    userID = cookieGuid;
+                    con.Request.Cookies.TryGetValue(CookieName, out string cookieValStr) &&
+                    Guid.TryParse(cookieValStr, out Guid cookieVal)
+                ) { 
+                    sessionID = cookieVal; 
                 }
             }
-            return userID;
+            return sessionID;
         }
     }
 }
