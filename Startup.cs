@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using iSketch.app.Services;
 using iSketch.app.Data.Middleware;
 
 namespace iSketch.app
@@ -20,7 +21,7 @@ namespace iSketch.app
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<Services.Session>();
+            services.AddScoped<Session>();
             services.AddHealthChecks();
             services.AddRazorPages();
             services.AddServerSideBlazor();

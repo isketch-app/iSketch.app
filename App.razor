@@ -1,4 +1,4 @@
-@inject Services.Session Session;
+@inject Session Session;
 
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
@@ -13,10 +13,13 @@
 
 @code {
     [Parameter]
-    public Guid SessionID { get; set; }
+    public Guid sSessionID { get; set; }
+    [Parameter]
+    public bool sExisting { get; set; }
     protected override void OnParametersSet()
     {
-        Session.SessionID = SessionID;
+        Session.SessionID = sSessionID;
+        Session.Existing = sExisting;
         base.OnParametersSet();
     }
 }

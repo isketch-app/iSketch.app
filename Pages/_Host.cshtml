@@ -1,39 +1,44 @@
 ﻿@page "/"
 @namespace iSketch.app.Pages
-@using iSketch.app.Data.Middleware;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using iSketch.app;
+@using iSketch.app.Services;
+@using iSketch.app.Data;
 @{
     Layout = null;
-    Guid sessionID = HttpContext.HandleSessionCookie();
+    Session session = HttpContext.InitializeSession();
 }
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="theme-color" content="#ffffff">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <link rel="icon" type="image/svg+xml" href="./static/images/logo_512_square.svg">
-        <link rel="alternate icon" type="image/png" href="./static/images/logo_32_square.png">
-        <title>iSketch.app</title>
-        <base href="~/" />
-        <link rel="manifest" href="~/dynamic/sw.manifest.json" />
-        <link href="~/static/styles/main.css" rel="stylesheet" />
-        <link href="iSketch.app.styles.css" rel="stylesheet" />
-        <script type="module">
-            import iSketchGame from "./static/scripts/iSketchGame.js";
-            window.iSketchGame = new iSketchGame();
-        </script>
-    </head>
-    <body>
-        <div id="is_body">
-            <!--<component type="typeof(Shared.General.SplashPopup)" render-mode="Static" />-->
-            <component type="typeof(App)" render-mode="Server" param-SessionID="sessionID" />
-        </div>
-        <script src="./static/scripts/iSketchSiteBB.js"></script>
-        <script src="_framework/blazor.server.js"></script>
-        <script src="./static/scripts/iSketchSiteAB.js"></script>
-        <script>
-            navigator.serviceWorker.register("./dynamic/sw.serviceworker.js", { scope: "/" });
-        </script>
-    </body>
+<head>
+    <meta charset="utf-8" />
+    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/svg+xml" href="./static/images/logo_512_square.svg">
+    <link rel="alternate icon" type="image/png" href="./static/images/logo_32_square.png">
+    <title>iSketch.app</title>
+    <base href="~/" />
+    <link rel="manifest" href="~/dynamic/sw.manifest.json" />
+    <link href="~/static/styles/main.css" rel="stylesheet" />
+    <link href="iSketch.app.styles.css" rel="stylesheet" />
+    <script type="module">
+        import iSketchGame from "./static/scripts/iSketchGame.js";
+        window.iSketchGame = new iSketchGame();
+    </script>
+</head>
+<body>
+    <div id="is_body">
+        @if (!session.Existing)
+        {
+            <component type="typeof(Shared.General.SplashPopup)" render-mode="Static" />
+        }
+        <component type="typeof(App)" render-mode="Server" param-sSessionID="session.SessionID" param-sExisting="session.Existing" />
+    </div>
+    <script src="./static/scripts/iSketchSiteBB.js"></script>
+    <script src="_framework/blazor.server.js"></script>
+    <script src="./static/scripts/iSketchSiteAB.js"></script>
+    <script>
+        navigator.serviceWorker.register("./dynamic/sw.serviceworker.js", { scope: "/" });
+    </script>
+</body>
 </html>

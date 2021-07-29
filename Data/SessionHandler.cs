@@ -1,19 +1,20 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
+using iSketch.app.Services;
 
-namespace iSketch.app.Data.Middleware
+namespace iSketch.app.Data
 {
-    public static class SessionCookieHandler
+    public static class SessionHandler
     {
         public static TimeSpan CookieMaxAge = TimeSpan.FromDays(90);
         private const string CookieName = "IS-SessionID";
-        public static Guid HandleSessionCookie(this HttpContext con)
+        public static Session InitializeSession(this HttpContext con)
         {
-            Guid sessionID = Guid.Empty;
+            Session session = new Session();
             if (!con.Request.Cookies.ContainsKey(CookieName))
             {
-                sessionID = Guid.NewGuid();
-                con.Response.Cookies.Append(CookieName, sessionID.ToString(), new CookieOptions() { 
+                session.SessionID = Guid.NewGuid();
+                con.Response.Cookies.Append(CookieName, session.SessionID.ToString(), new CookieOptions() { 
                     HttpOnly = true,
                     IsEssential = true,
                     MaxAge = CookieMaxAge,
@@ -26,11 +27,12 @@ namespace iSketch.app.Data.Middleware
                 if (
                     con.Request.Cookies.TryGetValue(CookieName, out string cookieValStr) &&
                     Guid.TryParse(cookieValStr, out Guid cookieVal)
-                ) { 
-                    sessionID = cookieVal; 
+                ) {
+                    session.SessionID = cookieVal;
+                    session.Existing = true;
                 }
             }
-            return sessionID;
+            return session;
         }
     }
 }
