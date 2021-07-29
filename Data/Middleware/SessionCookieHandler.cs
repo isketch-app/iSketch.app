@@ -5,6 +5,7 @@ namespace iSketch.app.Data.Middleware
 {
     public static class SessionCookieHandler
     {
+        public static TimeSpan CookieMaxAge = TimeSpan.FromDays(90);
         private const string CookieName = "IS-SessionID";
         public static Guid HandleSessionCookie(this HttpContext con)
         {
@@ -12,7 +13,13 @@ namespace iSketch.app.Data.Middleware
             if (!con.Request.Cookies.ContainsKey(CookieName))
             {
                 sessionID = Guid.NewGuid();
-                con.Response.Cookies.Append(CookieName, sessionID.ToString());
+                con.Response.Cookies.Append(CookieName, sessionID.ToString(), new CookieOptions() { 
+                    HttpOnly = true,
+                    IsEssential = true,
+                    MaxAge = CookieMaxAge,
+                    SameSite = SameSiteMode.Strict,
+                    Secure = true
+                });
             }
             else
             {
