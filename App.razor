@@ -1,3 +1,5 @@
+@inject Services.Session Session;
+
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -8,3 +10,13 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    [Parameter]
+    public Guid SessionID { get; set; }
+    protected override void OnParametersSet()
+    {
+        Session.SessionID = SessionID;
+        base.OnParametersSet();
+    }
+}
