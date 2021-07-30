@@ -5,6 +5,7 @@ var assets = [
     '/static/images/isketch.svg',
     '/static/images/logo_512_square.svg',
     '/static/images/logo_32_square.png',
+    '/static/images/spinner.svg',
     '/static/fonts/icons.otf',
     '/static/fonts/Roboto.woff2',
     '/static/styles/main.css',
