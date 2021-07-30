@@ -133,3 +133,21 @@ a {
 #components-reconnect-modal div:nth-child(2) {
     border-color: rgb(126 0 141) rgb(243, 243, 243) rgb(243, 243, 243) !important;
 }
+
+.spinner {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    animation: spinner-rotate infinite 2s linear;
+    background-image: url('../images/spinner.svg');
+    background-size: 100% 100%;
+}
+
+@keyframes spinner-rotate {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
