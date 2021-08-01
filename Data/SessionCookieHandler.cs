@@ -4,11 +4,11 @@ using iSketch.app.Services;
 
 namespace iSketch.app.Data
 {
-    public static class SessionHandler
+    public static class SessionCookieHandler
     {
         public static TimeSpan CookieMaxAge = TimeSpan.FromDays(90);
         private const string CookieName = "IS-SessionID";
-        public static Session InitializeSession(this HttpContext con)
+        public static Session InitializeSessionCookie(this HttpContext con)
         {
             Session session = new Session();
             if (!con.Request.Cookies.ContainsKey(CookieName))

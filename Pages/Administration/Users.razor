@@ -1,0 +1,25 @@
+﻿@page "/Administration/Users";
+@page "/Administration/Users/{PageNumber:int}";
+@page "/Administration/Users/{UserID}";
+@page "/Administration/Users/{PageNumber:int}/{UserID}";
+@inject Services.Database db;
+@inject NavigationManager nm;
+@inject IJSRuntime js;
+@inject Services.EventHook eh;
+
+<ListPage 
+    PageTitle="UserID"
+    PageNumber="PageNumber"
+    SQLCon="db.Connection"
+    PagePath="/Administration/Users"
+    TableName="[Users]"
+    VisibleRows='new List<string>() { "[UserID]", "[UserName]", "[Email]", "[CreatedTime], [LastLogonTime]" }'
+    VisibleRowsTitles='new List<string>() { "[UserID]", "User Name", "Email", "Created", "Last Logon" }'
+/>
+
+@code {
+    [Parameter]
+    public int PageNumber { get; set; }
+    [Parameter]
+    public string UserID { get; set; }
+}

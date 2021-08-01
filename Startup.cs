@@ -21,12 +21,12 @@ namespace iSketch.app
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<Session>();
             services.AddHealthChecks();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton(new Services.EventHook());
-            services.AddSingleton(new Services.Database());
+            services.AddSingleton(new EventHook());
+            services.AddSingleton(new Database());
+            services.AddScoped<Session>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
