@@ -4,7 +4,8 @@ var iSketchSite = {
     Blazor: {},
     JSInteropHelpers: {},
     Elements: {
-        FloaterMenuF: {}
+        FloaterMenuF: {},
+        PageLoader: {}
     }
 }
 
@@ -71,4 +72,9 @@ iSketchSite.Elements.FloaterMenuF.Toggle = function (item) {
         FM.classList.add('visible');
         RMI.classList.add('visible');
     }
+};
+
+iSketchSite.Elements.PageLoader.Hide = function () {
+    document.querySelector('.pl_body').classList.add('fadeout');
+    setTimeout(function() { document.querySelector('.pl_body').remove(); }, 300);
 };
