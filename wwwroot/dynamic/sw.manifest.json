@@ -1,6 +1,6 @@
 {
-  "short_name": "iSketch.app",
   "name": "iSketch.app",
+  "short_name": "iSketch",
   "description": "iSketch.app is a free, open source, Pictionary-style, online drawing game!",
   "icons": [
     {
@@ -34,6 +34,29 @@
       "purpose": "maskable"
     }
   ],
+  "shortcuts": [
+    {
+      "name": "Play",
+      "url": "/",
+      "description": "Start a new game!",
+      "icons": [
+        {
+          "src": "../static/images/sc_play_192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "About",
+      "url": "/About",
+      "icons": [
+        {
+          "src": "../static/images/sc_info_192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "prefer_related_applications": false,
   "related_applications": [
     {
@@ -48,5 +71,6 @@
   "theme_color": "#ffffff",
   "version": "$VERSION$",
   "orientation": "any",
+  "iarc_rating_id": "d33e7764-4796-4db9-ad28-4a9cdb05bed1",
   "categories": [ "game", "drawing", "multiplayer", "word" ]
 }
