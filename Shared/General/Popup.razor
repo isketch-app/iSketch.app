@@ -18,8 +18,16 @@
     private string ID = "x" + Guid.NewGuid().ToString();
     public async Task FadeOut()
     {
-        _ = js.InvokeVoidAsync("eval", "document.getElementById('" + ID + "').classList.add('closing');");
+        _ = js.InvokeVoidAsync("eval",
+            "document.getElementById('" + ID + "').classList.add('closing');" +
+            "document.querySelector('[name=theme-color]').content = '#ffffff';"
+        );
         await Task.Delay(75);
         await OnFadeOut.InvokeAsync();
+    }
+    protected override Task OnInitializedAsync()
+    {
+        _ = js.InvokeVoidAsync("eval", "document.querySelector('[name=theme-color]').content = '#adadad';");
+        return base.OnInitializedAsync();
     }
 }
