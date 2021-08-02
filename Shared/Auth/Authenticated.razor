@@ -1,0 +1,20 @@
+﻿@inject User user
+
+@if (IsAuthenticated())
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public bool Invert { get; set; } = false;
+    private bool IsAuthenticated()
+    {
+        bool ret = false;
+        if (user.Session.UserID != Guid.Empty) ret = true;
+        if (Invert) ret = !ret;
+        return ret;
+    }
+}

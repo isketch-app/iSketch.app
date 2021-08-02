@@ -1,6 +1,6 @@
 @page "/"
-@using iSketch.app.Shared.Game.Timer; 
-@using iSketchTimer = iSketch.app.Shared.Game.Timer.Timer;  
+@using iSketch.app.Shared.Game.Timer;
+@using iSketchTimer = iSketch.app.Shared.Game.Timer.Timer;
 
 <!--<Timer @ref="timer" />
 @if (ShowDialog)
@@ -9,11 +9,16 @@
 }
 -->
 
-<Authentication/>
+<Authenticated>
+    Only shown to authenticated users!
+    <a href="/Administration">Administration</a>
+</Authenticated>
 
-<a href="/Administration">Administration</a>
+<Authenticated Invert="true">
+    You are not logged in!
+    <iSketch.app.Shared.Login.LoginDialog />
+</Authenticated>
 
-<iSketch.app.Shared.Login.LoginDialog />
 
 @code {
     public bool ShowDialog = true;
@@ -27,4 +32,4 @@
     {
         await timer.StartTimer();
     }
-} 
+}

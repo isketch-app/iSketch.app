@@ -1,0 +1,11 @@
+﻿@inject NavigationManager nm; 
+
+<div class="bg"></div>
+
+<Dialog OnFadeOut='() => nm.NavigateTo("/")' OnDismiss='(d) => d.FadeOut()'>
+    <center>
+        <div class="emoji">(☁️😶) ->📱</div>
+        <p>The iSketch.app server returned an empty response,</p>
+        <p>that's computer talk for the "silent treatment".</p>
+    </center>
+</Dialog>
