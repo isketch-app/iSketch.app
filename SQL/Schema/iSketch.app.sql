@@ -1,6 +1,6 @@
 ﻿USE [iSketch.app]
 GO
-/****** Object:  Table [dbo].[Words.Difficulties]    Script Date: 8/1/2021 2:35:18 PM ******/
+/****** Object:  Table [dbo].[Words.Difficulties]    Script Date: 8/3/2021 1:23:03 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[Words.Difficulties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words]    Script Date: 8/1/2021 2:35:18 PM ******/
+/****** Object:  Table [dbo].[Words]    Script Date: 8/3/2021 1:23:03 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -39,7 +39,7 @@ CREATE TABLE [dbo].[Words](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Words.Difficulty]    Script Date: 8/1/2021 2:35:18 PM ******/
+/****** Object:  View [dbo].[Words.Difficulty]    Script Date: 8/3/2021 1:23:03 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,7 +52,7 @@ SELECT        WordID, Word, Score,
                                WHERE        ([From] <= dbo.Words.Score) AND ([To] >= dbo.Words.Score)) AS Difficulty
 FROM            dbo.Words
 GO
-/****** Object:  Table [dbo].[Bans]    Script Date: 8/1/2021 2:35:18 PM ******/
+/****** Object:  Table [dbo].[Bans]    Script Date: 8/3/2021 1:23:03 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -74,7 +74,7 @@ CREATE TABLE [dbo].[Bans](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Properties]    Script Date: 8/1/2021 2:35:18 PM ******/
+/****** Object:  Table [dbo].[Properties]    Script Date: 8/3/2021 1:23:03 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -88,7 +88,7 @@ CREATE TABLE [dbo].[Properties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Sessions]    Script Date: 8/1/2021 2:35:18 PM ******/
+/****** Object:  Table [dbo].[Sessions]    Script Date: 8/3/2021 1:23:03 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -96,8 +96,8 @@ GO
 CREATE TABLE [dbo].[Sessions](
 	[SessionID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
 	[SessionTime] [datetime] NOT NULL,
-	[SessionIPv4] [char](15) NULL,
-	[SessionIPv6] [char](39) NULL,
+	[SessionIP] [char](39) NULL,
+	[SessionIPVersion] [smallint] NULL,
 	[UserID] [uniqueidentifier] NULL,
  CONSTRAINT [PK_Sessions] PRIMARY KEY CLUSTERED 
 (
@@ -105,7 +105,7 @@ CREATE TABLE [dbo].[Sessions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 8/1/2021 2:35:18 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 8/3/2021 1:23:03 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -135,7 +135,7 @@ CREATE TABLE [dbo].[Users](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words.Banned]    Script Date: 8/1/2021 2:35:18 PM ******/
+/****** Object:  Table [dbo].[Words.Banned]    Script Date: 8/3/2021 1:23:03 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

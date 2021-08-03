@@ -1,0 +1,44 @@
+﻿@page "/Administration/{PageName}";
+@page "/Administration/{PageName}/{PageNumber:int}";
+@page "/Administration/{PageName}/{OID}";
+@page "/Administration/{PageName}/{PageNumber:int}/{OID}";
+
+<Authenticated>
+    @if (PageName == "Words")
+    {
+        <Words PageNumber="@PageNumber" WordID="@OID" />
+    }
+
+    @if (PageName == "Users")
+    {
+        <Users PageNumber="@PageNumber" UserID="@OID" />
+    }
+
+    @if (PageName == "Difficulties")
+    {
+        <Difficulties PageNumber="@PageNumber" DifficultyID="@OID" />
+    }
+
+    @if (PageName == "BannedWords")
+    {
+        <BannedWords PageNumber="@PageNumber" BID="@OID" />
+    }
+
+    @if (PageName == "Sessions")
+    {
+        <Sessions PageNumber="@PageNumber" SessionID="@OID" />
+    }
+</Authenticated>
+
+<Authenticated Invert="true">
+    <PageError ReturnTo="/Administration" Emoji="👮" Message="You do not have permissions to perform this action." />
+</Authenticated>
+
+@code {
+    [Parameter]
+    public string PageName { get; set; }
+    [Parameter]
+    public int PageNumber { get; set; }
+    [Parameter]
+    public string OID { get; set; }
+}

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Net;
+using System.Net.Sockets;
 
 namespace iSketch.app.Services
 {
@@ -8,6 +10,7 @@ namespace iSketch.app.Services
         public Database db;
         public Guid SessionID = Guid.Empty;
         public Guid UserID = Guid.Empty;
+        public IPAddress IPAddress;
         public bool Existing = false;
         public Session(Database db = null)
         {
@@ -17,17 +20,20 @@ namespace iSketch.app.Services
         {
             SqlCommand cmd = db.Connection.CreateCommand();
             cmd.Parameters.AddWithValue("@SESSID@", SessionID);
+            cmd.Parameters.AddWithValue("@IPADDR@", IPAddress.ToString());
+            if (IPAddress.AddressFamily == AddressFamily.InterNetwork) cmd.Parameters.AddWithValue("@IPVER@", 4);
+            if (IPAddress.AddressFamily == AddressFamily.InterNetworkV6) cmd.Parameters.AddWithValue("@IPVER@", 6);
             cmd.CommandText = "SELECT UserID FROM Sessions WHERE SessionID = @SESSID@";
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
                 reader.Read();
                 if (!reader.IsDBNull(0)) UserID = reader.GetGuid(0);
-                cmd.CommandText = "UPDATE Sessions SET SessionTime = GETDATE() WHERE SessionID = @SESSID@";
+                cmd.CommandText = "UPDATE Sessions SET SessionTime = GETDATE(), SessionIP = @IPADDR@, SessionIPVersion = @IPVER@ WHERE SessionID = @SESSID@";
             }
             else
             {
-                cmd.CommandText = "INSERT INTO Sessions (SessionID) VALUES (@SESSID@)";
+                cmd.CommandText = "INSERT INTO Sessions (SessionID, SessionIP, SessionIPVersion) VALUES (@SESSID@, @IPADDR@, @IPVER@)";
             }
             reader.Close();
             cmd.ExecuteNonQuery();

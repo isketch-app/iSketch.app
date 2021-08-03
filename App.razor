@@ -17,10 +17,13 @@
     public Guid sSessionID { get; set; }
     [Parameter]
     public bool sExisting { get; set; }
+    [Parameter]
+    public string IPAddress { get; set; }
     protected override void OnParametersSet()
     {
         Session.SessionID = sSessionID;
         Session.Existing = sExisting;
+        Session.IPAddress = System.Net.IPAddress.Parse(IPAddress);
         Session.RegisterSession();
         base.OnParametersSet();
     }

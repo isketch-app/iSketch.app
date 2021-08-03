@@ -1,0 +1,21 @@
+﻿@inject Services.Database db;
+@inject NavigationManager nm;
+@inject IJSRuntime js;
+@inject Services.EventHook eh;
+
+<ListPage 
+    PageTitle="Sessions"
+    PageNumber="PageNumber"
+    SQLCon="db.Connection"
+    PagePath="/Administration/Sessions"
+    TableName="[Sessions]"
+    VisibleRows='new List<string>() { "[SessionID]", "[SessionTime]", "[SessionIP]", "[SessionIPVersion]", "[UserID]" }'
+    VisibleRowsTitles='new List<string>() { "SessionID", "Session Time", "IP Address", "[IP Version]", "User ID" }'
+/>
+
+@code {
+    [Parameter]
+    public int PageNumber { get; set; }
+    [Parameter]
+    public string SessionID { get; set; }
+}

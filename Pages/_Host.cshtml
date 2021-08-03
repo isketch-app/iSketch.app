@@ -6,7 +6,7 @@
 @using iSketch.app.Data;
 @{
     Layout = null;
-    Session session = HttpContext.InitializeSessionCookie();
+    Session session = HttpContext.InitializeSession();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,13 @@
                 <component type="typeof(Shared.General.SplashPopup)" render-mode="Static" />
             }
             <component type="typeof(Shared.Body.PageLoading)" render-mode="Static" />
-            <component type="typeof(App)" render-mode="Server" param-sSessionID="session.SessionID" param-sExisting="session.Existing" />
+            <component 
+                type="typeof(App)" 
+                render-mode="Server"
+                param-sSessionID="session.SessionID"
+                param-sExisting="session.Existing"
+                param-IPAddress="session.IPAddress.ToString()"
+            />
         </div>
         <script src="./static/scripts/iSketchSiteBB.js"></script>
         <script src="_framework/blazor.server.js"></script>

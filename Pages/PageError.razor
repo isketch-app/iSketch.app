@@ -2,9 +2,18 @@
 
 <!--<div class="bg"></div>-->
 
-<Dialog OnFadeOut='() => nm.NavigateTo("/")' OnDismiss='(d) => d.FadeOut()'>
+<Dialog OnFadeOut='() => nm.NavigateTo(ReturnTo)' OnDismiss='(d) => d.FadeOut()'>
     <center>
-        <div class="emoji">(☁️😶) ->📱</div>
-        <p>The iSketch.app server returned an empty response.</p>
+        <div class="emoji">@Emoji</div>
+        <p>@Message</p>
     </center>
 </Dialog>
+
+@code {
+    [Parameter]
+    public string Emoji { get; set; } = "😶";
+    [Parameter]
+    public string Message { get; set; } = "An un-defined error occured.";
+    [Parameter]
+    public string ReturnTo { get; set; } = "/";
+} 
