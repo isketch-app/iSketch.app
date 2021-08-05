@@ -12,10 +12,15 @@
     display: flex;
 }
 
-.top-bar a {
+.top-bar a:last-child {
     text-align: right;
     flex: 1;
     margin-top: 24px;
+}
+
+.top-bar a:first-child {
+    margin-top: 24px;
+    margin-right: 16px;
 }
 
 ::deep .table-body {
