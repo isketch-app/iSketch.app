@@ -9,11 +9,6 @@
 }
 -->
 
-<Authenticated>
-    Only shown to authenticated users!
-    <a href="/Administration">Administration</a>
-</Authenticated>
-
 
 <a href="/Administration">Administration</a>
 
@@ -21,6 +16,11 @@
     You are not logged in!
     <iSketch.app.Shared.Login.LoginDialog />
 </Authenticated>
+
+
+<Authorized PermissionsA="PMA.None">
+    You have no permissions!
+</Authorized>
 
 
 @code {

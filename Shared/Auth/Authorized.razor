@@ -1,5 +1,24 @@
-﻿<h3>Authorized</h3>
+﻿@inject User user
+
+@if (IsAuthorized())
+{
+    @ChildContent
+}
 
 @code {
-
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public PermissionsA PermissionsA { get; set; } = PermissionsA.None;
+    [Parameter]
+    public PermissionsB PermissionsB { get; set; } = PermissionsB.None;
+    [Parameter]
+    public bool Invert { get; set; } = false;
+    private bool IsAuthorized()
+    {
+        bool ret = false;
+        if (user.Permissions.HasPermission(PermissionsA, PermissionsB)) ret = true;
+        if (Invert) ret = !ret;
+        return ret;
+    }
 }

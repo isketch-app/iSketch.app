@@ -1,6 +1,6 @@
 ﻿USE [iSketch.app]
 GO
-/****** Object:  Table [dbo].[Words.Game.Difficulties]    Script Date: 8/8/2021 2:48:42 AM ******/
+/****** Object:  Table [dbo].[Words.Game.Difficulties]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[Words.Game.Difficulties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words.Game]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  Table [dbo].[Words.Game]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -39,7 +39,7 @@ CREATE TABLE [dbo].[Words.Game](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Words.Game.Difficulties.Splice]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  View [dbo].[Words.Game.Difficulties.Splice]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,22 +52,7 @@ SELECT        WordID, Word, Score,
                                WHERE        ([From] <= dbo.[Words.Game].Score) AND ([To] >= dbo.[Words.Game].Score)) AS Difficulty
 FROM            dbo.[Words.Game]
 GO
-/****** Object:  Table [dbo].[Security.Groups]    Script Date: 8/8/2021 2:48:43 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Security.Groups](
-	[GroupID] [uniqueidentifier] NOT NULL,
-	[DisplayName] [varchar](20) NOT NULL,
-	[Permissions] [binary](16) NOT NULL,
- CONSTRAINT [PK_Security.Groups] PRIMARY KEY CLUSTERED 
-(
-	[GroupID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Security.Users]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  Table [dbo].[Security.Users]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -97,7 +82,7 @@ CREATE TABLE [dbo].[Security.Users](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Security.Groups.Membership]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  Table [dbo].[Security.Groups.Membership]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -107,19 +92,35 @@ CREATE TABLE [dbo].[Security.Groups.Membership](
 	[UserID] [uniqueidentifier] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Security.Users.Permissions.Splice]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  Table [dbo].[Security.Groups]    Script Date: 8/8/2021 4:50:15 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Security.Groups](
+	[GroupID] [uniqueidentifier] NOT NULL,
+	[DisplayName] [varchar](20) NOT NULL,
+	[PermissionsA] [binary](8) NOT NULL,
+	[PermissionsB] [binary](8) NOT NULL,
+ CONSTRAINT [PK_Security.Groups] PRIMARY KEY CLUSTERED 
+(
+	[GroupID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[Security.Users.Permissions.Splice]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[Security.Users.Permissions.Splice]
 AS
-SELECT        dbo.[Security.Users].UserID, dbo.[Security.Groups].Permissions
+SELECT        dbo.[Security.Users].UserID, dbo.[Security.Groups].PermissionsA, dbo.[Security.Groups].PermissionsB
 FROM            dbo.[Security.Groups] INNER JOIN
                          dbo.[Security.Groups.Membership] ON dbo.[Security.Groups].GroupID = dbo.[Security.Groups.Membership].GroupID RIGHT OUTER JOIN
                          dbo.[Security.Users] ON dbo.[Security.Groups.Membership].UserID = dbo.[Security.Users].UserID
 GO
-/****** Object:  Table [dbo].[Security.Bans]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  Table [dbo].[Security.Bans]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -141,7 +142,7 @@ CREATE TABLE [dbo].[Security.Bans](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Security.Sessions]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  Table [dbo].[Security.Sessions]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -158,7 +159,7 @@ CREATE TABLE [dbo].[Security.Sessions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[System.Properties]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  Table [dbo].[System.Properties]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -172,7 +173,7 @@ CREATE TABLE [dbo].[System.Properties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words.Banned]    Script Date: 8/8/2021 2:48:43 AM ******/
+/****** Object:  Table [dbo].[Words.Banned]    Script Date: 8/8/2021 4:50:15 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -213,7 +214,9 @@ ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_Enabled]  DEFAULT ((1
 GO
 ALTER TABLE [dbo].[Security.Groups] ADD  CONSTRAINT [DF_Security.Groups_SGroupID]  DEFAULT (newid()) FOR [GroupID]
 GO
-ALTER TABLE [dbo].[Security.Groups] ADD  CONSTRAINT [DF_Security.Groups_Permissions]  DEFAULT (0x00) FOR [Permissions]
+ALTER TABLE [dbo].[Security.Groups] ADD  CONSTRAINT [DF_Security.Groups_Permissions]  DEFAULT (0x00) FOR [PermissionsA]
+GO
+ALTER TABLE [dbo].[Security.Groups] ADD  CONSTRAINT [DF_Security.Groups_PermissionsB]  DEFAULT (0x00) FOR [PermissionsB]
 GO
 ALTER TABLE [dbo].[Security.Sessions] ADD  CONSTRAINT [DF_Sessions_SessionID]  DEFAULT (newid()) FOR [SessionID]
 GO
@@ -357,32 +360,32 @@ Begin DesignProperties =
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "Security.Users"
+         Begin Table = "Security.Groups"
             Begin Extent = 
                Top = 6
                Left = 38
                Bottom = 136
-               Right = 240
+               Right = 208
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "Security.Groups.Membership"
             Begin Extent = 
-               Top = 74
-               Left = 321
-               Bottom = 170
-               Right = 491
+               Top = 6
+               Left = 246
+               Bottom = 102
+               Right = 416
             End
             DisplayFlags = 280
             TopColumn = 0
          End
-         Begin Table = "Security.Groups"
+         Begin Table = "Security.Users"
             Begin Extent = 
-               Top = 0
-               Left = 603
-               Bottom = 113
-               Right = 773
+               Top = 102
+               Left = 246
+               Bottom = 232
+               Right = 448
             End
             DisplayFlags = 280
             TopColumn = 0
