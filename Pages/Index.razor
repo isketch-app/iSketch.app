@@ -10,7 +10,7 @@
 -->
 
 
-<a href="/Administration">Administration</a>
+<a href="/Administration">Administration</a> <br />
 
 <Authenticated Invert="true">
     You are not logged in!
@@ -18,8 +18,20 @@
 </Authenticated>
 
 
-<Authorized PermissionsA="PMA.None">
-    You have no permissions!
+<Authorized MatchAny="true" PermissionsA="PMA.PlaceHolder | PMA.Administration">
+    PlaceHolder OR Administration <br />
+</Authorized>
+
+<Authorized MatchAny="false" PermissionsA="PMA.PlaceHolder | PMA.Administration">
+    PlaceHolder AND Administration <br />
+</Authorized>
+
+<Authorized PermissionsA="PMA.Administration">
+    Administration <br />
+</Authorized>
+
+<Authorized PermissionsA="PMA.PlaceHolder">
+    Placeholder <br />
 </Authorized>
 
 

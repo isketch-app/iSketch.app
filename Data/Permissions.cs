@@ -6,7 +6,8 @@ namespace iSketch.app.Data
     public enum PermissionsA : ulong
     {
         None = 0x0,
-        Administration = 0x1
+        Administration = 0x1,
+        PlaceHolder = 0x2
     }
     public enum PermissionsB : ulong 
     {
@@ -16,17 +17,29 @@ namespace iSketch.app.Data
     {
         public PermissionsA PermissionsA = PermissionsA.None;
         public PermissionsB PermissionsB = PermissionsB.None;
-        public bool HasPermission(PermissionsA a)
+        public bool HasEachPermission(PermissionsA a)
         {
             return (PermissionsA & a) == a;
         }
-        public bool HasPermission(PermissionsB b)
+        public bool HasEachPermission(PermissionsB b)
         {
             return (PermissionsB & b) == b;
         }
-        public bool HasPermission(PermissionsA a, PermissionsB b)
+        public bool HasEachPermission(PermissionsA a, PermissionsB b)
         {
-            return HasPermission(a) && HasPermission(b);
+            return HasEachPermission(a) && HasEachPermission(b);
+        }
+        public bool HasAnyPermission(PermissionsA a)
+        {
+            return (PermissionsA & a) != 0x0;
+        }
+        public bool HasAnyPermission(PermissionsB b)
+        {
+            return (PermissionsB & b) != 0x0;
+        }
+        public bool HasAnyPermission(PermissionsA a, PermissionsB b)
+        {
+            return HasAnyPermission(a) || HasAnyPermission(b);
         }
     }
     public static class PermissionsStatic

@@ -13,11 +13,14 @@
     [Parameter]
     public PermissionsB PermissionsB { get; set; } = PermissionsB.None;
     [Parameter]
+    public bool MatchAny { get; set; } = false;
+    [Parameter]
     public bool Invert { get; set; } = false;
     private bool IsAuthorized()
     {
         bool ret = false;
-        if (user.Permissions.HasPermission(PermissionsA, PermissionsB)) ret = true;
+        if (!MatchAny && user.Permissions.HasEachPermission(PermissionsA, PermissionsB)) ret = true;
+        if (MatchAny && user.Permissions.HasAnyPermission(PermissionsA, PermissionsB)) ret = true;
         if (Invert) ret = !ret;
         return ret;
     }
