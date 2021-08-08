@@ -1,11 +1,11 @@
 ﻿USE [iSketch.app]
 GO
-/****** Object:  Table [dbo].[Words.Difficulties]    Script Date: 8/3/2021 1:23:03 AM ******/
+/****** Object:  Table [dbo].[Words.Game.Difficulties]    Script Date: 8/8/2021 12:56:10 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Words.Difficulties](
+CREATE TABLE [dbo].[Words.Game.Difficulties](
 	[DifficultyID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
 	[From] [int] NOT NULL,
 	[To] [int] NOT NULL,
@@ -20,12 +20,12 @@ CREATE TABLE [dbo].[Words.Difficulties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words]    Script Date: 8/3/2021 1:23:03 AM ******/
+/****** Object:  Table [dbo].[Words.Game]    Script Date: 8/8/2021 12:56:10 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Words](
+CREATE TABLE [dbo].[Words.Game](
 	[WordID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
 	[Word] [varchar](50) NOT NULL,
 	[Score] [int] NOT NULL,
@@ -39,25 +39,25 @@ CREATE TABLE [dbo].[Words](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Words.Difficulty]    Script Date: 8/3/2021 1:23:03 AM ******/
+/****** Object:  View [dbo].[Words.Game.Difficulties.Splice]    Script Date: 8/8/2021 12:56:10 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[Words.Difficulty]
+CREATE VIEW [dbo].[Words.Game.Difficulties.Splice]
 AS
 SELECT        WordID, Word, Score,
                              (SELECT        TOP (1) Name
-                               FROM            dbo.[Words.Difficulties]
-                               WHERE        ([From] <= dbo.Words.Score) AND ([To] >= dbo.Words.Score)) AS Difficulty
-FROM            dbo.Words
+                               FROM            dbo.[Words.Game.Difficulties]
+                               WHERE        ([From] <= dbo.[Words.Game].Score) AND ([To] >= dbo.[Words.Game].Score)) AS Difficulty
+FROM            dbo.[Words.Game]
 GO
-/****** Object:  Table [dbo].[Bans]    Script Date: 8/3/2021 1:23:03 AM ******/
+/****** Object:  Table [dbo].[Security.Bans]    Script Date: 8/8/2021 12:56:10 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Bans](
+CREATE TABLE [dbo].[Security.Bans](
 	[BanID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
 	[UserID] [uniqueidentifier] NULL,
 	[CIDR.IPv4] [char](18) NULL,
@@ -74,26 +74,47 @@ CREATE TABLE [dbo].[Bans](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Properties]    Script Date: 8/3/2021 1:23:03 AM ******/
+/****** Object:  Table [dbo].[Security.Groups]    Script Date: 8/8/2021 12:56:10 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Properties](
-	[Property] [varchar](50) NOT NULL,
-	[Value] [varchar](500) NULL,
- CONSTRAINT [PK_Properties] PRIMARY KEY CLUSTERED 
+CREATE TABLE [dbo].[Security.Groups](
+	[GroupID] [uniqueidentifier] NOT NULL,
+	[DisplayName] [varchar](20) NOT NULL,
+	[Permissions] [binary](16) NOT NULL,
+ CONSTRAINT [PK_Security.Groups] PRIMARY KEY CLUSTERED 
 (
-	[Property] ASC
+	[GroupID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Sessions]    Script Date: 8/3/2021 1:23:03 AM ******/
+/****** Object:  Table [dbo].[Security.Groups.XRef]    Script Date: 8/8/2021 12:56:10 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Sessions](
+CREATE TABLE [dbo].[Security.Groups.XRef](
+	[GroupID] [uniqueidentifier] NOT NULL,
+	[UserID] [uniqueidentifier] NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Security.Membership]    Script Date: 8/8/2021 12:56:10 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Security.Membership](
+	[GroupIDParent] [uniqueidentifier] NOT NULL,
+	[UserIDChild] [uniqueidentifier] NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Security.Sessions]    Script Date: 8/8/2021 12:56:10 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Security.Sessions](
 	[SessionID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
 	[SessionTime] [datetime] NOT NULL,
 	[SessionIP] [char](39) NULL,
@@ -105,12 +126,12 @@ CREATE TABLE [dbo].[Sessions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 8/3/2021 1:23:03 AM ******/
+/****** Object:  Table [dbo].[Security.Users]    Script Date: 8/8/2021 12:56:10 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Users](
+CREATE TABLE [dbo].[Security.Users](
 	[UserID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
 	[UserName] [char](20) NOT NULL,
 	[CreatedTime] [datetime] NULL,
@@ -135,7 +156,21 @@ CREATE TABLE [dbo].[Users](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words.Banned]    Script Date: 8/3/2021 1:23:03 AM ******/
+/****** Object:  Table [dbo].[System.Properties]    Script Date: 8/8/2021 12:56:10 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[System.Properties](
+	[Property] [varchar](50) NOT NULL,
+	[Value] [varchar](500) NULL,
+ CONSTRAINT [PK_Properties] PRIMARY KEY CLUSTERED 
+(
+	[Property] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Words.Banned]    Script Date: 8/8/2021 12:56:10 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -154,86 +189,110 @@ CREATE TABLE [dbo].[Words.Banned](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_BanID]  DEFAULT (newid()) FOR [BanID]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_BanID]  DEFAULT (newid()) FOR [BanID]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_UserID]  DEFAULT (NULL) FOR [UserID]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_UserID]  DEFAULT (NULL) FOR [UserID]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_IPv4]  DEFAULT (NULL) FOR [CIDR.IPv4]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_IPv4]  DEFAULT (NULL) FOR [CIDR.IPv4]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_IPv6]  DEFAULT (NULL) FOR [CIDR.IPv6]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_IPv6]  DEFAULT (NULL) FOR [CIDR.IPv6]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_Reason]  DEFAULT (NULL) FOR [Reason]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_Reason]  DEFAULT (NULL) FOR [Reason]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_Note]  DEFAULT (NULL) FOR [Note]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_Note]  DEFAULT (NULL) FOR [Note]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_Description]  DEFAULT (NULL) FOR [Description]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_Description]  DEFAULT (NULL) FOR [Description]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_ExpiresTime]  DEFAULT (NULL) FOR [ExpiresTime]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_ExpiresTime]  DEFAULT (NULL) FOR [ExpiresTime]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_CreatedTime]  DEFAULT (getdate()) FOR [CreatedTime]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_CreatedTime]  DEFAULT (getdate()) FOR [CreatedTime]
 GO
-ALTER TABLE [dbo].[Bans] ADD  CONSTRAINT [DF_Bans_Enabled]  DEFAULT ((1)) FOR [IsBanEnabled]
+ALTER TABLE [dbo].[Security.Bans] ADD  CONSTRAINT [DF_Bans_Enabled]  DEFAULT ((1)) FOR [IsBanEnabled]
 GO
-ALTER TABLE [dbo].[Sessions] ADD  CONSTRAINT [DF_Sessions_SessionID]  DEFAULT (newid()) FOR [SessionID]
+ALTER TABLE [dbo].[Security.Groups] ADD  CONSTRAINT [DF_Security.Groups_SGroupID]  DEFAULT (newid()) FOR [GroupID]
 GO
-ALTER TABLE [dbo].[Sessions] ADD  CONSTRAINT [DF_Sessions_InitializedTime]  DEFAULT (getdate()) FOR [SessionTime]
+ALTER TABLE [dbo].[Security.Groups] ADD  CONSTRAINT [DF_Security.Groups_Permissions]  DEFAULT (0x00) FOR [Permissions]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_UserID]  DEFAULT (newid()) FOR [UserID]
+ALTER TABLE [dbo].[Security.Sessions] ADD  CONSTRAINT [DF_Sessions_SessionID]  DEFAULT (newid()) FOR [SessionID]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_CreatedTime]  DEFAULT (getdate()) FOR [CreatedTime]
+ALTER TABLE [dbo].[Security.Sessions] ADD  CONSTRAINT [DF_Sessions_InitializedTime]  DEFAULT (getdate()) FOR [SessionTime]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_ResetPasswordTime]  DEFAULT (NULL) FOR [ResetPasswordTime]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_UserID]  DEFAULT (newid()) FOR [UserID]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Email]  DEFAULT (NULL) FOR [Email]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_CreatedTime]  DEFAULT (getdate()) FOR [CreatedTime]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Biography]  DEFAULT (NULL) FOR [Biography]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_ResetPasswordTime]  DEFAULT (NULL) FOR [ResetPasswordTime]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Score.Wins]  DEFAULT ((0)) FOR [Score.Wins]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Email]  DEFAULT (NULL) FOR [Email]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Score.Plays]  DEFAULT ((0)) FOR [Score.Plays]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Biography]  DEFAULT (NULL) FOR [Biography]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Score.Guesses]  DEFAULT ((0)) FOR [Score.Guesses]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Score.Wins]  DEFAULT ((0)) FOR [Score.Wins]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Score.CorrectGuesses]  DEFAULT ((0)) FOR [Score.CorrectGuesses]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Score.Plays]  DEFAULT ((0)) FOR [Score.Plays]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Settings.AnonMode]  DEFAULT ((0)) FOR [Settings.AnonMode]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Score.Guesses]  DEFAULT ((0)) FOR [Score.Guesses]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Settings.DarkMode]  DEFAULT ((0)) FOR [Settings.DarkMode]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Score.CorrectGuesses]  DEFAULT ((0)) FOR [Score.CorrectGuesses]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_ProfilePicture]  DEFAULT (NULL) FOR [ProfilePicture]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Settings.AnonMode]  DEFAULT ((0)) FOR [Settings.AnonMode]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Score.Points]  DEFAULT ((0)) FOR [Score.Points]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Settings.DarkMode]  DEFAULT ((0)) FOR [Settings.DarkMode]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_EmailVerified]  DEFAULT ((0)) FOR [EmailVerified]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_ProfilePicture]  DEFAULT (NULL) FOR [ProfilePicture]
 GO
-ALTER TABLE [dbo].[Words] ADD  CONSTRAINT [DF_Words_WordID]  DEFAULT (newid()) FOR [WordID]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_Score.Points]  DEFAULT ((0)) FOR [Score.Points]
 GO
-ALTER TABLE [dbo].[Words] ADD  CONSTRAINT [DF_Words_Score]  DEFAULT ((0)) FOR [Score]
+ALTER TABLE [dbo].[Security.Users] ADD  CONSTRAINT [DF_Users_EmailVerified]  DEFAULT ((0)) FOR [EmailVerified]
 GO
 ALTER TABLE [dbo].[Words.Banned] ADD  CONSTRAINT [DF_Words.Banned_WordID]  DEFAULT (newid()) FOR [WordID]
 GO
 ALTER TABLE [dbo].[Words.Banned] ADD  CONSTRAINT [DF_Words.Banned_Contains]  DEFAULT ((1)) FOR [Contains]
 GO
-ALTER TABLE [dbo].[Words.Difficulties] ADD  CONSTRAINT [DF_Words.Difficulties_DifficultyID]  DEFAULT (newid()) FOR [DifficultyID]
+ALTER TABLE [dbo].[Words.Game] ADD  CONSTRAINT [DF_Words_WordID]  DEFAULT (newid()) FOR [WordID]
 GO
-ALTER TABLE [dbo].[Words.Difficulties] ADD  CONSTRAINT [DF_Words.Difficulties_From]  DEFAULT ((0)) FOR [From]
+ALTER TABLE [dbo].[Words.Game] ADD  CONSTRAINT [DF_Words_Score]  DEFAULT ((0)) FOR [Score]
 GO
-ALTER TABLE [dbo].[Words.Difficulties] ADD  CONSTRAINT [DF_Words.Difficulties_To]  DEFAULT ((0)) FOR [To]
+ALTER TABLE [dbo].[Words.Game.Difficulties] ADD  CONSTRAINT [DF_Words.Difficulties_DifficultyID]  DEFAULT (newid()) FOR [DifficultyID]
 GO
-ALTER TABLE [dbo].[Bans]  WITH CHECK ADD  CONSTRAINT [FK_Bans_Users] FOREIGN KEY([UserID])
-REFERENCES [dbo].[Users] ([UserID])
+ALTER TABLE [dbo].[Words.Game.Difficulties] ADD  CONSTRAINT [DF_Words.Difficulties_From]  DEFAULT ((0)) FOR [From]
 GO
-ALTER TABLE [dbo].[Bans] CHECK CONSTRAINT [FK_Bans_Users]
+ALTER TABLE [dbo].[Words.Game.Difficulties] ADD  CONSTRAINT [DF_Words.Difficulties_To]  DEFAULT ((0)) FOR [To]
 GO
-ALTER TABLE [dbo].[Sessions]  WITH CHECK ADD  CONSTRAINT [FK_Sessions_Users] FOREIGN KEY([UserID])
-REFERENCES [dbo].[Users] ([UserID])
+ALTER TABLE [dbo].[Security.Bans]  WITH CHECK ADD  CONSTRAINT [FK_Bans_Users] FOREIGN KEY([UserID])
+REFERENCES [dbo].[Security.Users] ([UserID])
 GO
-ALTER TABLE [dbo].[Sessions] CHECK CONSTRAINT [FK_Sessions_Users]
+ALTER TABLE [dbo].[Security.Bans] CHECK CONSTRAINT [FK_Bans_Users]
 GO
-ALTER TABLE [dbo].[Words]  WITH CHECK ADD  CONSTRAINT [FK_Words_Words] FOREIGN KEY([WordID])
-REFERENCES [dbo].[Words] ([WordID])
+ALTER TABLE [dbo].[Security.Groups.XRef]  WITH CHECK ADD  CONSTRAINT [FK_Security.Groups.XRef_Security.Groups1] FOREIGN KEY([GroupID])
+REFERENCES [dbo].[Security.Groups] ([GroupID])
 GO
-ALTER TABLE [dbo].[Words] CHECK CONSTRAINT [FK_Words_Words]
+ALTER TABLE [dbo].[Security.Groups.XRef] CHECK CONSTRAINT [FK_Security.Groups.XRef_Security.Groups1]
+GO
+ALTER TABLE [dbo].[Security.Groups.XRef]  WITH CHECK ADD  CONSTRAINT [FK_Security.Groups.XRef_Users1] FOREIGN KEY([UserID])
+REFERENCES [dbo].[Security.Users] ([UserID])
+GO
+ALTER TABLE [dbo].[Security.Groups.XRef] CHECK CONSTRAINT [FK_Security.Groups.XRef_Users1]
+GO
+ALTER TABLE [dbo].[Security.Membership]  WITH CHECK ADD  CONSTRAINT [FK_Security.Groups.XRef_Security.Groups] FOREIGN KEY([GroupIDParent])
+REFERENCES [dbo].[Security.Groups] ([GroupID])
+GO
+ALTER TABLE [dbo].[Security.Membership] CHECK CONSTRAINT [FK_Security.Groups.XRef_Security.Groups]
+GO
+ALTER TABLE [dbo].[Security.Membership]  WITH CHECK ADD  CONSTRAINT [FK_Security.Groups.XRef_Users] FOREIGN KEY([UserIDChild])
+REFERENCES [dbo].[Security.Users] ([UserID])
+GO
+ALTER TABLE [dbo].[Security.Membership] CHECK CONSTRAINT [FK_Security.Groups.XRef_Users]
+GO
+ALTER TABLE [dbo].[Security.Sessions]  WITH CHECK ADD  CONSTRAINT [FK_Sessions_Users] FOREIGN KEY([UserID])
+REFERENCES [dbo].[Security.Users] ([UserID])
+GO
+ALTER TABLE [dbo].[Security.Sessions] CHECK CONSTRAINT [FK_Sessions_Users]
+GO
+ALTER TABLE [dbo].[Words.Game]  WITH CHECK ADD  CONSTRAINT [FK_Words_Words] FOREIGN KEY([WordID])
+REFERENCES [dbo].[Words.Game] ([WordID])
+GO
+ALTER TABLE [dbo].[Words.Game] CHECK CONSTRAINT [FK_Words_Words]
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
@@ -306,7 +365,7 @@ Begin DesignProperties =
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "Words"
+         Begin Table = "Words.Game"
             Begin Extent = 
                Top = 6
                Left = 38
@@ -353,7 +412,7 @@ Begin DesignProperties =
       End
    End
 End
-' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'Words.Difficulty'
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'Words.Game.Difficulties.Splice'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'Words.Difficulty'
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'Words.Game.Difficulties.Splice'
 GO

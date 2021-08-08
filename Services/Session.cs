@@ -23,17 +23,17 @@ namespace iSketch.app.Services
             cmd.Parameters.AddWithValue("@IPADDR@", IPAddress.ToString());
             if (IPAddress.AddressFamily == AddressFamily.InterNetwork) cmd.Parameters.AddWithValue("@IPVER@", 4);
             if (IPAddress.AddressFamily == AddressFamily.InterNetworkV6) cmd.Parameters.AddWithValue("@IPVER@", 6);
-            cmd.CommandText = "SELECT UserID FROM Sessions WHERE SessionID = @SESSID@";
+            cmd.CommandText = "SELECT UserID FROM [Security.Sessions] WHERE SessionID = @SESSID@";
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
                 reader.Read();
                 if (!reader.IsDBNull(0)) UserID = reader.GetGuid(0);
-                cmd.CommandText = "UPDATE Sessions SET SessionTime = GETDATE(), SessionIP = @IPADDR@, SessionIPVersion = @IPVER@ WHERE SessionID = @SESSID@";
+                cmd.CommandText = "UPDATE [Security.Sessions] SET SessionTime = GETDATE(), SessionIP = @IPADDR@, SessionIPVersion = @IPVER@ WHERE SessionID = @SESSID@";
             }
             else
             {
-                cmd.CommandText = "INSERT INTO Sessions (SessionID, SessionIP, SessionIPVersion) VALUES (@SESSID@, @IPADDR@, @IPVER@)";
+                cmd.CommandText = "INSERT INTO [Security.Sessions] (SessionID, SessionIP, SessionIPVersion) VALUES (@SESSID@, @IPADDR@, @IPVER@)";
             }
             reader.Close();
             cmd.ExecuteNonQuery();

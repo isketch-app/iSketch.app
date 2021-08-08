@@ -66,7 +66,7 @@
     PageNumber="PageNumber"
     SQLCon="db.Connection"
     PagePath="/Administration/Words"
-    TableName="[Words.Difficulty]"
+    TableName="[Words.Game.Difficulties.Splice]"
     VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
     VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
 />
@@ -89,7 +89,7 @@
         InitDifficultyValue = InitWordValue = InitScoreValue = "";
         if (!Guid.TryParse(WordID, out Guid id)) return 1;
         SqlCommand cmd = db.Connection.CreateCommand();
-        cmd.CommandText = "SELECT TOP(1) Word, Score, Difficulty FROM [Words.Difficulty] WHERE WordID = '" + id.ToString() + "'";
+        cmd.CommandText = "SELECT TOP(1) Word, Score, Difficulty FROM [Words.Game.Difficulties.Splice] WHERE WordID = '" + id.ToString() + "'";
         SqlDataReader rdr = cmd.ExecuteReader();
         if (!rdr.HasRows)
         {
@@ -126,7 +126,7 @@
             string word = FilterWord(WordValue.Value);
             if (word == "") return;
             SqlCommand cmd = db.Connection.CreateCommand();
-            cmd.CommandText = "UPDATE Words SET Word = @WORD, Score = " + ScoreValue.Value + " WHERE WordID = '" + id.ToString() + "'";
+            cmd.CommandText = "UPDATE [Words.Game] SET Word = @WORD, Score = " + ScoreValue.Value + " WHERE WordID = '" + id.ToString() + "'";
             cmd.Parameters.AddWithValue("@WORD", word);
             cmd.ExecuteNonQuery();
             eh.OnAdminWordsChanged();
@@ -148,7 +148,7 @@
     {
         if (!Guid.TryParse(WordID, out Guid id)) return;
         SqlCommand cmd = db.Connection.CreateCommand();
-        cmd.CommandText = "DELETE FROM Words WHERE WordID = '" + id.ToString() + "'";
+        cmd.CommandText = "DELETE FROM [Words.Game] WHERE WordID = '" + id.ToString() + "'";
         cmd.ExecuteNonQuery();
         eh.OnAdminWordsChanged();
         await Dialog.FadeOut();
@@ -160,7 +160,7 @@
         try
         {
             SqlCommand cmd = db.Connection.CreateCommand();
-            cmd.CommandText = "INSERT INTO Words (Word, Score) VALUES(@WORD, @SCORE)";
+            cmd.CommandText = "INSERT INTO [Words.Game] (Word, Score) VALUES(@WORD, @SCORE)";
             cmd.Parameters.AddWithValue("@WORD", word);
             cmd.Parameters.AddWithValue("@SCORE", ScoreValue.Value);
             cmd.ExecuteNonQuery();

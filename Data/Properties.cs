@@ -7,7 +7,7 @@ namespace iSketch.app.Data
     {
         public static string GetProperty(this Database db, string Property)
         {
-            SqlCommand cmd = new SqlCommand("SELECT Value FROM Properties WHERE Property = @PROP", db.Connection);
+            SqlCommand cmd = new SqlCommand("SELECT Value FROM [System.Properties] WHERE Property = @PROP", db.Connection);
             cmd.Parameters.AddWithValue("@PROP", Property);
             return (string)cmd.ExecuteScalar();
         }
@@ -15,7 +15,7 @@ namespace iSketch.app.Data
         {
             if(Value == null)
             {
-                SqlCommand cmd = new SqlCommand("DELETE FROM Properties WHERE Property = @PROP", db.Connection);
+                SqlCommand cmd = new SqlCommand("DELETE FROM [System.Properties] WHERE Property = @PROP", db.Connection);
                 cmd.Parameters.AddWithValue("@PROP", Property);
                 cmd.ExecuteNonQuery();
                 return;
@@ -23,14 +23,14 @@ namespace iSketch.app.Data
             ClearNull(db);
             if(db.GetProperty(Property) == null)
             {
-                SqlCommand cmd = new SqlCommand("INSERT INTO Properties (Property, Value) VALUES(@PROP, @VAL)", db.Connection);
+                SqlCommand cmd = new SqlCommand("INSERT INTO [System.Properties] (Property, Value) VALUES(@PROP, @VAL)", db.Connection);
                 cmd.Parameters.AddWithValue("@PROP", Property);
                 cmd.Parameters.AddWithValue("@VAL", Value);
                 cmd.ExecuteNonQuery();
             }
             else
             {
-                SqlCommand cmd = new SqlCommand("UPDATE Properties SET Value = @VAL WHERE Property = @PROP", db.Connection);
+                SqlCommand cmd = new SqlCommand("UPDATE [System.Properties] SET Value = @VAL WHERE Property = @PROP", db.Connection);
                 cmd.Parameters.AddWithValue("@PROP", Property);
                 cmd.Parameters.AddWithValue("@VAL", Value);
                 cmd.ExecuteNonQuery();
@@ -38,7 +38,7 @@ namespace iSketch.app.Data
         }
         private static void ClearNull(Database db)
         {
-            new SqlCommand("DELETE FROM Properties WHERE Value IS NULL", db.Connection).ExecuteNonQuery();
+            new SqlCommand("DELETE FROM [System.Properties] WHERE Value IS NULL", db.Connection).ExecuteNonQuery();
         }
     }
 }
