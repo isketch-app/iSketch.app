@@ -2,12 +2,47 @@
 @using iSketch.app.Shared.Game.Timer;
 @using iSketchTimer = iSketch.app.Shared.Game.Timer.Timer;
 
+@using Konscious.Security.Cryptography; 
+
 <!--<Timer @ref="timer" />
 @if (ShowDialog)
 {
     <Dialog OnFadeOut="@(() => ShowDialog = false)" OnDismiss="@((e) =>  e.FadeOut())" Header="iSketch.app Beta CI">This instance of iSketch.app is in active development, this site may restart at any time.</Dialog>
 }
 -->
+
+
+
+<div style="width:200px;">
+    <CText Label="Password" Type="password" ValueChanged="(v) => passInput = v" />
+    <br />
+    <CButton OnClick='() => {
+        new System.Random().NextBytes(passSalt);
+        Argon2i a2 = new(System.Text.Encoding.ASCII.GetBytes(passInput))
+        {
+            DegreeOfParallelism = 1,
+            MemorySize = 4882,
+            Salt = passSalt,
+            Iterations = 64
+        };
+        passBytes = a2.GetBytes(128);
+        //StateHasChanged();
+    }'>Compute Hash</CButton>
+
+    <br />
+    <pre>
+Pass Val: @passInput
+Salt Out:
+@Convert.ToHexString(passSalt)
+Hash Out: 
+@Convert.ToHexString(passBytes)
+    </pre>
+</div>
+
+
+
+
+<br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 
 
 <a href="/Administration">Administration</a> <br />
@@ -47,4 +82,12 @@
     {
         await timer.StartTimer();
     }
+
+
+
+
+
+    public string passInput { get; set; } = "";
+    public byte[] passSalt { get; set; } = new byte[128];
+    public byte[] passBytes { get; set; } = new byte[128];
 }
