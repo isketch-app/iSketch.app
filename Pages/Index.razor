@@ -2,7 +2,7 @@
 @using iSketch.app.Shared.Game.Timer;
 @using iSketchTimer = iSketch.app.Shared.Game.Timer.Timer;
 
-@using Konscious.Security.Cryptography; 
+@inject PassHashQueue phq; 
 
 <!--<Timer @ref="timer" />
 @if (ShowDialog)
@@ -12,20 +12,13 @@
 -->
 
 
-
 <div style="width:200px;">
     <CText Label="Password" Type="password" ValueChanged="(v) => passInput = v" />
     <br />
     <CButton OnClick='async () => {
-        new System.Random().NextBytes(passSalt);
-        Argon2i a2 = new(System.Text.Encoding.ASCII.GetBytes(passInput))
-        {
-            DegreeOfParallelism = 1,
-            MemorySize = 4882,
-            Salt = passSalt,
-            Iterations = 64
-        };
-        passBytes = await a2.GetBytesAsync(128);
+        PassHashResult res = await phq.GenerateHash(passInput);
+        passSalt = res.Salt;
+        passBytes = res.Hash;
     }'>Compute Hash</CButton>
 
     <br />
@@ -37,8 +30,6 @@ Hash Out:
 @Convert.ToHexString(passBytes)
     </pre>
 </div>
-
-
 
 
 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
@@ -81,9 +72,6 @@ Hash Out:
     {
         await timer.StartTimer();
     }
-
-
-
 
 
     public string passInput { get; set; } = "";
