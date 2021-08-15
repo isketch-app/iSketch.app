@@ -7,7 +7,7 @@
     }
     <span class="text">@ChildContent</span>
     <div class="load">
-        <span></span>
+        <span class="spinner"></span>
     </div>
 </button>
 
@@ -20,11 +20,15 @@
     public RenderFragment ChildContent { get; set; }
     [Parameter]
     public EmphasisStyles Emphasis { get; set; } = EmphasisStyles.High;
+    private bool IsClickedAlready = false;
     private string ID = "x" + Guid.NewGuid().ToString();
     private async void CButtClick(MouseEventArgs e)
     {
+        if (IsClickedAlready) return;
+        IsClickedAlready = true;
         await OnClick.InvokeAsync(e);
         await js.InvokeVoidAsync("eval", "try { document.getElementById('" + ID + "').classList.remove('clicked'); } catch(e) { }");
+        IsClickedAlready = false;
     }
     public enum EmphasisStyles : int
     {
