@@ -9,9 +9,10 @@ namespace iSketch.app.Services
     public class PassHashQueue
     {
         public bool QueueRunning = false;
-        public Task<PassHashResult> GenerateHash(string Password)
+        public Task<PassHashResult> GenerateHash(PassHashRequest Request)
         {
-            Task<PassHashResult> tsk = new(RunHashAction, Password);
+            if (Request.Pass == null || Request.Pass == "") return Task.FromResult<PassHashResult>(null);
+            Task<PassHashResult> tsk = new(RunHashAction, Request);
             Queue.Enqueue(tsk);
             if (!QueueRunning) _ = RunQueue();
             return tsk;
@@ -34,20 +35,24 @@ namespace iSketch.app.Services
             });
         }
         private ConcurrentQueue<Task<PassHashResult>> Queue = new();
-        private Func<object, PassHashResult> RunHashAction = (object Password) =>
+        private Func<object, PassHashResult> RunHashAction = (object Request) =>
         {
-            byte[] passSalt = new byte[128];
-            new Random().NextBytes(passSalt);
-            Argon2i a2 = new(Encoding.ASCII.GetBytes((string)Password))
+            PassHashRequest req = (PassHashRequest)Request;
+            if (req.Salt == null)
+            {
+                req.Salt = new byte[128];
+                new Random().NextBytes(req.Salt);
+            }
+            Argon2i a2 = new(Encoding.ASCII.GetBytes(req.Pass))
             {
                 DegreeOfParallelism = 1,
                 MemorySize = 4882,
-                Salt = passSalt,
+                Salt = req.Salt,
                 Iterations = 64
             };
             return new PassHashResult()
             {
-                Salt = passSalt,
+                Salt = req.Salt,
                 Hash = a2.GetBytes(128)
             };
         };
@@ -55,5 +60,10 @@ namespace iSketch.app.Services
     public class PassHashResult {
         public byte[] Salt;
         public byte[] Hash;
+    }
+    public class PassHashRequest
+    {
+        public byte[] Salt;
+        public string Pass;
     }
 }

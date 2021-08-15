@@ -16,7 +16,8 @@
     <CText Label="Password" Type="password" ValueChanged="(v) => passInput = v" />
     <br />
     <CButton OnClick='async () => {
-        PassHashResult res = await phq.GenerateHash(passInput);
+        PassHashResult res = await phq.GenerateHash(new() { Pass = passInput });
+        if (res == null) return;
         passSalt = res.Salt;
         passBytes = res.Hash;
     }'>Compute Hash</CButton>
