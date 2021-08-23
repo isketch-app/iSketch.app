@@ -1,86 +1,79 @@
 @page "/"
-@using iSketch.app.Shared.Game.Timer;
-@using iSketchTimer = iSketch.app.Shared.Game.Timer.Timer;
 
+@inject Database db; 
 @inject PassHashQueue phq; 
-
-<!--<Timer @ref="timer" />
-@if (ShowDialog)
-{
-    <Dialog OnFadeOut="@(() => ShowDialog = false)" OnDismiss="@((e) =>  e.FadeOut())" Header="iSketch.app Beta CI">This instance of iSketch.app is in active development, this site may restart at any time.</Dialog>
-}
--->
+@inject User user; 
 
 
-<div style="width:200px;">
-    <CText Label="Password" Type="password" ValueChanged="(v) => passInput = v" />
+<div style="width:300px;">
+    <Authenticated Invert="true">
+        <CText Label="User Name" ValueChanged="(v) => UserName = v"></CText>
+        <br />
+    </Authenticated>
+    <CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText>
     <br />
-    <CButton OnClick='async () => {
-        PassHashResult res = await phq.GenerateHash(new() { Pass = passInput });
-        if (res == null) return;
-        passSalt = res.Salt;
-        passBytes = res.Hash;
-    }'>Compute Hash</CButton>
-
-    <br />
-    <pre>
-Pass Val: @passInput
-Salt Out:
-@Convert.ToHexString(passSalt)
-Hash Out: 
-@Convert.ToHexString(passBytes)
-    </pre>
+    <Authenticated Invert="true">
+        <CButton OnClick="Logon">Logon</CButton>
+        <br /><br />
+        <CButton OnClick="CreateAccount">Create Account</CButton>
+        <br /><br />
+    </Authenticated>
+    <Authenticated>
+        <CButton OnClick="SetPassword">Set Password</CButton>
+        <br /><br />
+        <CButton OnClick="() => user.Logoff()">Logoff</CButton>
+        <br /><br />
+    </Authenticated>
+    @SuccessStatus
+    <br /><br /><br /><br />
 </div>
 
-<br /><br />
-
-<CButton Emphasis="Emphasis.High" OnClick="async () => await Task.Delay(10000)">Test 1</CButton><br /><br />
-<CButton Emphasis="Emphasis.Medium" OnClick="async () => await Task.Delay(10000)">Test 2</CButton><br /><br />
-<CButton Emphasis="Emphasis.Low" OnClick="async () => await Task.Delay(10000)">Test 3</CButton><br /><br />
-
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 
 
 <a href="/Administration">Administration</a> <br />
 
-<Authenticated Invert="true">
-    You are not logged in!
-    <iSketch.app.Shared.Login.LoginDialog />
-</Authenticated>
-
-
-<Authorized MatchAny="true" PermissionsA="PMA.PlaceHolder | PMA.Administration">
-    PlaceHolder OR Administration <br />
-</Authorized>
-
-<Authorized MatchAny="false" PermissionsA="PMA.PlaceHolder | PMA.Administration">
-    PlaceHolder AND Administration <br />
-</Authorized>
-
-<Authorized PermissionsA="PMA.Administration">
-    Administration <br />
-</Authorized>
-
-<Authorized PermissionsA="PMA.PlaceHolder">
-    Placeholder <br />
-</Authorized>
 
 
 @code {
-    public bool ShowDialog = true;
-    public iSketchTimer timer;
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        //timer.TimerInitialized += TimerReady;
-        return base.OnAfterRenderAsync(firstRender);
-    }
-    private async void TimerReady(object o, EventArgs e)
-    {
-        await timer.StartTimer();
-    }
+    public string UserName { get; set; }
+    public string Password { get; set; }
 
+    public string SuccessStatus { get; set; }
 
-    public string passInput { get; set; } = "";
-    public byte[] passSalt { get; set; } = new byte[128];
-    public byte[] passBytes { get; set; } = new byte[128];
+    public void Logon()
+    {
+        SuccessStatus = "Working...";
+        if (user.Logon(UserName, Password))
+        {
+            SuccessStatus = "Success!";
+        }
+        else
+        {
+            SuccessStatus = "Fail.";
+        }
+    }
+    public void CreateAccount()
+    {
+        SuccessStatus = "Working...";
+        if (UserTools.CreateUser(db, UserName) != Guid.Empty)
+        {
+            SuccessStatus = "Success!";
+        }
+        else
+        {
+            SuccessStatus = "Fail.";
+        }
+    }
+    public void SetPassword()
+    {
+        SuccessStatus = "Working...";
+        if (user.ChangePassword(Password))
+        {
+            SuccessStatus = "Success!";
+        }
+        else
+        {
+            SuccessStatus = "Fail.";
+        }
+    }
 }

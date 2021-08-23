@@ -55,11 +55,13 @@ namespace iSketch.app.Data
             {
                 while (sRead.Read())
                 {
-                    byte[] bytes = new byte[8];
-                    sRead.GetBytes(0, 0, bytes, 0, 8);
-                    perms.PermissionsA = perms.PermissionsA | (PermissionsA)BitConverter.ToUInt64(bytes, 0);
-                    sRead.GetBytes(1, 0, bytes, 0, 8);
-                    perms.PermissionsB = perms.PermissionsB | (PermissionsB)BitConverter.ToUInt64(bytes, 0);
+                    byte[] bytes;
+                    bytes = new byte[8];
+                    if(!sRead.IsDBNull(0)) sRead.GetBytes(0, 0, bytes, 0, 8);
+                    perms.PermissionsA |= (PermissionsA)BitConverter.ToUInt64(bytes, 0);
+                    bytes = new byte[8];
+                    if (!sRead.IsDBNull(1)) sRead.GetBytes(1, 0, bytes, 0, 8);
+                    perms.PermissionsB |= (PermissionsB)BitConverter.ToUInt64(bytes, 0);
                 }
             }
             sRead.Close();

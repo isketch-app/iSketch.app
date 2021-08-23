@@ -28,7 +28,14 @@ namespace iSketch.app.Services
             if (reader.HasRows)
             {
                 reader.Read();
-                if (!reader.IsDBNull(0)) UserID = reader.GetGuid(0);
+                if (reader.IsDBNull(0)) 
+                {
+                    UserID = Guid.Empty;
+                }
+                else
+                {
+                    UserID = reader.GetGuid(0);
+                }
                 cmd.CommandText = "UPDATE [Security.Sessions] SET SessionTime = GETDATE(), SessionIP = @IPADDR@, SessionIPVersion = @IPVER@ WHERE SessionID = @SESSID@";
             }
             else
