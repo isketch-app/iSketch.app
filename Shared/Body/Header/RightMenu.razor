@@ -1,4 +1,6 @@
-﻿<span>
+﻿@inject User user; 
+
+<span>
     <RightMenuItem FMID="user" Icon="" />
     <RightMenuItem FMID="general" Icon="" />
 </span>
@@ -8,11 +10,22 @@
         <div class="u-bg">
             <div class="u-image"></div>
         </div>
-        <div class="u-name">@@BabySmith21</div>
+        <Authenticated>
+            <div class="u-name">@@@(user.UserName)</div>
+        </Authenticated>
+        <Authenticated Invert="true">
+            <div class="u-name">iSketch.app</div>
+        </Authenticated>
     </div>
     <div fmid class="u-menu">
-        <CMenuItem Icon="" Text="Sign in" />
-        <CMenuItem Icon="" Text="Sign up" />
+        <Authenticated>
+            <CMenuItem Icon="" Text="Preferences" />
+            <CMenuItem Icon="" Text="Sign out" OnClick="() => user.Logoff()" />
+        </Authenticated>
+        <Authenticated Invert="true">
+            <CMenuItem Icon="" Text="Sign in" />
+            <CMenuItem Icon="" Text="Sign up" />
+        </Authenticated>
     </div>
 </FloaterMenu>
 
@@ -23,8 +36,3 @@
         <a href="/Help"><CMenuItem Icon="" Text="Help" /></a>
     </div>
 </FloaterMenu>
-
-@code {
-    private bool UserMenuVisible { get; set; }
-    private bool GeneralMenuVisible { get; set; }
-}

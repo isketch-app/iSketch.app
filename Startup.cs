@@ -24,7 +24,8 @@ namespace iSketch.app
             services.AddHealthChecks();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton(new EventHook());
+            services.AddSingleton(new EventHookGlobal());
+            services.AddScoped<EventHookScoped>();
             services.AddSingleton(new Database());
             services.AddScoped<Session>();
             services.AddScoped<User>();

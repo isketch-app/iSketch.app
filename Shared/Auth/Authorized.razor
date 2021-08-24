@@ -1,4 +1,5 @@
 ﻿@inject User user
+@inject EventHookScoped EHS
 
 @if (IsAuthorized())
 {
@@ -23,5 +24,14 @@
         if (MatchAny && user.Permissions.HasAnyPermission(PermissionsA, PermissionsB)) ret = true;
         if (Invert) ret = !ret;
         return ret;
+    }
+    protected override void OnParametersSet()
+    {
+        EHS.LoginLogoutStatusChanged += OnLoginLogoutStatusChange;
+        base.OnParametersSet();
+    }
+    private void OnLoginLogoutStatusChange(object o, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

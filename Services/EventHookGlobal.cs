@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace iSketch.app.Services
 {
-    public class EventHook
+    public class EventHookGlobal
     {
         public event EventHandler AdminWordsChanged;
         public void OnAdminWordsChanged()

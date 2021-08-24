@@ -8,19 +8,42 @@ namespace iSketch.app.Services
     public class User
     {
         public Session Session;
-        public Permissions Permissions = new Permissions();
+        public Permissions Permissions = new();
+        public string UserName;
         private Database Database;
         private PassHashQueue PHQ;
-        public User(Session Session, Database Database, PassHashQueue PHQ)
+        private EventHookScoped EHS;
+        public User(Session Session, Database Database, PassHashQueue PHQ, EventHookScoped EHS)
         {
             this.Database = Database;
             this.Session = Session;
             this.PHQ = PHQ;
+            this.EHS = EHS;
+            Init();
+        }
+        public void Init()
+        {
             ReloadPermissionsFromDatabase();
+            ReloadUserData();
         }
         public void ReloadPermissionsFromDatabase()
         {
             Permissions = Database.Connection.ReadPermissionsFromDatabase(Session.UserID);
+        }
+        public void ReloadUserData()
+        {
+            SqlCommand cmd = Database.Connection.CreateCommand();
+            cmd.Parameters.AddWithValue("@USERID@", Session.UserID);
+            cmd.CommandText = "SELECT [UserName], [Settings.DarkMode] FROM [Security.Users] WHERE UserID = @USERID@";
+            SqlDataReader rdr = cmd.ExecuteReader();
+            if (!rdr.HasRows)
+            {
+                rdr.Close();
+                return;
+            }
+            rdr.Read();
+            UserName = rdr.GetString(0);
+            rdr.Close();
         }
         public bool Logon(string UserName, string Password = null)
         {
@@ -67,7 +90,8 @@ namespace iSketch.app.Services
                 int affected = cmd.ExecuteNonQuery();
                 if (affected != 1) return false;
                 Session.RegisterSession();
-                ReloadPermissionsFromDatabase();
+                Init();
+                EHS.OnLoginLogoutStatusChanged();
                 return true;
             }
             catch (Exception)
@@ -85,7 +109,8 @@ namespace iSketch.app.Services
                 int affected = cmd.ExecuteNonQuery();
                 if (affected != 1) return false;
                 Session.RegisterSession();
-                ReloadPermissionsFromDatabase();
+                Init();
+                EHS.OnLoginLogoutStatusChanged();
                 return true;
             }
             catch (Exception)
@@ -147,5 +172,9 @@ namespace iSketch.app.Services
                 return Guid.Empty;
             }
         }
+    }
+    public class UserSettings
+    {
+        public bool DarkMode;
     }
 }
