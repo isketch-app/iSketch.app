@@ -2,6 +2,7 @@
 using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace iSketch.app.Services
 {
@@ -171,6 +172,35 @@ namespace iSketch.app.Services
             {
                 return Guid.Empty;
             }
+        }
+        public static Guid GetUserID(Database Database, string UserName)
+        {
+            try
+            {
+                SqlCommand cmd = Database.Connection.CreateCommand();
+                cmd.Parameters.AddWithValue("@USERNAME@", UserName);
+                cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE UserName = @USERNAME@";
+                object oUserID = cmd.ExecuteScalar();
+                if (oUserID == null)
+                {
+                    return Guid.Empty;
+                }
+                else
+                {
+                    return (Guid)oUserID;
+                }
+            }
+            catch (Exception)
+            {
+                return Guid.Empty;
+            }
+        }
+        public static bool IsValidUserIDString(string UserName)
+        {
+            int maxLength = 25;
+            if (UserName.Length > maxLength) return false;
+            string regexPolicy = "[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]";
+            return Regex.IsMatch(UserName, regexPolicy);
         }
     }
     public class UserSettings

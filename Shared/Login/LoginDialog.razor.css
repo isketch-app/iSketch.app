@@ -7,3 +7,26 @@
 ::deep.idp-buttons .CButton:not(:last-child) {
     margin-bottom: 15px;
 }
+.warning {
+    color: #420042;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background-color: #ffdbff;
+    font-size: 15px;
+    padding: 10px 15px;
+    border-radius: 50px;
+    text-align: center;
+    margin-bottom: 30px;
+    animation: .3s in;
+}
+
+@keyframes in {
+    from {
+        opacity: 0;
+        margin-bottom: -38px;
+    }
+    to {
+        opacity: 1;
+        margin-bottom: 30px;
+    }
+}

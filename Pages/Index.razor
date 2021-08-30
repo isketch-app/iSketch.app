@@ -5,6 +5,12 @@
 @inject User user; 
 
 
+<Authenticated Invert="true">
+    <iSketch.app.Shared.Login.LoginDialog />
+</Authenticated>
+
+
+
 <div style="width:300px;">
     <Authenticated Invert="true">
         <CText Label="User Name" ValueChanged="(v) => UserName = v"></CText>

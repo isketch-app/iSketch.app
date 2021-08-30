@@ -1,11 +1,21 @@
-﻿<Dialog Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
+﻿@inject Services.Database db
+
+<Dialog Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
+    @if (Warning != "")
+    {
+        <div class="warning">@Warning</div>
+    }
     @if (CurrentStage == Stage.UserName)
     {
         <p>This will be your screen-name throughout the game.</p>
         <br />
-        <CText Icon="" Label="Username" />
+        <CText Icon="" Label="Username" Value="@UserName" ValueChanged="(v) => UserName = v" />
         <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage++">Next</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick='() => { 
+                Warning = "";
+                CurrentStage = Stage.HelpUserName;
+            }'>Help</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="StageUserName_Next">Next</CButton>
         </DialogButtonContainer>
     }
     @if (CurrentStage == Stage.PasswordExisting)
@@ -44,18 +54,35 @@
             <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Cancel</CButton>
         </DialogButtonContainer>
     }
+    @if (CurrentStage == Stage.HelpUserName)
+    {
+        <p>
+            iSketch.app usernames must satisfy the following conditions:
+        </p>
+        <ul>
+            <li>Must not contain whitespace.</li>
+            <li>Must be less or equal to 25 characters in length.</li>
+            <li>Can only contain: a-z, A-Z, 0-9, and any special character on a US keyboard.</li>
+        </ul>
+        <DialogButtonContainer>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
+        </DialogButtonContainer>
+    }
 </Dialog>
 
 @code {
     private Stage CurrentStage = Stage.UserName;
     private Dialog Dialog;
+    private string UserName = "";
+    private string Warning = "";
     private string[] Headers = new string[]
     {
         "Unknown",
-        "Choose a username",
+        "Enter a username",
         "Enter your password",
         "Sign up (recommended)",
-        "Choose an identity provider"
+        "Choose an identity provider",
+        "Help with usernames"
     };
     private enum Stage : int
     {
@@ -63,6 +90,27 @@
         UserName = 1,
         PasswordExisting = 2,
         PasswordNew = 3,
-        ThirdParty = 4
+        ThirdParty = 4,
+        HelpUserName = 5
+    }
+    private void StageUserName_Next()
+    {
+        if (UserTools.IsValidUserIDString(UserName))
+        {
+            Warning = "";
+        }
+        else
+        {
+            Warning = "Please enter a valid username.";
+            return;
+        }
+        if (UserTools.GetUserID(db, UserName) == Guid.Empty)
+        {
+            CurrentStage = Stage.PasswordNew;
+        }
+        else
+        {
+            CurrentStage = Stage.PasswordExisting;
+        }
     }
 }
