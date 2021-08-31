@@ -154,7 +154,7 @@
             Warning = "Your passwords do not match.";
             return;
         }
-        if (!MailAddress.TryCreate(Email, out mail))
+        if (Email != "" && !MailAddress.TryCreate(Email, out mail))
         {
             Warning = "You entered an invalid email address.";
             return;
