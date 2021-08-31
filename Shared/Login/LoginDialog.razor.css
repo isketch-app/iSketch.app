@@ -1,12 +1,15 @@
 ﻿p {
     font-size: 14px;
 }
+
 ::deep.idp-buttons .CButton {
     width: 100%;
 }
+
 ::deep.idp-buttons .CButton:not(:last-child) {
     margin-bottom: 15px;
 }
+
 .warning {
     color: #420042;
     font-weight: 600;
@@ -25,6 +28,7 @@
         opacity: 0;
         margin-bottom: -38px;
     }
+
     to {
         opacity: 1;
         margin-bottom: 30px;

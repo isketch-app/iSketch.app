@@ -3,6 +3,7 @@ using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Net.Mail;
 
 namespace iSketch.app.Services
 {
@@ -46,6 +47,26 @@ namespace iSketch.app.Services
             UserName = rdr.GetString(0);
             rdr.Close();
         }
+        public bool Logon(Guid UserID)
+        {
+            try
+            {
+                SqlCommand cmd = Database.Connection.CreateCommand();
+                cmd.Parameters.AddWithValue("@USERID@", UserID);
+                cmd.Parameters.AddWithValue("@SESSIONID@", Session.SessionID);
+                cmd.CommandText = "UPDATE [Security.Sessions] SET [UserID] = @USERID@ WHERE SessionID = @SESSIONID@";
+                int affected = cmd.ExecuteNonQuery();
+                if (affected != 1) return false;
+                Session.RegisterSession();
+                Init();
+                EHS.OnLoginLogoutStatusChanged();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         public bool Logon(string UserName, string Password = null)
         {
             if (Password == "") Password = null;
@@ -84,16 +105,7 @@ namespace iSketch.app.Services
                 {
                     rdr.Close();
                 }
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@USERID@", UserID);
-                cmd.Parameters.AddWithValue("@SESSIONID@", Session.SessionID);
-                cmd.CommandText = "UPDATE [Security.Sessions] SET [UserID] = @USERID@ WHERE SessionID = @SESSIONID@";
-                int affected = cmd.ExecuteNonQuery();
-                if (affected != 1) return false;
-                Session.RegisterSession();
-                Init();
-                EHS.OnLoginLogoutStatusChanged();
-                return true;
+                return Logon(UserID);
             }
             catch (Exception)
             {
@@ -173,6 +185,23 @@ namespace iSketch.app.Services
                 return Guid.Empty;
             }
         }
+        public static bool SetUserSetting(Database Database, Guid UserID, UserSettings Setting, string Value)
+        {
+            try
+            {
+                SqlCommand cmd = Database.Connection.CreateCommand();
+                cmd.Parameters.AddWithValue("@USERID@", UserID);
+                cmd.Parameters.AddWithValue("@VALUE@", Value);
+                cmd.CommandText = "UPDATE [Security.Users] SET " + Setting.ToString() + " = @VALUE@ WHERE UserID = @USERID@";
+                int affected = cmd.ExecuteNonQuery();
+                return (affected == 1);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public static Guid GetUserID(Database Database, string UserName)
         {
             try
@@ -202,9 +231,34 @@ namespace iSketch.app.Services
             string regexPolicy = "[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]";
             return Regex.IsMatch(UserName, regexPolicy);
         }
+        public static bool UserHasPasswordSet(Database Database, Guid UserID)
+        {
+            try
+            {
+                SqlCommand cmd = Database.Connection.CreateCommand();
+                cmd.Parameters.AddWithValue("@USERID@", UserID);
+                cmd.CommandText = "SELECT Password FROM [Security.Users] WHERE UserID = @USERID@";
+                SqlDataReader rdr = cmd.ExecuteReader();
+                rdr.Read();
+                if (rdr.IsDBNull(0))
+                {
+                    rdr.Close();
+                    return false;
+                }
+                else
+                {
+                    rdr.Close();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
-    public class UserSettings
+    public enum UserSettings
     {
-        public bool DarkMode;
+        Email
     }
 }

@@ -1,4 +1,6 @@
-﻿@inject Services.Database db
+﻿@using System.Net.Mail;
+@inject Services.User user
+@inject Services.Database db
 
 <Dialog Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
     @if (Warning != "")
@@ -11,10 +13,7 @@
         <br />
         <CText Icon="" Label="Username" Value="@UserName" ValueChanged="(v) => UserName = v" />
         <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick='() => { 
-                Warning = "";
-                CurrentStage = Stage.HelpUserName;
-            }'>Help</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.HelpUserName">Help</CButton>
             <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="StageUserName_Next">Next</CButton>
         </DialogButtonContainer>
     }
@@ -22,25 +21,25 @@
     {
         <p>The username you selected is locked with a password, please enter it below.</p>
         <br />
-        <CText Icon="" Label="Password" Type="password" />
+        <CText Icon="" Label="Password" Type="password" Value="@Password" ValueChanged="(v) => Password = v" />
         <DialogButtonContainer>
             <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage++">Login</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="StagePasswordExisting_Login">Login</CButton>
         </DialogButtonContainer>
     }
     @if (CurrentStage == Stage.PasswordNew)
     {
         <p>Optionally, lock your username with a password or a third party account.</p>
         <br />
-        <CText Icon="" Label="Password (Optional)" Type="password" />
+        <CText Icon="" Label="Password (Optional)" Type="password" Value="@Password" ValueChanged="(v) => Password = v" />
         <br />
-        <CText Icon="" Label="Password (Confirm)" Type="password" />
+        <CText Icon="" Label="Password (Confirm)" Type="password" Value="@Password2" ValueChanged="(v) => Password2 = v" />
         <br />
-        <CText Icon="" Label="Recovery Email (Optional)" />
+        <CText Icon="" Label="Recovery Email (Optional)" Value="@Email" ValueChanged="(v) => Email = v" />
         <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ThirdParty">Use a third party</CButton>
+            <!--<CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ThirdParty">Use a third party</CButton>-->
             <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage++">Done</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="StagePasswordNew_Done">Done</CButton>
         </DialogButtonContainer>
     }
     @if (CurrentStage == Stage.ThirdParty)
@@ -71,9 +70,24 @@
 </Dialog>
 
 @code {
-    private Stage CurrentStage = Stage.UserName;
+    private Stage rCurrentStage = Stage.UserName;
+    private Stage CurrentStage
+    {
+        get
+        {
+            return rCurrentStage;
+        }
+        set
+        {
+            Warning = "";
+            rCurrentStage = value;
+        }
+    }
     private Dialog Dialog;
     private string UserName = "";
+    private string Password = "";
+    private string Password2 = "";
+    private string Email = "";
     private string Warning = "";
     private string[] Headers = new string[]
     {
@@ -104,13 +118,61 @@
             Warning = "Please enter a valid username.";
             return;
         }
-        if (UserTools.GetUserID(db, UserName) == Guid.Empty)
+        Guid uid = UserTools.GetUserID(db, UserName);
+        if (uid == Guid.Empty)
         {
             CurrentStage = Stage.PasswordNew;
         }
         else
         {
-            CurrentStage = Stage.PasswordExisting;
+            if (UserTools.UserHasPasswordSet(db, uid))
+            {
+                CurrentStage = Stage.PasswordExisting;
+            }
+            else
+            {
+                CurrentStage = Stage.PasswordNew;
+            }
         }
+    }
+    private void StagePasswordExisting_Login()
+    {
+        if (user.Logon(UserName, Password))
+        {
+            _ = Dialog.FadeOut();
+        }
+        else
+        {
+            Warning = "Password is incorrect!";
+        }
+    }
+    private void StagePasswordNew_Done()
+    {
+        MailAddress mail = null;
+        if (Password != "" && Password != Password2)
+        {
+            Warning = "Your passwords do not match.";
+            return;
+        }
+        if (!MailAddress.TryCreate(Email, out mail))
+        {
+            Warning = "You entered an invalid email address.";
+            return;
+        }
+        Guid uid = UserTools.GetUserID(db, UserName);
+        if (uid == Guid.Empty)
+        {
+            uid = UserTools.CreateUser(db, UserName);
+        }
+        user.Logon(uid);
+        if (Password != "")
+        {
+            user.ChangePassword(Password);
+        }
+        if (mail != null)
+        {
+            UserTools.SetUserSetting(db, uid, UserSettings.Email, mail.Address);
+        }
+        _ = Dialog.FadeOut();
     }
 }

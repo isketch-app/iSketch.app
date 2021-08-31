@@ -1,85 +1,9 @@
 @page "/"
 
-@inject Database db; 
-@inject PassHashQueue phq; 
-@inject User user; 
-
-
 <Authenticated Invert="true">
     <iSketch.app.Shared.Login.LoginDialog />
 </Authenticated>
 
-
-
-<div style="width:300px;">
-    <Authenticated Invert="true">
-        <CText Label="User Name" ValueChanged="(v) => UserName = v"></CText>
-        <br />
-    </Authenticated>
-    <CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText>
-    <br />
-    <Authenticated Invert="true">
-        <CButton OnClick="Logon">Logon</CButton>
-        <br /><br />
-        <CButton OnClick="CreateAccount">Create Account</CButton>
-        <br /><br />
-    </Authenticated>
-    <Authenticated>
-        <CButton OnClick="SetPassword">Set Password</CButton>
-        <br /><br />
-        <CButton OnClick="() => user.Logoff()">Logoff</CButton>
-        <br /><br />
-    </Authenticated>
-    @SuccessStatus
-    <br /><br /><br /><br />
-</div>
-
-
-
-<a href="/Administration">Administration</a> <br />
-
-
-
-@code {
-    public string UserName { get; set; }
-    public string Password { get; set; }
-
-    public string SuccessStatus { get; set; }
-
-    public void Logon()
-    {
-        SuccessStatus = "Working...";
-        if (user.Logon(UserName, Password))
-        {
-            SuccessStatus = "Success!";
-        }
-        else
-        {
-            SuccessStatus = "Fail.";
-        }
-    }
-    public void CreateAccount()
-    {
-        SuccessStatus = "Working...";
-        if (UserTools.CreateUser(db, UserName) != Guid.Empty)
-        {
-            SuccessStatus = "Success!";
-        }
-        else
-        {
-            SuccessStatus = "Fail.";
-        }
-    }
-    public void SetPassword()
-    {
-        SuccessStatus = "Working...";
-        if (user.ChangePassword(Password))
-        {
-            SuccessStatus = "Success!";
-        }
-        else
-        {
-            SuccessStatus = "Fail.";
-        }
-    }
-}
+<Authenticated>
+    <a href="/Administration">Administration</a>
+</Authenticated>
