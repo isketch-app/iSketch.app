@@ -1,9 +1,31 @@
 @page "/"
+@inject NavigationManager nm;
+
+@using System.Web; 
 
 <Authenticated Invert="true">
     <iSketch.app.Shared.Login.LoginDialog />
 </Authenticated>
 
-<Authenticated>
+<Authorized PermissionsA="PMA.Administration">
     <a href="/Administration">Administration</a>
-</Authenticated>
+</Authorized>
+
+<center>
+    <br />
+    <img src="./static/images/isketch.svg" />
+</center>
+<h3>We are not ready quite yet!</h3>
+<hr />
+<p>
+    iSketch.app is in early, active development, you can track the progress on <a target="_blank" href="https://github.com/isketch-app/iSketch.app">GitHub</a>
+    or on our website at <a target="_blank" href="https://isketch.app">iSketch.app</a>.
+</p>
+<p>
+    iSketch.app will be an online, multi-player drawing / guessing word game, if you sign up today, your user-name will be reserved when the game
+    goes live.
+</p>
+<p>
+    Our target go-live date is sometime before Christmas 2021. Feel free to check back anytime, a beta version of the game may be live to the
+    public before our go-live date.
+</p>
