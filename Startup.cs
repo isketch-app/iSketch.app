@@ -24,9 +24,10 @@ namespace iSketch.app
             services.AddHealthChecks();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton(new EventHookGlobal());
+            services.AddSingleton<EventHookGlobal>();
             services.AddScoped<EventHookScoped>();
-            services.AddSingleton(new Database());
+            services.AddSingleton<Database>();
+            services.AddSingleton<OpenID.OpenID>();
             services.AddScoped<Session>();
             services.AddScoped<User>();
             services.AddSingleton(new PassHashQueue());
@@ -50,7 +51,7 @@ namespace iSketch.app
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/dynamic/{File}.{Ext}", Dynamic.Delegate);
-                endpoints.MapGet("/_SSO/_OpenID/Login/{UserID}", iDP.OpenID.Endpoints.Login);
+                endpoints.MapGet("/_OpenID/{IdpID}/Login", OpenID.Endpoints.Login);
                 endpoints.MapHealthChecks("/_Health");
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
