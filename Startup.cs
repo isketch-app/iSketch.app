@@ -27,7 +27,6 @@ namespace iSketch.app
             services.AddSingleton<EventHookGlobal>();
             services.AddScoped<EventHookScoped>();
             services.AddSingleton<Database>();
-            services.AddSingleton<OpenID.OpenID>();
             services.AddScoped<Session>();
             services.AddScoped<User>();
             services.AddSingleton(new PassHashQueue());

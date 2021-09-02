@@ -13,6 +13,7 @@ namespace iSketch.app.Data
         public static Session InitializeSession(this HttpContext con)
         {
             Session session = new Session();
+            session.db = (Database)con.RequestServices.GetService(typeof(Database));
             string host;
             string proto;
             if (con.Request.Headers.ContainsKey("X-Forwarded-Host") &&
@@ -65,6 +66,7 @@ namespace iSketch.app.Data
                     session.Existing = true;
                 }
             }
+            session.RegisterSession();
             return session;
         }
     }

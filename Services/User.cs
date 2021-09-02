@@ -49,23 +49,10 @@ namespace iSketch.app.Services
         }
         public bool Logon(Guid UserID)
         {
-            try
-            {
-                SqlCommand cmd = Database.Connection.CreateCommand();
-                cmd.Parameters.AddWithValue("@USERID@", UserID);
-                cmd.Parameters.AddWithValue("@SESSIONID@", Session.SessionID);
-                cmd.CommandText = "UPDATE [Security.Sessions] SET [UserID] = @USERID@ WHERE SessionID = @SESSIONID@";
-                int affected = cmd.ExecuteNonQuery();
-                if (affected != 1) return false;
-                Session.RegisterSession();
-                Init();
-                EHS.OnLoginLogoutStatusChanged();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            bool success = UserTools.Logon(Session, UserID);
+            Init();
+            EHS.OnLoginLogoutStatusChanged();
+            return success;
         }
         public bool Logon(string UserName, string Password = null)
         {
@@ -114,22 +101,10 @@ namespace iSketch.app.Services
         }
         public bool Logoff()
         {
-            try
-            {
-                SqlCommand cmd = Database.Connection.CreateCommand();
-                cmd.Parameters.AddWithValue("@SESSIONID@", Session.SessionID);
-                cmd.CommandText = "UPDATE [Security.Sessions] SET UserID = NULL WHERE SessionID = @SESSIONID@";
-                int affected = cmd.ExecuteNonQuery();
-                if (affected != 1) return false;
-                Session.RegisterSession();
-                Init();
-                EHS.OnLoginLogoutStatusChanged();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            bool success = UserTools.Logoff(Session);
+            Init();
+            EHS.OnLoginLogoutStatusChanged();
+            return success;
         }
         public bool ChangePassword(string NewPassword = null)
         {
@@ -138,6 +113,41 @@ namespace iSketch.app.Services
     }
     public static class UserTools
     {
+        public static bool Logon(Session session, Guid UserID)
+        {
+            try
+            {
+                SqlCommand cmd = session.db.Connection.CreateCommand();
+                cmd.Parameters.AddWithValue("@USERID@", UserID);
+                cmd.Parameters.AddWithValue("@SESSIONID@", session.SessionID);
+                cmd.CommandText = "UPDATE [Security.Sessions] SET [UserID] = @USERID@ WHERE SessionID = @SESSIONID@";
+                int affected = cmd.ExecuteNonQuery();
+                if (affected != 1) return false;
+                session.RegisterSession();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public static bool Logoff(Session session)
+        {
+            try
+            {
+                SqlCommand cmd = session.db.Connection.CreateCommand();
+                cmd.Parameters.AddWithValue("@SESSIONID@", session.SessionID);
+                cmd.CommandText = "UPDATE [Security.Sessions] SET UserID = NULL WHERE SessionID = @SESSIONID@";
+                int affected = cmd.ExecuteNonQuery();
+                if (affected != 1) return false;
+                session.RegisterSession();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         public static bool ChangePassword(Database Database, PassHashQueue PHQ, Guid UserID, string NewPassword = null)
         {
             if (NewPassword == "") NewPassword = null;
