@@ -11,9 +11,9 @@ namespace iSketch.app.OpenID
 {
     public static class OpenID
     {
-        public static List<idP> GetIDPs(Session session, bool includeDisabled = false)
+        public static List<idP> GetIDPs(Database db, bool includeDisabled = false)
         {
-            SqlCommand cmd = session.db.Connection.CreateCommand();
+            SqlCommand cmd = db.Connection.CreateCommand();
             cmd.CommandText = "SELECT IdpID, DisplayName, DisplayIcon, Enabled, ClientID, AuthorizationEndpoint FROM [Security.OpenID]";
             if (!includeDisabled)
             {
@@ -22,19 +22,50 @@ namespace iSketch.app.OpenID
             cmd.CommandText += " ORDER BY DisplayOrder";
             SqlDataReader rdr = cmd.ExecuteReader();
             List<idP> list = new();
-            while (rdr.Read())
+            try
             {
-                list.Add(new()
+                while (rdr.Read())
+                {
+                    list.Add(new()
+                    {
+                        IdpID = rdr.GetGuid(0),
+                        DisplayName = rdr.GetString(1),
+                        Enabled = rdr.GetBoolean(3),
+                        ClientID = rdr.GetString(4),
+                        AuthorizationEndpointPrefix = rdr.GetString(5)
+                    });
+                }
+            }
+            finally
+            {
+                rdr.Close();
+            }
+            return list;
+        }
+        public static idP GetIDP(Database db, Guid IdpID)
+        {
+            idP idp;
+            SqlCommand cmd = db.Connection.CreateCommand();
+            cmd.Parameters.AddWithValue("@IDPID@", IdpID);
+            cmd.CommandText = "SELECT IdpID, DisplayName, DisplayIcon, Enabled, ClientID, AuthorizationEndpoint FROM [Security.OpenID] WHERE IdpID = @IDPID@";
+            SqlDataReader rdr = cmd.ExecuteReader();
+            try
+            {
+                rdr.Read();
+                idp = new idP()
                 {
                     IdpID = rdr.GetGuid(0),
                     DisplayName = rdr.GetString(1),
-                    DisplayIcon = (byte[])rdr.GetValue(2),
                     Enabled = rdr.GetBoolean(3),
                     ClientID = rdr.GetString(4),
                     AuthorizationEndpointPrefix = rdr.GetString(5)
-                });
+                };
             }
-            return list;
+            finally
+            {
+                rdr.Close();
+            }
+            return idp;
         }
     }
     public class idP
@@ -65,9 +96,9 @@ namespace iSketch.app.OpenID
         {
             Session session = con.InitializeSession();
 
+            idP asdf = OpenID.GetIDP(session.db, Guid.Parse(con.Request.RouteValues["IdpID"].ToString()));
 
-
-            await con.Response.WriteAsync(con.Request.RouteValues["IdpID"].ToString() + "\r\n");
+            await con.Response.WriteAsync(asdf.GetRequestURI(session) + "\r\n\r\n");
             await con.Response.WriteAsync(con.Request.Query["code"]);
 
         }

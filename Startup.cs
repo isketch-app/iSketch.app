@@ -50,7 +50,7 @@ namespace iSketch.app
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/dynamic/{File}.{Ext}", Dynamic.Delegate);
-                endpoints.MapGet("/_OpenID/{IdpID}/Login", OpenID.Endpoints.Login);
+                endpoints.MapGet("/_OpenID/{IdpID:guid}/Login", OpenID.Endpoints.Login);
                 endpoints.MapHealthChecks("/_Health");
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
