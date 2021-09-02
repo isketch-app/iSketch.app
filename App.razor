@@ -19,11 +19,17 @@
     public bool sExisting { get; set; }
     [Parameter]
     public string IPAddress { get; set; }
+    [Parameter]
+    public string HostAndPort { get; set; }
+    [Parameter]
+    public bool IsHTTPS { get; set; }
     protected override void OnParametersSet()
     {
         Session.SessionID = sSessionID;
         Session.Existing = sExisting;
         Session.IPAddress = System.Net.IPAddress.Parse(IPAddress);
+        Session.HostAndPort = HostAndPort;
+        Session.IsHTTPS = IsHTTPS;
         Session.RegisterSession();
         base.OnParametersSet();
     }

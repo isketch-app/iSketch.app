@@ -11,6 +11,8 @@ namespace iSketch.app.Services
         public Guid SessionID = Guid.Empty;
         public Guid UserID = Guid.Empty;
         public IPAddress IPAddress;
+        public string HostAndPort;
+        public bool IsHTTPS;
         public bool Existing = false;
         public Session(Database db = null)
         {
