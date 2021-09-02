@@ -38,9 +38,8 @@
                 render-mode="Server"
                 param-sSessionID="session.SessionID"
                 param-sExisting="session.Existing"
-                param-IPAddress="session.IPAddress.ToString()"
-                param-HostAndPort="HttpContext.Request.Host.ToString()"
-                param-IsHTTPS="HttpContext.Request.IsHttps"
+                param-sIPAddress="session.IPAddress.ToString()"
+                param-sBaseURI="session.BaseURI.ToString()"
             />
         </div>
         <script src="./static/scripts/iSketchSiteBB.js"></script>

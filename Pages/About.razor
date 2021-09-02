@@ -2,7 +2,6 @@
 @implements IDisposable;
 @using System.Reflection;
 @using System.Timers;
-@inject Session session; 
 
 <div class="page">
     <div class="logo"></div>
@@ -36,10 +35,6 @@
         <tr>
             <td>Internal Name:</td>
             <td>@servername</td>
-        </tr>
-        <tr>
-            <td>Public Name:</td>
-            <td>@session.HostAndPort</td>
         </tr>
         <tr>
             <td>OS:</td>

@@ -13,9 +13,30 @@ namespace iSketch.app.Data
         public static Session InitializeSession(this HttpContext con)
         {
             Session session = new Session();
+            string host;
+            string proto;
+            if (con.Request.Headers.ContainsKey("X-Forwarded-Host") &&
+                con.Request.Headers.TryGetValue("X-Forwarded-Host", out StringValues hostVal))
+            {
+                host = hostVal;
+            }
+            else
+            {
+                host = con.Request.Host.ToString();
+            }
+            if (con.Request.Headers.ContainsKey("X-Forwarded-Proto") &&
+                con.Request.Headers.TryGetValue("X-Forwarded-Proto", out StringValues protoVal))
+            {
+                proto = protoVal;
+            }
+            else
+            {
+                proto = con.Request.Scheme;
+            }
+            session.BaseURI = new Uri(proto + "://" + host);
             if (con.Request.Headers.ContainsKey("X-Forwarded-For") &&
-                con.Request.Headers.TryGetValue("X-Forwarded-For", out StringValues val) &&
-                IPAddress.TryParse(val[0].Split(',')[0], out IPAddress xForIP))
+                con.Request.Headers.TryGetValue("X-Forwarded-For", out StringValues ipVal) &&
+                IPAddress.TryParse(ipVal[0].Split(',')[0], out IPAddress xForIP))
             {
                 session.IPAddress = xForIP;
             }

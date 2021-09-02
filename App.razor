@@ -18,18 +18,15 @@
     [Parameter]
     public bool sExisting { get; set; }
     [Parameter]
-    public string IPAddress { get; set; }
+    public string sBaseURI { get; set; }
     [Parameter]
-    public string HostAndPort { get; set; }
-    [Parameter]
-    public bool IsHTTPS { get; set; }
+    public string sIPAddress { get; set; }
     protected override void OnParametersSet()
     {
         Session.SessionID = sSessionID;
         Session.Existing = sExisting;
-        Session.IPAddress = System.Net.IPAddress.Parse(IPAddress);
-        Session.HostAndPort = HostAndPort;
-        Session.IsHTTPS = IsHTTPS;
+        Session.IPAddress = System.Net.IPAddress.Parse(sIPAddress);
+        Session.BaseURI = new Uri(sBaseURI);
         Session.RegisterSession();
         base.OnParametersSet();
     }
