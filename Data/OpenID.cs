@@ -14,52 +14,65 @@ namespace iSketch.app.OpenID
         public static List<idP> GetIDPs(Database db, bool includeDisabled = false)
         {
             SqlCommand cmd = db.Connection.CreateCommand();
-            cmd.CommandText = "SELECT IdpID, DisplayName, DisplayIcon, Enabled, ClientID, AuthorizationEndpoint FROM [Security.OpenID]";
+            cmd.CommandText = "SELECT IdpID FROM [Security.OpenID] ";
             if (!includeDisabled)
             {
-                cmd.CommandText += " WHERE Enabled = 1";
+                cmd.CommandText += "WHERE Enabled = 1 ";
             }
-            cmd.CommandText += " ORDER BY DisplayOrder";
+            cmd.CommandText += "ORDER BY DisplayOrder";
             SqlDataReader rdr = cmd.ExecuteReader();
-            List<idP> list = new();
+            List<Guid> IdpIDs = new();
             try
             {
-                while (rdr.Read())
+                while(rdr.Read())
                 {
-                    list.Add(new()
-                    {
-                        IdpID = rdr.GetGuid(0),
-                        DisplayName = rdr.GetString(1),
-                        Enabled = rdr.GetBoolean(3),
-                        ClientID = rdr.GetString(4),
-                        AuthorizationEndpointPrefix = rdr.GetString(5)
-                    });
+                    IdpIDs.Add(rdr.GetGuid(0));
                 }
             }
             finally
             {
                 rdr.Close();
             }
-            return list;
+            List<idP> IDPs = new(); 
+            foreach(Guid IdpID in IdpIDs)
+            {
+                IDPs.Add(GetIDP(db, IdpID));
+            }
+            return IDPs;
         }
         public static idP GetIDP(Database db, Guid IdpID)
         {
             idP idp;
             SqlCommand cmd = db.Connection.CreateCommand();
             cmd.Parameters.AddWithValue("@IDPID@", IdpID);
-            cmd.CommandText = "SELECT IdpID, DisplayName, DisplayIcon, Enabled, ClientID, AuthorizationEndpoint FROM [Security.OpenID] WHERE IdpID = @IDPID@";
+            cmd.CommandText = 
+            "SELECT " +
+            "IdpID, " +
+            "DisplayName, " +
+            "Enabled, " +
+            "ClientID, " +
+            "[Endpoint.Authorization], " +
+            "[Endpoint.Token], " +
+            "[Endpoint.Logout], " +
+            "[Claims.UserName], " +
+            "[Claims.Email], " +
+            "[Claims.UserPhoto] " +
+            "FROM [Security.OpenID] WHERE IdpID = @IDPID@";
             SqlDataReader rdr = cmd.ExecuteReader();
             try
             {
                 rdr.Read();
-                idp = new idP()
-                {
-                    IdpID = rdr.GetGuid(0),
-                    DisplayName = rdr.GetString(1),
-                    Enabled = rdr.GetBoolean(3),
-                    ClientID = rdr.GetString(4),
-                    AuthorizationEndpointPrefix = rdr.GetString(5)
-                };
+                idp = new();
+                idp.IdpID = rdr.GetGuid(0);
+                idp.DisplayName = rdr.GetString(1);
+                idp.Enabled = rdr.GetBoolean(2);
+                idp.ClientID = rdr.GetString(3);
+                idp.EndpointAuthorization = rdr.GetString(4);
+                idp.EndpointToken = rdr.GetString(5);
+                if (!rdr.IsDBNull(6)) idp.EndpointLogout = rdr.GetString(6);
+                if (!rdr.IsDBNull(7)) idp.ClaimsUserName = rdr.GetString(7);
+                if (!rdr.IsDBNull(8)) idp.ClaimsEmail = rdr.GetString(8);
+                if (!rdr.IsDBNull(9)) idp.ClaimsUserPhoto = rdr.GetString(9);
             }
             finally
             {
@@ -74,8 +87,13 @@ namespace iSketch.app.OpenID
         public string DisplayName;
         public byte[] DisplayIcon;
         public bool Enabled;
-        public string AuthorizationEndpointPrefix;
         public string ClientID;
+        public string EndpointAuthorization;
+        public string EndpointToken;
+        public string EndpointLogout;
+        public string ClaimsUserName;
+        public string ClaimsEmail;
+        public string ClaimsUserPhoto;
         public string GetRedirectURI(Session session) 
         {
             return session.BaseURI.ToString() + "_OpenID/" + IdpID.ToString() + "/Login";
@@ -83,7 +101,7 @@ namespace iSketch.app.OpenID
         public string GetRequestURI(Session session)
         {
             return 
-            AuthorizationEndpointPrefix +
+            EndpointAuthorization +
             "?response_type=code&scope=openid&client_id=" +
             HttpUtility.UrlEncode(ClientID) +
             "&redirect_uri=" +
