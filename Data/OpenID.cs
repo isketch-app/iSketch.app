@@ -57,6 +57,7 @@ namespace iSketch.app.OpenID
             "DisplayName, " +
             "Enabled, " +
             "ClientID, " +
+            "ClientSecret, " +
             "[Endpoint.Authorization], " +
             "[Endpoint.Token], " +
             "[Endpoint.Logout], " +
@@ -73,12 +74,13 @@ namespace iSketch.app.OpenID
                 idp.DisplayName = rdr.GetString(1);
                 idp.Enabled = rdr.GetBoolean(2);
                 idp.ClientID = rdr.GetString(3);
-                idp.EndpointAuthorization = rdr.GetString(4);
-                idp.EndpointToken = rdr.GetString(5);
-                if (!rdr.IsDBNull(6)) idp.EndpointLogout = rdr.GetString(6);
-                if (!rdr.IsDBNull(7)) idp.ClaimsUserName = rdr.GetString(7);
-                if (!rdr.IsDBNull(8)) idp.ClaimsEmail = rdr.GetString(8);
-                if (!rdr.IsDBNull(9)) idp.ClaimsUserPhoto = rdr.GetString(9);
+                if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
+                idp.EndpointAuthorization = rdr.GetString(5);
+                idp.EndpointToken = rdr.GetString(6);
+                if (!rdr.IsDBNull(7)) idp.EndpointLogout = rdr.GetString(7);
+                if (!rdr.IsDBNull(8)) idp.ClaimsUserName = rdr.GetString(8);
+                if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
+                if (!rdr.IsDBNull(10)) idp.ClaimsUserPhoto = rdr.GetString(10);
             }
             catch (Exception)
             {
@@ -98,6 +100,7 @@ namespace iSketch.app.OpenID
         public byte[] DisplayIcon;
         public bool Enabled;
         public string ClientID;
+        public string ClientSecret;
         public string EndpointAuthorization;
         public string EndpointToken;
         public string EndpointLogout;
@@ -173,6 +176,11 @@ namespace iSketch.app.OpenID
             HttpRequestMessage msg = new();
             msg.RequestUri = new(idP.EndpointToken);
             msg.Method = HttpMethod.Post;
+            if (idP.ClientSecret != null)
+            {
+                byte[] secret = Encoding.Default.GetBytes(HttpUtility.UrlEncode(idP.ClientID) + ":" + idP.ClientSecret);
+                msg.Headers.Authorization = new("Basic", Convert.ToBase64String(secret));
+            }
             FormUrlEncodedContent form = new(new Dictionary<string, string>() {
                 { "grant_type", "authorization_code" },
                 { "code", code },

@@ -1,6 +1,6 @@
 ﻿USE [iSketch.app]
 GO
-/****** Object:  Table [dbo].[Words.Game.Difficulties]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Words.Game.Difficulties]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[Words.Game.Difficulties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words.Game]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Words.Game]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -39,7 +39,7 @@ CREATE TABLE [dbo].[Words.Game](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Words.Game.Difficulties.Splice]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  View [dbo].[Words.Game.Difficulties.Splice]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,7 +52,7 @@ SELECT        WordID, Word, Score,
                                WHERE        ([From] <= dbo.[Words.Game].Score) AND ([To] >= dbo.[Words.Game].Score)) AS Difficulty
 FROM            dbo.[Words.Game]
 GO
-/****** Object:  Table [dbo].[Security.Users]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Security.Users]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -77,14 +77,14 @@ CREATE TABLE [dbo].[Security.Users](
 	[Settings.AnonMode] [bit] NOT NULL,
 	[Settings.DarkMode] [bit] NOT NULL,
 	[OpenID.IdpID] [uniqueidentifier] NULL,
-	[OpenID.UserID] [varchar](200) NULL,
+	[OpenID.Subject] [varchar](200) NULL,
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[UserID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Security.Groups.Membership]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Security.Groups.Membership]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -94,7 +94,7 @@ CREATE TABLE [dbo].[Security.Groups.Membership](
 	[UserID] [uniqueidentifier] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Security.Groups]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Security.Groups]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -110,7 +110,7 @@ CREATE TABLE [dbo].[Security.Groups](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Security.Users.Permissions.Splice]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  View [dbo].[Security.Users.Permissions.Splice]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -122,7 +122,7 @@ FROM            dbo.[Security.Groups] INNER JOIN
                          dbo.[Security.Groups.Membership] ON dbo.[Security.Groups].GroupID = dbo.[Security.Groups.Membership].GroupID RIGHT OUTER JOIN
                          dbo.[Security.Users] ON dbo.[Security.Groups.Membership].UserID = dbo.[Security.Users].UserID
 GO
-/****** Object:  Table [dbo].[Security.Bans]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Security.Bans]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -144,7 +144,7 @@ CREATE TABLE [dbo].[Security.Bans](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Security.OpenID]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Security.OpenID]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -156,6 +156,7 @@ CREATE TABLE [dbo].[Security.OpenID](
 	[DisplayIcon] [varbinary](max) NULL,
 	[Enabled] [bit] NOT NULL,
 	[ClientID] [varchar](100) NOT NULL,
+	[ClientSecret] [varchar](100) NULL,
 	[Endpoint.Authorization] [varchar](100) NOT NULL,
 	[Endpoint.Token] [varchar](100) NOT NULL,
 	[Endpoint.Logout] [varchar](100) NULL,
@@ -168,7 +169,7 @@ CREATE TABLE [dbo].[Security.OpenID](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Security.Sessions]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Security.Sessions]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -185,7 +186,7 @@ CREATE TABLE [dbo].[Security.Sessions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[System.Properties]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[System.Properties]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -199,7 +200,7 @@ CREATE TABLE [dbo].[System.Properties](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Words.Banned]    Script Date: 9/2/2021 9:39:56 PM ******/
+/****** Object:  Table [dbo].[Words.Banned]    Script Date: 9/5/2021 7:49:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
