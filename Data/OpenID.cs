@@ -184,7 +184,7 @@ namespace iSketch.app.OpenID
             HttpResponseMessage hResponse = await hc.SendAsync(msg);
             Stream sResponse = await hResponse.Content.ReadAsStreamAsync();
             Dictionary<string, object> jResposne = await JsonSerializer.DeserializeAsync<Dictionary<string, object>>(sResponse);
-            if (jResposne["id_token"] == null)
+            if (!jResposne.TryGetValue("id_token", out object idToken))
             {
                 sResponse.Position = 0;
                 con.Response.Redirect("/error/openid/jwt-missing?idp_response=" + HttpUtility.UrlEncode(await new StreamReader(sResponse).ReadToEndAsync()));
@@ -193,7 +193,7 @@ namespace iSketch.app.OpenID
             JWT JWT;
             try
             {
-                JWT = new(jResposne["id_token"].ToString());
+                JWT = new(idToken.ToString());
             }
             catch (Exception)
             {
