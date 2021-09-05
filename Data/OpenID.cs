@@ -11,6 +11,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text;
+using System.IO;
 
 namespace iSketch.app.OpenID
 {
@@ -117,11 +118,6 @@ namespace iSketch.app.OpenID
             HttpUtility.UrlEncode(GetRedirectURI(session));
         }
     }
-    public class Token
-    {
-        [JsonPropertyName("id_token")]
-        public string IDToken { get; set; }
-    }
     public class JWT
     {
         public Dictionary<string, object> Header;
@@ -185,17 +181,19 @@ namespace iSketch.app.OpenID
             });
             msg.Content = new StreamContent(await form.ReadAsStreamAsync());
             msg.Content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-            HttpResponseMessage response = await hc.SendAsync(msg);
-            Token Token = await response.Content.ReadFromJsonAsync<Token>();
-            if (Token.IDToken == null)
+            HttpResponseMessage hResponse = await hc.SendAsync(msg);
+            Stream sResponse = await hResponse.Content.ReadAsStreamAsync();
+            Dictionary<string, object> jResposne = await JsonSerializer.DeserializeAsync<Dictionary<string, object>>(sResponse);
+            if (jResposne["id_token"] == null)
             {
-                con.Response.Redirect("/error/openid/jwt-missing");
+                sResponse.Position = 0;
+                con.Response.Redirect("/error/openid/jwt-missing?idp_response=" + HttpUtility.UrlEncode(await new StreamReader(sResponse).ReadToEndAsync()));
                 return;
             }
             JWT JWT;
             try
             {
-                JWT = new(Token.IDToken);
+                JWT = new(jResposne["id_token"].ToString());
             }
             catch (Exception)
             {
