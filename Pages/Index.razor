@@ -1,6 +1,8 @@
 @page "/"
 @inject NavigationManager nm;
 @inject Session session;
+@inject Database db; 
+@using OpenID;    
 
 @using System.Web; 
 
@@ -11,6 +13,13 @@
 <Authorized PermissionsA="PMA.Administration">
     <a href="/Administration">Administration</a>
 </Authorized>
+
+
+@foreach(idP idP in OpenID.GetIDPs(db))
+{
+    <CButton OnClick="() => nm.NavigateTo(idP.GetRequestURI(session))">@idP.DisplayName</CButton>
+}
+
 
 <center>
     <br />
