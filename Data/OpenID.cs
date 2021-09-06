@@ -116,21 +116,21 @@ namespace iSketch.app.OpenID
         }
         public string GetRequestURI(Session session)
         {
-            string URI =  
+            string URI =
             EndpointAuthorization +
-            "?response_type=code" +
-            "&client_id=" +
-            HttpUtility.UrlEncode(ClientID) +
-            "&redirect_uri=" +
-            HttpUtility.UrlEncode(GetRedirectURI(session));
+            "?response_type=code";
             if (ExtraScopes != null)
             {
-                URI += "&scope=openid " + ExtraScopes;
+                URI += "&scope=openid" + HttpUtility.UrlEncode(" " + ExtraScopes);
             }
             else
             {
                 URI += "&scope=openid";
             }
+            URI += "&client_id=" +
+            HttpUtility.UrlEncode(ClientID) +
+            "&redirect_uri=" +
+            HttpUtility.UrlEncode(GetRedirectURI(session));
             return URI;
         }
     }
