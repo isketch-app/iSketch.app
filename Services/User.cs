@@ -61,7 +61,7 @@ namespace iSketch.app.Services
             {
                 SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERNAME@", UserName);
-                cmd.CommandText = "SELECT UserID, Password, PasswordSalt FROM [Security.Users] WHERE UserName = @USERNAME@";
+                cmd.CommandText = "SELECT UserID, Password, PasswordSalt, [OpenID.IdpID] FROM [Security.Users] WHERE UserName = @USERNAME@";
                 SqlDataReader rdr = cmd.ExecuteReader();
                 if (!rdr.HasRows)
                 {
@@ -70,6 +70,11 @@ namespace iSketch.app.Services
                 }
                 rdr.Read();
                 Guid UserID = rdr.GetGuid(0);
+                if (!rdr.IsDBNull(3) && Password == null)
+                {
+                    rdr.Close();
+                    return false;
+                }
                 if (!rdr.IsDBNull(1))
                 {
                     if (Password == null)
@@ -177,11 +182,12 @@ namespace iSketch.app.Services
                 return false;
             }
         }
-        public static Guid CreateUser(Database Database, string UserName)
+        public static Guid CreateUser(Database Database, string UserName = null)
         {
             try
             {
                 Guid UserID = Guid.NewGuid();
+                if (UserName == null) UserName = UserID.ToString();
                 SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@USERNAME@", UserName);

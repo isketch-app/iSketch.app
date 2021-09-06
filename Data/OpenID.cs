@@ -92,6 +92,50 @@ namespace iSketch.app.OpenID
             }
             return idp;
         }
+        public static TokenHandleResult HandleIdpIdToken(Session session, idP idP, JWT JWT)
+        {
+            SqlCommand cmd = session.db.Connection.CreateCommand();
+            cmd.Parameters.AddWithValue("@IDPID@", idP.IdpID);
+            cmd.Parameters.AddWithValue("@SUBJECT@", JWT.Payload["sub"].ToString());
+            cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE [OpenID.IdpID] = @IDPID@ AND [OpenID.Subject] = @SUBJECT@";
+            SqlDataReader rdr = cmd.ExecuteReader();
+            if (rdr.HasRows)
+            {
+                if (session.UserID == Guid.Empty)
+                {
+                    rdr.Read();
+                    Guid UserID = rdr.GetGuid(0);
+                    rdr.Close();
+                    UserTools.Logon(session, UserID);
+                    return TokenHandleResult.Success;
+                }
+                else
+                {
+                    rdr.Close();
+                    return TokenHandleResult.SubjectAlreadyBoundToAnotherAccount;
+                }
+            }
+            rdr.Close();
+            if (session.UserID == Guid.Empty)
+            {
+                Guid newUserID = UserTools.CreateUser(session.db);
+                UserTools.Logon(session, newUserID);
+            }
+            cmd.Parameters.AddWithValue("@USERID@", session.UserID);
+            cmd.CommandText = "UPDATE [Security.Users] SET [OpenID.IdpID] = @IDPID@, [OpenID.Subject] = @SUBJECT@ WHERE UserID = @USERID@";
+            int affected = cmd.ExecuteNonQuery();
+            if (affected != 1)
+            {
+                return TokenHandleResult.FailedToBindToCurrentUserAccount;
+            }
+            return TokenHandleResult.Success;
+        }
+        public enum TokenHandleResult
+        {
+            Success,
+            SubjectAlreadyBoundToAnotherAccount,
+            FailedToBindToCurrentUserAccount
+        }
     }
     public class idP
     {
@@ -218,14 +262,14 @@ namespace iSketch.app.OpenID
                 con.Response.Redirect("/_Error/OpenID/jwt-invalid");
                 return;
             }
-            
-            foreach (KeyValuePair<string, object> claim in JWT.Payload)
+            OpenID.TokenHandleResult result = OpenID.HandleIdpIdToken(session, idP, JWT);
+            if (result != OpenID.TokenHandleResult.Success)
             {
-                await con.Response.WriteAsync(claim.Key + ": " + claim.Value.ToString() + "\r\n");
+                con.Response.Redirect("/_Error/OpenID/" + result.ToString());
+                return;
             }
-            //con.Response.Redirect("/");
+            con.Response.Redirect("/");
             await Task.CompletedTask;
         }
     }
-
 }
