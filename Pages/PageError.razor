@@ -1,6 +1,5 @@
-﻿@inject NavigationManager nm; 
-
-<!--<div class="bg"></div>-->
+﻿@page "/_Error/{Component}/{ErrorType}" 
+@inject NavigationManager nm;
 
 <Dialog OnFadeOut='() => nm.NavigateTo(ReturnTo)' OnDismiss='(d) => d.FadeOut()'>
     <center>
@@ -11,9 +10,26 @@
 
 @code {
     [Parameter]
+    public string Component { get; set; }
+    [Parameter]
+    public string ErrorType { get; set; }
+    [Parameter]
     public string Emoji { get; set; } = "😶";
     [Parameter]
     public string Message { get; set; } = "An un-defined error occured.";
     [Parameter]
     public string ReturnTo { get; set; } = "/";
+    protected override void OnInitialized()
+    {
+        if (Component != null && ErrorType != null)
+        {
+            string key = Component + "_" + ErrorType;
+            if (Strings.PageErrors.ContainsKey(key))
+            {
+                Emoji = "😿";
+                Message = Strings.PageErrors[key];
+            }
+        }
+        base.OnInitialized();
+    }
 } 

@@ -7,9 +7,7 @@ using System.Web;
 using System;
 using System.Data.SqlClient;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text;
 using System.IO;
 
@@ -175,16 +173,15 @@ namespace iSketch.app.OpenID
             idP idP = OpenID.GetIDP(session.db, Guid.Parse(con.Request.RouteValues["IdpID"].ToString()));
             if (idP == null)
             {
-                con.Response.Redirect("/error/openid/idp-does-not-exist");
+                con.Response.Redirect("/_Error/OpenID/idp-does-not-exist");
                 return;
             }
             if (!con.Request.Query.ContainsKey("code") || con.Request.Query["code"] == "")
             {
-                con.Response.Redirect("/error/openid/code-missing");
+                con.Response.Redirect("/_Error/OpenID/code-missing");
                 return;
             }
             string code = con.Request.Query["code"];
-
             HttpClient hc = new();
             HttpRequestMessage msg = new();
             msg.RequestUri = new(idP.EndpointToken);
@@ -208,7 +205,7 @@ namespace iSketch.app.OpenID
             if (!jResposne.TryGetValue("id_token", out object idToken))
             {
                 sResponse.Position = 0;
-                con.Response.Redirect("/error/openid/jwt-missing?idp_response=" + HttpUtility.UrlEncode(await new StreamReader(sResponse).ReadToEndAsync()));
+                con.Response.Redirect("/_Error/OpenID/jwt-missing?idp_response=" + HttpUtility.UrlEncode(await new StreamReader(sResponse).ReadToEndAsync()));
                 return;
             }
             JWT JWT;
@@ -218,7 +215,7 @@ namespace iSketch.app.OpenID
             }
             catch (Exception)
             {
-                con.Response.Redirect("/error/openid/jwt-invalid");
+                con.Response.Redirect("/_Error/OpenID/jwt-invalid");
                 return;
             }
             
@@ -226,7 +223,6 @@ namespace iSketch.app.OpenID
             {
                 await con.Response.WriteAsync(claim.Key + ": " + claim.Value.ToString() + "\r\n");
             }
-
             //con.Response.Redirect("/");
             await Task.CompletedTask;
         }
