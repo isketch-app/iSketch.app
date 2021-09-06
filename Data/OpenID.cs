@@ -58,6 +58,7 @@ namespace iSketch.app.OpenID
             "Enabled, " +
             "ClientID, " +
             "ClientSecret, " +
+            "ExtraScopes, " +
             "[Endpoint.Authorization], " +
             "[Endpoint.Token], " +
             "[Endpoint.Logout], " +
@@ -75,12 +76,13 @@ namespace iSketch.app.OpenID
                 idp.Enabled = rdr.GetBoolean(2);
                 idp.ClientID = rdr.GetString(3);
                 if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
-                idp.EndpointAuthorization = rdr.GetString(5);
-                idp.EndpointToken = rdr.GetString(6);
-                if (!rdr.IsDBNull(7)) idp.EndpointLogout = rdr.GetString(7);
-                if (!rdr.IsDBNull(8)) idp.ClaimsUserName = rdr.GetString(8);
-                if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
-                if (!rdr.IsDBNull(10)) idp.ClaimsUserPhoto = rdr.GetString(10);
+                if (!rdr.IsDBNull(5)) idp.ExtraScopes = rdr.GetString(5);
+                idp.EndpointAuthorization = rdr.GetString(6);
+                idp.EndpointToken = rdr.GetString(7);
+                if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
+                if (!rdr.IsDBNull(9)) idp.ClaimsUserName = rdr.GetString(9);
+                if (!rdr.IsDBNull(10)) idp.ClaimsEmail = rdr.GetString(10);
+                if (!rdr.IsDBNull(11)) idp.ClaimsUserPhoto = rdr.GetString(11);
             }
             catch (Exception)
             {
@@ -101,6 +103,7 @@ namespace iSketch.app.OpenID
         public bool Enabled;
         public string ClientID;
         public string ClientSecret;
+        public string ExtraScopes;
         public string EndpointAuthorization;
         public string EndpointToken;
         public string EndpointLogout;
@@ -113,12 +116,22 @@ namespace iSketch.app.OpenID
         }
         public string GetRequestURI(Session session)
         {
-            return 
+            string URI =  
             EndpointAuthorization +
-            "?response_type=code&scope=openid&client_id=" +
+            "?response_type=code" +
+            "&client_id=" +
             HttpUtility.UrlEncode(ClientID) +
             "&redirect_uri=" +
             HttpUtility.UrlEncode(GetRedirectURI(session));
+            if (ExtraScopes != null)
+            {
+                URI += "&scope=openid " + ExtraScopes;
+            }
+            else
+            {
+                URI += "&scope=openid";
+            }
+            return URI;
         }
     }
     public class JWT
