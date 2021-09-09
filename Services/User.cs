@@ -187,7 +187,7 @@ namespace iSketch.app.Services
             try
             {
                 Guid UserID = Guid.NewGuid();
-                if (UserName == null) UserName = UserID.ToString();
+                if (UserName == null || UserName == "") UserName = UserID.ToString();
                 SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@USERNAME@", UserName);
@@ -257,11 +257,11 @@ namespace iSketch.app.Services
                 cmd.CommandText = "SELECT Password, [OpenID.IdpID] FROM [Security.Users] WHERE UserID = @USERID@";
                 using SqlDataReader rdr = cmd.ExecuteReader();
                 rdr.Read();
-                if (rdr.IsDBNull(0))
+                if (!rdr.IsDBNull(0))
                 {
                     result.Methods |= UserAuthMethods.Password;
                 }
-                if (rdr.IsDBNull(1))
+                if (!rdr.IsDBNull(1))
                 {
                     result.Methods |= UserAuthMethods.OpenID;
                     result.IdpID = rdr.GetGuid(1);

@@ -3,9 +3,10 @@
 @inject Services.Database db
 @inject NavigationManager nm;
 @inject Services.Session session;  
+@inject Services.PassHashQueue phq; 
 @using OpenID; 
 
-<Dialog Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
+<Dialog AllowBreakOut="false" Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
     @if (Warning != "")
     {
         <div class="warning">@Warning</div>
@@ -25,34 +26,43 @@
             </div>
         </div>
         <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Guest</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Spectator</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignGuest">Guest</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Spectator</CButton>
         </DialogButtonContainer>
     }
     @if (CurrentStage == Stage.ISSignIn)
     {
         <div class="px-300">
-            <div class="input"><CText Label="User Name"></CText></div>
-            <div class="input"><CText Type="password" Label="Password"></CText></div>
-            <DialogButtonContainer SpaceEvenly="true">
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Sign up</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Sign in</CButton>
-            </DialogButtonContainer>
+            <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+            <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
         </div>
+        <DialogButtonContainer SpaceEvenly="true">
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignUp">Sign up</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignIn">Sign in</CButton>
+        </DialogButtonContainer>
     }
-    @if (CurrentStage == Stage.HelpUserName)
+    @if (CurrentStage == Stage.ISSignUp)
     {
-        <p>
-            iSketch.app usernames must satisfy the following conditions:
-        </p>
-        <ul>
-            <li>Must not contain whitespace.</li>
-            <li>Must be less or equal to 25 characters in length.</li>
-            <li>Can only contain: a-z, A-Z, 0-9, and any special character on a US keyboard.</li>
-        </ul>
+        <div class="px-300">
+            <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+            <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
+            <div class="input"><CText Type="password" Label="Password (confirm)" ValueChanged="(v) => Password2 = v"></CText></div>
+            <div class="input"><CText Type="email" Label="Recovery Email (optional)"></CText></div>
+        </div>
         <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.Unknown">Back</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignIn">Back</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignUp">Sign up</CButton>
+        </DialogButtonContainer>
+    }
+    @if (CurrentStage == Stage.ISSignGuest)
+    {
+        <div class="px-300">
+            <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+        </div>
+        <DialogButtonContainer>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Continue</CButton>
         </DialogButtonContainer>
     }
 </Dialog>
@@ -81,10 +91,9 @@
     {
         "Unknown",
         "",
-        "Create your account",
-        "iSketch.app account",
-        "Unknown",
-        "Help with choosing a username"
+        "Sign up",
+        "Sign in",
+        "Choose a user name"
     };
     private enum Stage : int
     {
@@ -92,7 +101,64 @@
         SelectAnIDP = 1,
         ISSignUp = 2,
         ISSignIn = 3,
-        Unknown1 = 4,
-        HelpUserName = 5
+        ISSignGuest = 4
+    }
+    private async Task ISSignIn()
+    {
+        Warning = "";
+        if (await Task.Run<bool>(() => user.Logon(UserName, Password)))
+        {
+            await Dialog.FadeOut();
+        }
+        else
+        {
+            Warning = "Sign in failed!";
+        }
+    }
+    private async Task ISSignUp()
+    {
+        Warning = "";
+        if (Password == "")
+        {
+            Warning = "Please enter a password.";
+            return;
+        }
+        if (Password != Password2)
+        {
+            Warning = "Your passwords do not match.";
+            return;
+        }
+        if (!UserTools.IsValidUserIDString(UserName))
+        {
+            Warning = "The user name entered is invalid.";
+            return;
+        }
+        MailAddress mail = null;
+        if (Email != "" && !MailAddress.TryCreate(Email, out mail))
+        {
+            Warning = "You entered an invalid email address.";
+            return;
+        }
+        Guid uid = UserTools.GetUserID(db, UserName);
+        if (uid != Guid.Empty)
+        {
+            UserAuthMethodsResult methods = UserTools.GetUserAuthenticationMethods(db, uid);
+            if (methods.Methods != UserAuthMethods.None)
+            {
+                Warning = "User Name is already taken.";
+                return;
+            }
+        }
+        else
+        {
+            uid = UserTools.CreateUser(db, UserName);
+        }
+        if (mail != null)
+        {
+            UserTools.SetUserSetting(db, uid, UserSettings.Email, mail.Address);
+        }
+        await Task.Run<bool>(() => UserTools.ChangePassword(db, phq, uid, Password));
+        user.Logon(uid);
+        await Dialog.FadeOut();
     }
 }

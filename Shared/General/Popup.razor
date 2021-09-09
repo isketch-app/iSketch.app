@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime js;
 
-<div @onclick="FadeOut" id="@ID" style="z-index:@ZIndex;" class="popup">
+<div @onclick="BreakOutFadeOut" id="@ID" style="z-index:@ZIndex;" class="popup">
     <div></div>
     <div @onclick:stopPropagation="true" class="form">
         @ChildContent
@@ -15,6 +15,8 @@
     public int ZIndex { get; set; } = 100;
     [Parameter]
     public EventCallback OnFadeOut { get; set; }
+    [Parameter]
+    public bool AllowBreakOut { get; set; } = true;
     private string ID = "x" + Guid.NewGuid().ToString();
     public async Task FadeOut()
     {
@@ -24,6 +26,10 @@
         );
         await Task.Delay(75);
         await OnFadeOut.InvokeAsync();
+    }
+    private async Task BreakOutFadeOut()
+    {
+        if (AllowBreakOut) await FadeOut();
     }
     protected override Task OnInitializedAsync()
     {

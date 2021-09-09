@@ -32,6 +32,8 @@
     }
     private void OnLoginLogoutStatusChange(object o, EventArgs args)
     {
-        StateHasChanged();
+        InvokeAsync(() => {
+            StateHasChanged();
+        });
     }
 }

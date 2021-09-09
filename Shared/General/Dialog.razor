@@ -1,4 +1,4 @@
-﻿<Popup OnFadeOut="OnFadeOut" @ref="Popup">
+﻿<Popup AllowBreakOut="AllowBreakOut" OnFadeOut="OnFadeOut" @ref="Popup">
     @if (Header != "")
     {
         <div class="header">@Header</div>
@@ -17,6 +17,8 @@
     public RenderFragment ChildContent { get; set; }
     [Parameter]
     public string Header { get; set; } = "";
+    [Parameter]
+    public bool AllowBreakOut { get; set; } = true;
     [Parameter]
     public EventCallback OnFadeOut { get; set; }
     [Parameter]
