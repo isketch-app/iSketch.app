@@ -1,57 +1,45 @@
 ﻿@using System.Net.Mail;
 @inject Services.User user
 @inject Services.Database db
+@inject NavigationManager nm;
+@inject Services.Session session;  
+@using OpenID; 
 
 <Dialog Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
     @if (Warning != "")
     {
         <div class="warning">@Warning</div>
     }
-    @if (CurrentStage == Stage.UserName)
+    @if (CurrentStage == Stage.SelectAnIDP)
     {
-        <p>This will be your screen-name throughout the game.</p>
-        <br />
-        <CText Icon="" Label="Username" Value="@UserName" ValueChanged="(v) => UserName = v" />
-        <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.HelpUserName">Help</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="StageUserName_Next">Next</CButton>
-        </DialogButtonContainer>
-    }
-    @if (CurrentStage == Stage.PasswordExisting)
-    {
-        <p>The username you selected is locked with a password, please enter it below.</p>
-        <br />
-        <CText Icon="" Label="Password" Type="password" Value="@Password" ValueChanged="(v) => Password = v" />
-        <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="StagePasswordExisting_Login">Login</CButton>
-        </DialogButtonContainer>
-    }
-    @if (CurrentStage == Stage.PasswordNew)
-    {
-        <p>Optionally, lock your username with a password or a third party account.</p>
-        <br />
-        <CText Icon="" Label="Password (Optional)" Type="password" Value="@Password" ValueChanged="(v) => Password = v" />
-        <br />
-        <CText Icon="" Label="Password (Confirm)" Type="password" Value="@Password2" ValueChanged="(v) => Password2 = v" />
-        <br />
-        <CText Icon="" Label="Recovery Email (Optional)" Value="@Email" ValueChanged="(v) => Email = v" />
-        <DialogButtonContainer>
-            <!--<CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ThirdParty">Use a third party</CButton>-->
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="StagePasswordNew_Done">Done</CButton>
-        </DialogButtonContainer>
-    }
-    @if (CurrentStage == Stage.ThirdParty)
-    {
-        <div class="idp-buttons">
-            <CButton Emphasis="CButton.EmphasisStyles.Medium">Google</CButton>
-            <CButton Emphasis="CButton.EmphasisStyles.Medium">Microsoft</CButton>
+        <div class="px-300">
+            <div class="logo"></div>
+            <h3>Ready to sketch?</h3>
+            <h4>Select an option to continue with:</h4>
+            <div class="idp-buttons">
+                @foreach (idP idP in OpenID.GetIDPs(db))
+                {
+                    <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => nm.NavigateTo(idP.GetRequestURI(session))'>@idP.DisplayName</CButton>
+                }
+                <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
+            </div>
         </div>
         <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Cancel</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Guest</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Spectator</CButton>
         </DialogButtonContainer>
+    }
+    @if (CurrentStage == Stage.ISSignIn)
+    {
+        <div class="px-300">
+            <div class="input"><CText Label="User Name"></CText></div>
+            <div class="input"><CText Type="password" Label="Password"></CText></div>
+            <DialogButtonContainer SpaceEvenly="true">
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Sign up</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Sign in</CButton>
+            </DialogButtonContainer>
+        </div>
     }
     @if (CurrentStage == Stage.HelpUserName)
     {
@@ -64,13 +52,13 @@
             <li>Can only contain: a-z, A-Z, 0-9, and any special character on a US keyboard.</li>
         </ul>
         <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.UserName">Back</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.Unknown">Back</CButton>
         </DialogButtonContainer>
     }
 </Dialog>
 
 @code {
-    private Stage rCurrentStage = Stage.UserName;
+    private Stage rCurrentStage = Stage.SelectAnIDP;
     private Stage CurrentStage
     {
         get
@@ -92,87 +80,19 @@
     private string[] Headers = new string[]
     {
         "Unknown",
-        "Enter a username",
-        "Enter your password",
-        "Sign up (recommended)",
-        "Choose an identity provider",
-        "Help with usernames"
+        "",
+        "Create your account",
+        "iSketch.app account",
+        "Unknown",
+        "Help with choosing a username"
     };
     private enum Stage : int
     {
         Unknown = 0,
-        UserName = 1,
-        PasswordExisting = 2,
-        PasswordNew = 3,
-        ThirdParty = 4,
+        SelectAnIDP = 1,
+        ISSignUp = 2,
+        ISSignIn = 3,
+        Unknown1 = 4,
         HelpUserName = 5
-    }
-    private void StageUserName_Next()
-    {
-        if (UserTools.IsValidUserIDString(UserName))
-        {
-            Warning = "";
-        }
-        else
-        {
-            Warning = "Please enter a valid username.";
-            return;
-        }
-        Guid uid = UserTools.GetUserID(db, UserName);
-        if (uid == Guid.Empty)
-        {
-            CurrentStage = Stage.PasswordNew;
-        }
-        else
-        {
-            if (UserTools.UserHasPasswordSet(db, uid))
-            {
-                CurrentStage = Stage.PasswordExisting;
-            }
-            else
-            {
-                CurrentStage = Stage.PasswordNew;
-            }
-        }
-    }
-    private void StagePasswordExisting_Login()
-    {
-        if (user.Logon(UserName, Password))
-        {
-            _ = Dialog.FadeOut();
-        }
-        else
-        {
-            Warning = "Password is incorrect!";
-        }
-    }
-    private void StagePasswordNew_Done()
-    {
-        MailAddress mail = null;
-        if (Password != "" && Password != Password2)
-        {
-            Warning = "Your passwords do not match.";
-            return;
-        }
-        if (Email != "" && !MailAddress.TryCreate(Email, out mail))
-        {
-            Warning = "You entered an invalid email address.";
-            return;
-        }
-        Guid uid = UserTools.GetUserID(db, UserName);
-        if (uid == Guid.Empty)
-        {
-            uid = UserTools.CreateUser(db, UserName);
-        }
-        user.Logon(uid);
-        if (Password != "")
-        {
-            user.ChangePassword(Password);
-        }
-        if (mail != null)
-        {
-            UserTools.SetUserSetting(db, uid, UserSettings.Email, mail.Address);
-        }
-        _ = Dialog.FadeOut();
     }
 }

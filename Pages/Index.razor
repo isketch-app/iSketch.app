@@ -1,10 +1,7 @@
 @page "/"
 @inject NavigationManager nm;
 @inject Session session;
-@inject Database db; 
-@using OpenID;    
-
-@using System.Web; 
+@inject Database db;
 
 <Authenticated Invert="true">
     <iSketch.app.Shared.Login.LoginDialog />
@@ -14,17 +11,7 @@
     <a href="/Administration">Administration</a>
 </Authorized>
 
-
-@foreach(idP idP in OpenID.GetIDPs(db))
-{
-    <CButton OnClick="() => nm.NavigateTo(idP.GetRequestURI(session))">@idP.DisplayName</CButton>
-}
-
-
-<center>
-    <br />
-    <img src="./static/images/isketch.svg" />
-</center>
+<img src="./static/images/isketch.svg" />
 <h3>We are not ready quite yet!</h3>
 <hr />
 <p>

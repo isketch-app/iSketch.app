@@ -247,34 +247,46 @@ namespace iSketch.app.Services
             string regexPolicy = "[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]";
             return Regex.IsMatch(UserName, regexPolicy);
         }
-        public static bool UserHasPasswordSet(Database Database, Guid UserID)
+        public static UserAuthMethodsResult GetUserAuthenticationMethods(Database Database, Guid UserID)
         {
             try
             {
+                UserAuthMethodsResult result = new();
                 SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
-                cmd.CommandText = "SELECT Password FROM [Security.Users] WHERE UserID = @USERID@";
-                SqlDataReader rdr = cmd.ExecuteReader();
+                cmd.CommandText = "SELECT Password, [OpenID.IdpID] FROM [Security.Users] WHERE UserID = @USERID@";
+                using SqlDataReader rdr = cmd.ExecuteReader();
                 rdr.Read();
                 if (rdr.IsDBNull(0))
                 {
-                    rdr.Close();
-                    return false;
+                    result.Methods |= UserAuthMethods.Password;
                 }
-                else
+                if (rdr.IsDBNull(1))
                 {
-                    rdr.Close();
-                    return true;
+                    result.Methods |= UserAuthMethods.OpenID;
+                    result.IdpID = rdr.GetGuid(1);
                 }
+                return result;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
         }
+    }
+    public class UserAuthMethodsResult
+    {
+        public Guid IdpID;
+        public UserAuthMethods Methods;
     }
     public enum UserSettings
     {
         Email
+    }
+    public enum UserAuthMethods
+    {
+        None = 0x0,
+        Password = 0x1,
+        OpenID = 0x2
     }
 }

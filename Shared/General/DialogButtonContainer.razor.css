@@ -2,3 +2,21 @@
     text-align: right;
     margin: 20px -16px -16px -16px;
 }
+
+.space-even {
+    display: flex;
+    flex-direction: row;
+}
+
+::deep.space-even > * {
+    flex: 1;
+    margin: 0px 2px;
+}
+
+::deep.space-even > *:first-child {
+    margin-left: 0px;
+}
+
+::deep.space-even > *:last-child {
+    margin-right: 0px;
+}
