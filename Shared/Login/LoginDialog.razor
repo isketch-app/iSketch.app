@@ -48,7 +48,7 @@
             <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
             <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
             <div class="input"><CText Type="password" Label="Password (confirm)" ValueChanged="(v) => Password2 = v"></CText></div>
-            <div class="input"><CText Type="email" Label="Recovery Email (optional)"></CText></div>
+            <div class="input"><CText Type="email" Label="Recovery Email (optional)" ValueChanged="(v) => Email = v"></CText></div>
         </div>
         <DialogButtonContainer>
             <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignIn">Back</CButton>
