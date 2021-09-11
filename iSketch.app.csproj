@@ -33,7 +33,9 @@
     <Content Include="wwwroot\.well-known\assetlinks.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="wwwroot\.well-known\microsoft-identity-association.json" />
+    <Content Include="wwwroot\.well-known\microsoft-identity-association.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
