@@ -249,8 +249,26 @@ namespace iSketch.app.OpenID
             msg.Content = new StreamContent(await form.ReadAsStreamAsync());
             msg.Content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
             HttpResponseMessage hResponse = await hc.SendAsync(msg);
+            try
+            {
+                hResponse.EnsureSuccessStatusCode();
+            }
+            catch (Exception e)
+            {
+                con.Response.Redirect("/_Error/OpenID/token-endpoint-bad-status-response?msg=" + e.Message);
+                return;
+            }
             Stream sResponse = await hResponse.Content.ReadAsStreamAsync();
-            Dictionary<string, object> jResposne = await JsonSerializer.DeserializeAsync<Dictionary<string, object>>(sResponse);
+            Dictionary<string, object> jResposne;
+            try
+            {
+                jResposne = await JsonSerializer.DeserializeAsync<Dictionary<string, object>>(sResponse);
+            }
+            catch
+            {
+                con.Response.Redirect("/_Error/OpenID/jwt-deserialize-error");
+                return;
+            }
             if (!jResposne.TryGetValue("id_token", out object idToken))
             {
                 sResponse.Position = 0;
@@ -262,7 +280,7 @@ namespace iSketch.app.OpenID
             {
                 JWT = new(idToken.ToString());
             }
-            catch (Exception)
+            catch
             {
                 con.Response.Redirect("/_Error/OpenID/jwt-invalid");
                 return;
