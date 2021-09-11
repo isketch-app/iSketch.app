@@ -37,15 +37,13 @@ namespace iSketch.app.Services
             SqlCommand cmd = Database.Connection.CreateCommand();
             cmd.Parameters.AddWithValue("@USERID@", Session.UserID);
             cmd.CommandText = "SELECT [UserName], [Settings.DarkMode] FROM [Security.Users] WHERE UserID = @USERID@";
-            SqlDataReader rdr = cmd.ExecuteReader();
+            using SqlDataReader rdr = cmd.ExecuteReader();
             if (!rdr.HasRows)
             {
-                rdr.Close();
                 return;
             }
             rdr.Read();
             UserName = rdr.GetString(0);
-            rdr.Close();
         }
         public bool Logon(Guid UserID)
         {
@@ -62,10 +60,9 @@ namespace iSketch.app.Services
                 SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERNAME@", UserName);
                 cmd.CommandText = "SELECT UserID, Password, PasswordSalt, [OpenID.IdpID] FROM [Security.Users] WHERE UserName = @USERNAME@";
-                SqlDataReader rdr = cmd.ExecuteReader();
+                using SqlDataReader rdr = cmd.ExecuteReader();
                 if (!rdr.HasRows)
                 {
-                    rdr.Close();
                     return false;
                 }
                 rdr.Read();
@@ -74,14 +71,12 @@ namespace iSketch.app.Services
                 bool IsIdpIDNull = rdr.IsDBNull(3);
                 if (IsPasswordNull && !IsIdpIDNull)
                 {
-                    rdr.Close();
                     return false;
                 }
                 if (!IsPasswordNull)
                 {
                     if (Password == null)
                     {
-                        rdr.Close();
                         return false;
                     }
                     byte[] dbHash = new byte[128];
@@ -94,10 +89,6 @@ namespace iSketch.app.Services
                     string hash1 = Convert.ToBase64String(PHQTask.Result.Hash);
                     string hash2 = Convert.ToBase64String(dbHash);
                     if (hash1 != hash2) return false;
-                }
-                else
-                {
-                    rdr.Close();
                 }
                 return Logon(UserID);
             }

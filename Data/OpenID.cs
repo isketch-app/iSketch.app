@@ -24,18 +24,11 @@ namespace iSketch.app.OpenID
                 cmd.CommandText += "WHERE Enabled = 1 ";
             }
             cmd.CommandText += "ORDER BY DisplayOrder";
-            SqlDataReader rdr = cmd.ExecuteReader();
+            using SqlDataReader rdr = cmd.ExecuteReader();
             List<Guid> IdpIDs = new();
-            try
+            while(rdr.Read())
             {
-                while(rdr.Read())
-                {
-                    IdpIDs.Add(rdr.GetGuid(0));
-                }
-            }
-            finally
-            {
-                rdr.Close();
+                IdpIDs.Add(rdr.GetGuid(0));
             }
             List<idP> IDPs = new(); 
             foreach(Guid IdpID in IdpIDs)
@@ -64,7 +57,7 @@ namespace iSketch.app.OpenID
             "[Claims.Email], " +
             "[Claims.UserPhoto] " +
             "FROM [Security.OpenID] WHERE IdpID = @IDPID@";
-            SqlDataReader rdr = cmd.ExecuteReader();
+            using SqlDataReader rdr = cmd.ExecuteReader();
             try
             {
                 rdr.Read();
@@ -86,10 +79,6 @@ namespace iSketch.app.OpenID
             {
                 idp = null;
             }
-            finally
-            {
-                rdr.Close();
-            }
             return idp;
         }
         public static TokenHandleResult HandleIdpIdToken(Session session, idP idP, JWT JWT)
@@ -98,24 +87,21 @@ namespace iSketch.app.OpenID
             cmd.Parameters.AddWithValue("@IDPID@", idP.IdpID);
             cmd.Parameters.AddWithValue("@SUBJECT@", JWT.Payload["sub"].ToString());
             cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE [OpenID.IdpID] = @IDPID@ AND [OpenID.Subject] = @SUBJECT@";
-            SqlDataReader rdr = cmd.ExecuteReader();
+            using SqlDataReader rdr = cmd.ExecuteReader();
             if (rdr.HasRows)
             {
                 if (session.UserID == Guid.Empty)
                 {
                     rdr.Read();
                     Guid UserID = rdr.GetGuid(0);
-                    rdr.Close();
                     UserTools.Logon(session, UserID);
                     return TokenHandleResult.Success;
                 }
                 else
                 {
-                    rdr.Close();
                     return TokenHandleResult.SubjectAlreadyBoundToAnotherAccount;
                 }
             }
-            rdr.Close();
             if (session.UserID == Guid.Empty)
             {
                 Guid newUserID = UserTools.CreateUser(session.db);

@@ -166,7 +166,7 @@
             cmd.CommandText += " ORDER BY " + VisibleRows[SortColumnAndDirection * -1] + " DESC";
         }
         cmd.CommandText += " OFFSET " + ResultOffset + " ROWS FETCH NEXT " + MaxResults + " ROWS ONLY";
-        SqlDataReader rdr = cmd.ExecuteReader();
+        using SqlDataReader rdr = cmd.ExecuteReader();
         while (rdr.Read())
         {
             List<string> fields = new List<string>();
@@ -176,7 +176,6 @@
             }
             TableData.Add(fields);
         }
-        rdr.Close();
         StateHasChanged();
     }
     private void OnFilterChange()

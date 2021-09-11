@@ -90,10 +90,9 @@
         if (!Guid.TryParse(WordID, out Guid id)) return 1;
         SqlCommand cmd = db.Connection.CreateCommand();
         cmd.CommandText = "SELECT TOP(1) Word, Score, Difficulty FROM [Words.Game.Difficulties.Splice] WHERE WordID = '" + id.ToString() + "'";
-        SqlDataReader rdr = cmd.ExecuteReader();
+        using SqlDataReader rdr = cmd.ExecuteReader();
         if (!rdr.HasRows)
         {
-            rdr.Close();
             return 2;
         }
         try
@@ -109,12 +108,10 @@
             {
                 InitDifficultyValue = rdr.GetString(2);
             }
-            rdr.Close();
             return 0;
         }
         catch (Exception)
         {
-            rdr.Close();
             return 0;
         }
     }
