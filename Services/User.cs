@@ -70,12 +70,14 @@ namespace iSketch.app.Services
                 }
                 rdr.Read();
                 Guid UserID = rdr.GetGuid(0);
-                if (!rdr.IsDBNull(3) && Password == null)
+                bool IsPasswordNull = rdr.IsDBNull(1);
+                bool IsIdpIDNull = rdr.IsDBNull(3);
+                if (IsPasswordNull && !IsIdpIDNull)
                 {
                     rdr.Close();
                     return false;
                 }
-                if (!rdr.IsDBNull(1))
+                if (!IsPasswordNull)
                 {
                     if (Password == null)
                     {

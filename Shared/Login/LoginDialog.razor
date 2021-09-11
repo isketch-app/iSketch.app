@@ -62,7 +62,7 @@
         </div>
         <DialogButtonContainer>
             <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low">Continue</CButton>
+            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignGuest">Continue</CButton>
         </DialogButtonContainer>
     }
 </Dialog>
@@ -158,6 +158,31 @@
             UserTools.SetUserSetting(db, uid, UserSettings.Email, mail.Address);
         }
         await Task.Run<bool>(() => UserTools.ChangePassword(db, phq, uid, Password));
+        user.Logon(uid);
+        await Dialog.FadeOut();
+    }
+    private async Task ISSignGuest()
+    {
+        Warning = "";
+        if (!UserTools.IsValidUserIDString(UserName))
+        {
+            Warning = "The user name entered is invalid.";
+            return;
+        }
+        Guid uid = UserTools.GetUserID(db, UserName);
+        if (uid != Guid.Empty)
+        {
+            UserAuthMethodsResult methods = UserTools.GetUserAuthenticationMethods(db, uid);
+            if (methods.Methods != UserAuthMethods.None)
+            {
+                Warning = "User Name is already taken.";
+                return;
+            }
+        }
+        else
+        {
+            uid = UserTools.CreateUser(db, UserName);
+        }
         user.Logon(uid);
         await Dialog.FadeOut();
     }
