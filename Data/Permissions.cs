@@ -50,19 +50,26 @@ namespace iSketch.app.Data
             SqlCommand sCmd = sqlCon.CreateCommand();
             sCmd.Parameters.AddWithValue("@USERID@", UserID);
             sCmd.CommandText = "SELECT PermissionsA, PermissionsB FROM [Security.Users.Permissions.Splice] WHERE [UserID] = @USERID@";
-            using SqlDataReader sRead = sCmd.ExecuteReader();
-            if (sRead.HasRows)
+            SqlDataReader sRead = sCmd.ExecuteReader();
+            try
             {
-                while (sRead.Read())
+                if (sRead.HasRows)
                 {
-                    byte[] bytes;
-                    bytes = new byte[8];
-                    if(!sRead.IsDBNull(0)) sRead.GetBytes(0, 0, bytes, 0, 8);
-                    perms.PermissionsA |= (PermissionsA)BitConverter.ToUInt64(bytes, 0);
-                    bytes = new byte[8];
-                    if (!sRead.IsDBNull(1)) sRead.GetBytes(1, 0, bytes, 0, 8);
-                    perms.PermissionsB |= (PermissionsB)BitConverter.ToUInt64(bytes, 0);
+                    while (sRead.Read())
+                    {
+                        byte[] bytes;
+                        bytes = new byte[8];
+                        if (!sRead.IsDBNull(0)) sRead.GetBytes(0, 0, bytes, 0, 8);
+                        perms.PermissionsA |= (PermissionsA)BitConverter.ToUInt64(bytes, 0);
+                        bytes = new byte[8];
+                        if (!sRead.IsDBNull(1)) sRead.GetBytes(1, 0, bytes, 0, 8);
+                        perms.PermissionsB |= (PermissionsB)BitConverter.ToUInt64(bytes, 0);
+                    }
                 }
+            }
+            finally
+            {
+                sRead.Close();
             }
             return perms;
         }

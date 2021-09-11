@@ -90,29 +90,36 @@
         if (!Guid.TryParse(WordID, out Guid id)) return 1;
         SqlCommand cmd = db.Connection.CreateCommand();
         cmd.CommandText = "SELECT TOP(1) Word, Score, Difficulty FROM [Words.Game.Difficulties.Splice] WHERE WordID = '" + id.ToString() + "'";
-        using SqlDataReader rdr = cmd.ExecuteReader();
-        if (!rdr.HasRows)
-        {
-            return 2;
-        }
+        SqlDataReader rdr = cmd.ExecuteReader();
         try
         {
-            rdr.Read();
-            InitWordValue = rdr.GetString(0);
-            InitScoreValue = rdr.GetInt32(1).ToString();
-            if (rdr.IsDBNull(2))
+            if (!rdr.HasRows)
             {
-                InitDifficultyValue = "";
+                return 2;
             }
-            else
+            try
             {
-                InitDifficultyValue = rdr.GetString(2);
+                rdr.Read();
+                InitWordValue = rdr.GetString(0);
+                InitScoreValue = rdr.GetInt32(1).ToString();
+                if (rdr.IsDBNull(2))
+                {
+                    InitDifficultyValue = "";
+                }
+                else
+                {
+                    InitDifficultyValue = rdr.GetString(2);
+                }
+                return 0;
             }
-            return 0;
+            catch (Exception)
+            {
+                return 0;
+            }
         }
-        catch (Exception)
+        finally
         {
-            return 0;
+            rdr.Close();
         }
     }
     private void SetWordParameters()

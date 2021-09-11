@@ -37,13 +37,20 @@ namespace iSketch.app.Services
             SqlCommand cmd = Database.Connection.CreateCommand();
             cmd.Parameters.AddWithValue("@USERID@", Session.UserID);
             cmd.CommandText = "SELECT [UserName], [Settings.DarkMode] FROM [Security.Users] WHERE UserID = @USERID@";
-            using SqlDataReader rdr = cmd.ExecuteReader();
-            if (!rdr.HasRows)
+            SqlDataReader rdr = cmd.ExecuteReader();
+            try
             {
-                return;
+                if (!rdr.HasRows)
+                {
+                    return;
+                }
+                rdr.Read();
+                UserName = rdr.GetString(0);
             }
-            rdr.Read();
-            UserName = rdr.GetString(0);
+            finally
+            {
+                rdr.Close();
+            }
         }
         public bool Logon(Guid UserID)
         {
@@ -60,37 +67,45 @@ namespace iSketch.app.Services
                 SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERNAME@", UserName);
                 cmd.CommandText = "SELECT UserID, Password, PasswordSalt, [OpenID.IdpID] FROM [Security.Users] WHERE UserName = @USERNAME@";
-                using SqlDataReader rdr = cmd.ExecuteReader();
-                if (!rdr.HasRows)
+                SqlDataReader rdr = cmd.ExecuteReader();
+                try
                 {
-                    return false;
-                }
-                rdr.Read();
-                Guid UserID = rdr.GetGuid(0);
-                bool IsPasswordNull = rdr.IsDBNull(1);
-                bool IsIdpIDNull = rdr.IsDBNull(3);
-                if (IsPasswordNull && !IsIdpIDNull)
-                {
-                    return false;
-                }
-                if (!IsPasswordNull)
-                {
-                    if (Password == null)
+                    if (!rdr.HasRows)
                     {
                         return false;
                     }
-                    byte[] dbHash = new byte[128];
-                    byte[] dbSalt = new byte[128];
-                    rdr.GetBytes(1, 0, dbHash, 0, 128);
-                    rdr.GetBytes(2, 0, dbSalt, 0, 128);
+                    rdr.Read();
+                    Guid UserID = rdr.GetGuid(0);
+                    bool IsPasswordNull = rdr.IsDBNull(1);
+                    bool IsIdpIDNull = rdr.IsDBNull(3);
+                    if (IsPasswordNull && !IsIdpIDNull)
+                    {
+                        return false;
+                    }
+                    if (!IsPasswordNull)
+                    {
+                        if (Password == null)
+                        {
+                            return false;
+                        }
+                        byte[] dbHash = new byte[128];
+                        byte[] dbSalt = new byte[128];
+                        rdr.GetBytes(1, 0, dbHash, 0, 128);
+                        rdr.GetBytes(2, 0, dbSalt, 0, 128);
+                        rdr.Close();
+                        Task<PassHashResult> PHQTask = PHQ.GenerateHash(new() { Pass = Password, Salt = dbSalt });
+                        PHQTask.Wait();
+                        string hash1 = Convert.ToBase64String(PHQTask.Result.Hash);
+                        string hash2 = Convert.ToBase64String(dbHash);
+                        if (hash1 != hash2) return false;
+                    }
                     rdr.Close();
-                    Task<PassHashResult> PHQTask = PHQ.GenerateHash(new() { Pass = Password, Salt = dbSalt });
-                    PHQTask.Wait();
-                    string hash1 = Convert.ToBase64String(PHQTask.Result.Hash);
-                    string hash2 = Convert.ToBase64String(dbHash);
-                    if (hash1 != hash2) return false;
+                    return Logon(UserID);
                 }
-                return Logon(UserID);
+                finally 
+                {
+                    rdr.Close();
+                }
             }
             catch (Exception)
             {
@@ -248,16 +263,23 @@ namespace iSketch.app.Services
                 SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.CommandText = "SELECT Password, [OpenID.IdpID] FROM [Security.Users] WHERE UserID = @USERID@";
-                using SqlDataReader rdr = cmd.ExecuteReader();
-                rdr.Read();
-                if (!rdr.IsDBNull(0))
+                SqlDataReader rdr = cmd.ExecuteReader();
+                try
                 {
-                    result.Methods |= UserAuthMethods.Password;
+                    rdr.Read();
+                    if (!rdr.IsDBNull(0))
+                    {
+                        result.Methods |= UserAuthMethods.Password;
+                    }
+                    if (!rdr.IsDBNull(1))
+                    {
+                        result.Methods |= UserAuthMethods.OpenID;
+                        result.IdpID = rdr.GetGuid(1);
+                    }
                 }
-                if (!rdr.IsDBNull(1))
+                finally
                 {
-                    result.Methods |= UserAuthMethods.OpenID;
-                    result.IdpID = rdr.GetGuid(1);
+                    rdr.Close();
                 }
                 return result;
             }

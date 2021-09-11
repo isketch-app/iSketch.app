@@ -25,23 +25,30 @@ namespace iSketch.app.Services
             if (IPAddress.AddressFamily == AddressFamily.InterNetwork) cmd.Parameters.AddWithValue("@IPVER@", 4);
             if (IPAddress.AddressFamily == AddressFamily.InterNetworkV6) cmd.Parameters.AddWithValue("@IPVER@", 6);
             cmd.CommandText = "SELECT UserID FROM [Security.Sessions] WHERE SessionID = @SESSID@";
-            using SqlDataReader reader = cmd.ExecuteReader();
-            if (reader.HasRows)
+            SqlDataReader reader = cmd.ExecuteReader();
+            try
             {
-                reader.Read();
-                if (reader.IsDBNull(0)) 
+                if (reader.HasRows)
                 {
-                    UserID = Guid.Empty;
+                    reader.Read();
+                    if (reader.IsDBNull(0))
+                    {
+                        UserID = Guid.Empty;
+                    }
+                    else
+                    {
+                        UserID = reader.GetGuid(0);
+                    }
+                    cmd.CommandText = "UPDATE [Security.Sessions] SET SessionTime = GETDATE(), SessionIP = @IPADDR@, SessionIPVersion = @IPVER@ WHERE SessionID = @SESSID@";
                 }
                 else
                 {
-                    UserID = reader.GetGuid(0);
+                    cmd.CommandText = "INSERT INTO [Security.Sessions] (SessionID, SessionIP, SessionIPVersion) VALUES (@SESSID@, @IPADDR@, @IPVER@)";
                 }
-                cmd.CommandText = "UPDATE [Security.Sessions] SET SessionTime = GETDATE(), SessionIP = @IPADDR@, SessionIPVersion = @IPVER@ WHERE SessionID = @SESSID@";
             }
-            else
+            finally
             {
-                cmd.CommandText = "INSERT INTO [Security.Sessions] (SessionID, SessionIP, SessionIPVersion) VALUES (@SESSID@, @IPADDR@, @IPVER@)";
+                reader.Close();
             }
             cmd.ExecuteNonQuery();
         }
