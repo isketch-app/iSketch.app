@@ -28,9 +28,10 @@
                     <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
                 </div>
             </div>
-            <DialogButtonContainer>
+            <DialogButtonContainer SpaceEvenly="true">
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.Policies">Policies</CButton>
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignGuest">Guest</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Spectator</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Viewer</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.ISSignIn)
@@ -68,6 +69,30 @@
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignGuest">Continue</CButton>
             </DialogButtonContainer>
         }
+        @if (CurrentStage == Stage.Policies)
+        {
+            <div class="px-300 policies">
+                @{ 
+                    string tosURL = db.GetProperty("IS_Policies_TermsOfServiceURL");
+                    if (tosURL != null && tosURL != "")
+                    {
+                        <a href="@tosURL" target="_blank">
+                            <CButton Emphasis="CButton.EmphasisStyles.Low" Icon="">Terms of Service</CButton>
+                        </a>
+                    }
+                    string pURL = db.GetProperty("IS_Policies_PrivacyURL");
+                    if (pURL != null && pURL != "")
+                    {
+                        <a href="@pURL" target="_blank">
+                            <CButton Emphasis="CButton.EmphasisStyles.Low" Icon="">Privacy Policy</CButton>
+                        </a>
+                    }
+                }
+            </div>
+            <DialogButtonContainer>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+            </DialogButtonContainer>
+        }
     </Dialog>
 }
 
@@ -102,7 +127,8 @@
         "",
         "Sign up",
         "Sign in",
-        "Choose a user name"
+        "Choose a user name",
+        "Our policies:"
     };
     private enum Stage : int
     {
@@ -110,7 +136,8 @@
         SelectAnIDP = 1,
         ISSignUp = 2,
         ISSignIn = 3,
-        ISSignGuest = 4
+        ISSignGuest = 4,
+        Policies = 5
     }
     private async Task ISSignIn()
     {

@@ -65,6 +65,12 @@ h4 {
     animation: .3s in;
 }
 
+.policies a {
+    display: inline-block;
+    text-align: left;
+    margin-top: 10px;
+}
+
 @keyframes in {
     from {
         opacity: 0;
