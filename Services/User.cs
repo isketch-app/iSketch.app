@@ -209,14 +209,14 @@ namespace iSketch.app.Services
                 return Guid.Empty;
             }
         }
-        public static bool SetUserSetting(Database Database, Guid UserID, UserSettings Setting, string Value)
+        public static bool SetUserProperties(Database Database, Guid UserID, UserProperties Setting, string Value)
         {
             try
             {
                 SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@VALUE@", Value);
-                cmd.CommandText = "UPDATE [Security.Users] SET " + Setting.ToString() + " = @VALUE@ WHERE UserID = @USERID@";
+                cmd.CommandText = "UPDATE [Security.Users] SET [" + Setting.ToString().Replace('_', '.') + "] = @VALUE@ WHERE UserID = @USERID@";
                 int affected = cmd.ExecuteNonQuery();
                 return (affected == 1);
             }
@@ -225,7 +225,22 @@ namespace iSketch.app.Services
                 return false;
             }
         }
-
+        public static string GetUserProperties(Database Database, Guid UserID, UserProperties Setting)
+        {
+            try
+            {
+                SqlCommand cmd = Database.Connection.CreateCommand();
+                cmd.Parameters.AddWithValue("@USERID@", UserID);
+                cmd.CommandText = "SELECT [" + Setting.ToString().Replace('_', '.') + "] FROM [Security.Users] WHERE UserID = @USERID@";
+                object result = cmd.ExecuteScalar();
+                if (result.GetType() == typeof(DBNull)) return null;
+                return (string)result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
         public static Guid GetUserID(Database Database, string UserName)
         {
             try
@@ -288,15 +303,35 @@ namespace iSketch.app.Services
                 return null;
             }
         }
+        public static bool SetUserEmail(Database Database, Guid UserID, MailAddress Email)
+        {
+            try
+            {
+                string sEmail = GetUserProperties(Database, UserID, UserProperties.Email);
+                if (sEmail != null && MailAddress.TryCreate(sEmail, out MailAddress dbEmail))
+                {
+                    if (Email.Address == dbEmail.Address) return true;
+                }
+                SetUserProperties(Database, UserID, UserProperties.EmailVerified, "false");
+                SetUserProperties(Database, UserID, UserProperties.Email, Email.Address);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
     public class UserAuthMethodsResult
     {
         public Guid IdpID;
         public UserAuthMethods Methods;
     }
-    public enum UserSettings
+    public enum UserProperties
     {
-        Email
+        Email,
+        EmailVerified,
+        Settings_DarkMode
     }
     public enum UserAuthMethods
     {

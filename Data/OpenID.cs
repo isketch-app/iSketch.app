@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text;
 using System.IO;
+using System.Net.Mail;
 
 namespace iSketch.app.OpenID
 {
@@ -109,6 +110,7 @@ namespace iSketch.app.OpenID
                         Guid UserID = rdr.GetGuid(0);
                         rdr.Close();
                         UserTools.Logon(session, UserID);
+                        HandleJwtClaims(session, idP, JWT);
                         return TokenHandleResult.Success;
                     }
                     else
@@ -133,6 +135,7 @@ namespace iSketch.app.OpenID
             {
                 return TokenHandleResult.FailedToBindToCurrentUserAccount;
             }
+            HandleJwtClaims(session, idP, JWT);
             return TokenHandleResult.Success;
         }
         public enum TokenHandleResult
@@ -140,6 +143,18 @@ namespace iSketch.app.OpenID
             Success,
             SubjectAlreadyBoundToAnotherAccount,
             FailedToBindToCurrentUserAccount
+        }
+        private static bool HandleJwtClaims(Session Session, idP idP, JWT JWT)
+        {
+            if (
+                idP.ClaimsEmail != null &&
+                idP.ClaimsEmail != "" &&
+                JWT.Payload.TryGetValue(idP.ClaimsEmail, out object oClaimEmail) &&
+                MailAddress.TryCreate(oClaimEmail.ToString(), out MailAddress mailAddress)
+            ) {
+                UserTools.SetUserEmail(Session.db, Session.UserID, mailAddress);
+            }
+            return true;
         }
     }
     public class idP
@@ -288,6 +303,7 @@ namespace iSketch.app.OpenID
             OpenID.TokenHandleResult result = OpenID.HandleIdpIdToken(session, idP, JWT);
             if (result != OpenID.TokenHandleResult.Success)
             {
+
                 con.Response.Redirect("/_Error/OpenID/" + result.ToString());
                 return;
             }
