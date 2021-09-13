@@ -3,10 +3,6 @@
 @inject Session session;
 @inject Database db;
 
-<Authenticated Invert="true">
-    <iSketch.app.Shared.Login.LoginDialog />
-</Authenticated>
-
 <Authorized PermissionsA="PMA.Administration">
     <a href="/Administration">Administration</a>
 </Authorized>

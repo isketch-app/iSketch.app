@@ -4,70 +4,79 @@
 @inject NavigationManager nm;
 @inject Services.Session session;  
 @inject Services.PassHashQueue phq; 
+@inject EventHookScoped ehs; 
 @using OpenID; 
 
-<Dialog AllowBreakOut="false" Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
-    @if (Warning != "")
-    {
-        <div class="warning">@Warning</div>
-    }
-    @if (CurrentStage == Stage.SelectAnIDP)
-    {
-        <div class="px-300">
-            <div class="logo"></div>
-            <h3>Ready to sketch?</h3>
-            <h4>Select an option to continue with:</h4>
-            <div class="idp-buttons">
-                @foreach (idP idP in OpenID.GetIDPs(db))
-                {
-                    <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => nm.NavigateTo(idP.GetRequestURI(session))'>@idP.DisplayName</CButton>
-                }
-                <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
+@if (user.Session.UserID == Guid.Empty)
+{
+    <Dialog AllowBreakOut="false" Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
+        @if (Warning != "")
+        {
+            <div class="warning">@Warning</div>
+        }
+        @if (CurrentStage == Stage.SelectAnIDP)
+        {
+            <div class="px-300">
+                <div class="logo"></div>
+                <h3>Ready to sketch?</h3>
+                <h4>Select an option to continue with:</h4>
+                <div class="idp-buttons">
+                    @foreach (idP idP in OpenID.GetIDPs(db))
+                    {
+                        <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => nm.NavigateTo(idP.GetRequestURI(session))'>@idP.DisplayName</CButton>
+                    }
+                    <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
+                </div>
             </div>
-        </div>
-        <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignGuest">Guest</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Spectator</CButton>
-        </DialogButtonContainer>
-    }
-    @if (CurrentStage == Stage.ISSignIn)
-    {
-        <div class="px-300">
-            <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
-            <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
-        </div>
-        <DialogButtonContainer SpaceEvenly="true">
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignUp">Sign up</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignIn">Sign in</CButton>
-        </DialogButtonContainer>
-    }
-    @if (CurrentStage == Stage.ISSignUp)
-    {
-        <div class="px-300">
-            <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
-            <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
-            <div class="input"><CText Type="password" Label="Password (confirm)" ValueChanged="(v) => Password2 = v"></CText></div>
-            <div class="input"><CText Type="email" Label="Recovery Email (optional)" ValueChanged="(v) => Email = v"></CText></div>
-        </div>
-        <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignIn">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignUp">Sign up</CButton>
-        </DialogButtonContainer>
-    }
-    @if (CurrentStage == Stage.ISSignGuest)
-    {
-        <div class="px-300">
-            <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
-        </div>
-        <DialogButtonContainer>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
-            <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignGuest">Continue</CButton>
-        </DialogButtonContainer>
-    }
-</Dialog>
+            <DialogButtonContainer>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignGuest">Guest</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Spectator</CButton>
+            </DialogButtonContainer>
+        }
+        @if (CurrentStage == Stage.ISSignIn)
+        {
+            <div class="px-300">
+                <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
+            </div>
+            <DialogButtonContainer SpaceEvenly="true">
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignUp">Sign up</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignIn">Sign in</CButton>
+            </DialogButtonContainer>
+        }
+        @if (CurrentStage == Stage.ISSignUp)
+        {
+            <div class="px-300">
+                <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
+                <div class="input"><CText Type="password" Label="Password (confirm)" ValueChanged="(v) => Password2 = v"></CText></div>
+                <div class="input"><CText Type="email" Label="Recovery Email (optional)" ValueChanged="(v) => Email = v"></CText></div>
+            </div>
+            <DialogButtonContainer>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignIn">Back</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignUp">Sign up</CButton>
+            </DialogButtonContainer>
+        }
+        @if (CurrentStage == Stage.ISSignGuest)
+        {
+            <div class="px-300">
+                <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+            </div>
+            <DialogButtonContainer>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignGuest">Continue</CButton>
+            </DialogButtonContainer>
+        }
+    </Dialog>
+}
 
-@code {
+@code { 
+    override protected void OnInitialized()
+    {
+        ehs.LoginButtonPressed += LoginButtonPressed;
+        base.OnInitialized();
+    }
     private Stage rCurrentStage = Stage.SelectAnIDP;
     private Stage CurrentStage
     {
@@ -185,5 +194,11 @@
         }
         user.Logon(uid);
         await Dialog.FadeOut();
+    }
+    private void LoginButtonPressed(object o, EventArgs e)
+    {
+        CurrentStage = Stage.SelectAnIDP;
+        _ = Dialog.FadeIn();
+        StateHasChanged();
     }
 }

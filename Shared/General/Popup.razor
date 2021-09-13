@@ -21,11 +21,20 @@
     public async Task FadeOut()
     {
         _ = js.InvokeVoidAsync("eval",
-            "document.getElementById('" + ID + "').classList.add('closing');" +
+            "var elm = document.getElementById('" + ID + "');" +
+            "if (elm != null) elm.classList.add('closing');" +
             "document.querySelector('[name=theme-color]').content = '#ffffff';"
         );
         await Task.Delay(75);
         await OnFadeOut.InvokeAsync();
+    }
+    public async Task FadeIn()
+    {
+        await js.InvokeVoidAsync("eval",
+            "var elm = document.getElementById('" + ID + "');" +
+            "if (elm != null) elm.classList.remove('closing');" +
+            "document.querySelector('[name=theme-color]').content = '#adadad';"
+        );
     }
     private async Task BreakOutFadeOut()
     {

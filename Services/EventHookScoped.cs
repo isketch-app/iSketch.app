@@ -9,5 +9,10 @@ namespace iSketch.app.Services
         {
             LoginLogoutStatusChanged?.Invoke(this, EventArgs.Empty);
         }
+        public event EventHandler LoginButtonPressed;
+        public void OnLoginButtonPressed()
+        {
+            LoginButtonPressed?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

@@ -37,6 +37,10 @@
     {
         await Popup.FadeOut();
     }
+    public async Task FadeIn()
+    {
+        await Popup.FadeIn();
+    }
     private Popup Popup;
     private EventCallback<Dialog> pOnDismiss;
     private bool OnDismissSet = false;
