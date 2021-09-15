@@ -9,23 +9,6 @@
     <h2>iSketch.app</h2>
     <p>@description</p>
     <hr />
-    @{
-        string tosURL = db.GetProperty("IS_Policies_TermsOfServiceURL");
-        if (tosURL != null && tosURL != "")
-        {
-            <a href="@tosURL" target="_blank">
-                <CButton Emphasis="CButton.EmphasisStyles.Low" Icon="">Terms of Service</CButton>
-            </a>
-        }
-        string pURL = db.GetProperty("IS_Policies_PrivacyURL");
-        if (pURL != null && pURL != "")
-        {
-            <a href="@pURL" target="_blank">
-                <CButton Emphasis="CButton.EmphasisStyles.Low" Icon="">Privacy Policy</CButton>
-            </a>
-        }
-    }
-    <hr />
     <table>
         <tr>
             <td>Version:</td>
