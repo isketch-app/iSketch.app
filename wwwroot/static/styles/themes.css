@@ -1,0 +1,12 @@
+﻿#is_body.theme_light, #is_body.theme_dark {
+    --background-color: white;
+    --foreground-color: #1e1e1e;
+    --standard-border-color: #e1e1e1;
+}
+/*
+#is_body.theme_dark {
+    --background-color: #0a0a0a;
+    --foreground-color: #7b7b7b;
+    --standard-border-color: #1b1b1b;
+}
+*/

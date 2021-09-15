@@ -26,8 +26,6 @@ body {
     letter-spacing: 0.4px;
     margin: 0px;
     padding: 0px;
-    color: #1e1e1e;
-    background-color: white;
 }
 
 #is_body {
@@ -38,11 +36,13 @@ body {
     width: 100%;
     margin-top: 64px;
     height: calc(100% - 64px);
+    color: var(--foreground-color);
+    background-color: var(--background-color);
 }
 
 hr {
     border: 0px;
-    background-color: #e0e0e0;
+    background-color: var(--standard-border-color);
     height: 1px;
     margin: 20px 0px;
 }

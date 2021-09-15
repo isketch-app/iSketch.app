@@ -3,9 +3,11 @@ var iSketchSite = {
     onconnect: function () { },
     Blazor: {},
     JSInteropHelpers: {},
+    Theme: {},
     Elements: {
         FloaterMenuF: {},
-        PageLoader: {}
+        PageLoader: {},
+        ISBody: document.getElementById("is_body")
     }
 }
 
@@ -30,7 +32,7 @@ document.addEventListener('click', function (e) {
     });
 });
 
-document.getElementById('is_body').addEventListener('scroll', function (e) {
+iSketchSite.Elements.ISBody.addEventListener('scroll', function (e) {
     if (e.srcElement.scrollTop > 0) {
         e.srcElement.classList.add('scrolled');
     } else {
@@ -78,3 +80,18 @@ iSketchSite.Elements.PageLoader.Hide = function () {
     document.querySelector('.pl_body').classList.add('fadeout');
     setTimeout(function() { document.querySelector('.pl_body').remove(); }, 300);
 };
+
+iSketchSite.Theme.ChangeTheme = function (setDark) {
+    iSketchSite.Elements.ISBody.classList.remove('theme_light');
+    iSketchSite.Elements.ISBody.classList.remove('theme_dark');
+    if (setDark) {
+        iSketchSite.Elements.ISBody.classList.add('theme_dark');
+    } else {
+        iSketchSite.Elements.ISBody.classList.add('theme_light');
+    }
+};
+
+iSketchSite.Theme.ChangeTheme(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    iSketchSite.Theme.ChangeTheme(e.matches);
+});

@@ -4,7 +4,7 @@
     left: 0px;
     height: 44px;
     width: calc(100% - 20px);
-    background-color: white;
+    background-color: var(--background-color);
     display: flex;
     padding: 10px;
     z-index: 10;

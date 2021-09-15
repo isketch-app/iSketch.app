@@ -14,8 +14,8 @@ table {
     font-size: 14px;
     width: calc(100% - 2px);
     overflow-x: auto;
-    border: 1px solid #e1e1e1;
-    background-color: white;
+    border: 1px solid var(--standard-border-color);
+    background-color: var(--background-color);
     border-radius: 4px;
     position: relative;
     display: flex;
@@ -41,7 +41,7 @@ tr:not(:nth-child(-n+2)):hover {
 }
 
 tr {
-    border-bottom: 1px solid #e1e1e1;
+    border-bottom: 1px solid var(--standard-border-color);
 }
 
 td, th {
@@ -98,8 +98,8 @@ th {
     left: 0px;
     width: 100%;
     height: 50px;
-    background-color: white;
-    border-top: 1px solid #e1e1e1;
+    background-color: var(--background-color);
+    border-top: 1px solid var(--standard-border-color);
     text-align: right;
     line-height: 50px;
     margin-top: -1px;
