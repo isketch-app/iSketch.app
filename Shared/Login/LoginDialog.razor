@@ -225,7 +225,7 @@
     private void LoginButtonPressed(object o, EventArgs e)
     {
         CurrentStage = Stage.SelectAnIDP;
-        _ = Dialog.FadeIn();
+        if (Dialog != null) _ = Dialog.FadeIn();
         StateHasChanged();
     }
 }
