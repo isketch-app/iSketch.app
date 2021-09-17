@@ -29,17 +29,17 @@ namespace iSketch.app.Services
         {
             string Catelog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName");
             Logger.Info("Database: Initializing database connnection...");
+            SqlConnection con = new()
+            {
+                ConnectionString = new SqlConnectionStringBuilder()
+                {
+                    DataSource = Environment.GetEnvironmentVariable("IS_SQL_ServerHost"),
+                    UserID = Environment.GetEnvironmentVariable("IS_SQL_User"),
+                    Password = Environment.GetEnvironmentVariable("IS_SQL_Pass")
+                }.ToString()
+            };
             try
             {
-                SqlConnection con = new()
-                {
-                    ConnectionString = new SqlConnectionStringBuilder()
-                    {
-                        DataSource = Environment.GetEnvironmentVariable("IS_SQL_ServerHost"),
-                        UserID = Environment.GetEnvironmentVariable("IS_SQL_User"),
-                        Password = Environment.GetEnvironmentVariable("IS_SQL_Pass")
-                    }.ToString()
-                };
                 Logger.Info("Database: Connecting...");
                 con.Open();
                 Logger.Info("Database: Connected.");
@@ -72,6 +72,10 @@ namespace iSketch.app.Services
             catch (Exception e)
             {
                 throw new Exception("iSketch.app failed to open a connection to the database!", e);
+            }
+            finally
+            {
+                con.Close();
             }
         }
         public bool IsSchemaUpToDate()
