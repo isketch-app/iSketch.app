@@ -5,6 +5,10 @@
     {
         <span class="icon">@Icon</span>
     }
+    @if (IconURL != "")
+    {
+        <span class="icon" style="background-image:url('@IconURL');"></span>
+    }
     <span class="text">@ChildContent</span>
     <div class="load">
         <span class="spinner"></span>
@@ -16,6 +20,8 @@
     public EventCallback<MouseEventArgs> OnClick { get; set; }
     [Parameter]
     public string Icon { get; set; } = "";
+    [Parameter]
+    public string IconURL { get; set; } = "";
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     [Parameter]

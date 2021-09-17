@@ -19,15 +19,15 @@ namespace iSketch.app.Services
         }
         public void RegisterSession()
         {
-            SqlCommand cmd = db.Connection.CreateCommand();
-            cmd.Parameters.AddWithValue("@SESSID@", SessionID);
-            cmd.Parameters.AddWithValue("@IPADDR@", IPAddress.ToString());
-            if (IPAddress.AddressFamily == AddressFamily.InterNetwork) cmd.Parameters.AddWithValue("@IPVER@", 4);
-            if (IPAddress.AddressFamily == AddressFamily.InterNetworkV6) cmd.Parameters.AddWithValue("@IPVER@", 6);
-            cmd.CommandText = "SELECT UserID FROM [Security.Sessions] WHERE SessionID = @SESSID@";
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlCommand cmd = db.NewConnection.CreateCommand();
             try
             {
+                cmd.Parameters.AddWithValue("@SESSID@", SessionID);
+                cmd.Parameters.AddWithValue("@IPADDR@", IPAddress.ToString());
+                if (IPAddress.AddressFamily == AddressFamily.InterNetwork) cmd.Parameters.AddWithValue("@IPVER@", 4);
+                if (IPAddress.AddressFamily == AddressFamily.InterNetworkV6) cmd.Parameters.AddWithValue("@IPVER@", 6);
+                cmd.CommandText = "SELECT UserID FROM [Security.Sessions] WHERE SessionID = @SESSID@";
+                SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
                     reader.Read();
@@ -45,12 +45,13 @@ namespace iSketch.app.Services
                 {
                     cmd.CommandText = "INSERT INTO [Security.Sessions] (SessionID, SessionIP, SessionIPVersion) VALUES (@SESSID@, @IPADDR@, @IPVER@)";
                 }
+                reader.Close();
+                cmd.ExecuteNonQuery();
             }
             finally
             {
-                reader.Close();
+                cmd.Connection.Close();
             }
-            cmd.ExecuteNonQuery();
         }
     }
 }

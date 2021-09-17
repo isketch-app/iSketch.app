@@ -23,7 +23,7 @@
                 <div class="idp-buttons">
                     @foreach (idP idP in OpenID.GetIDPs(db))
                     {
-                        <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => nm.NavigateTo(idP.GetRequestURI(session))'>@idP.DisplayName</CButton>
+                        <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => nm.NavigateTo(idP.GetRequestURI(session))'>@idP.DisplayName</CButton>
                     }
                     <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
                 </div>

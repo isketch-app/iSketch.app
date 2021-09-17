@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iSketch.app.Services;
+using System;
 using System.Data.SqlClient;
 
 namespace iSketch.app.Data
@@ -44,15 +45,15 @@ namespace iSketch.app.Data
     }
     public static class PermissionsStatic
     {
-        public static Permissions ReadPermissionsFromDatabase(this SqlConnection sqlCon, Guid UserID)
+        public static Permissions ReadPermissionsFromDatabase(this Database db, Guid UserID)
         {
             Permissions perms = new Permissions();
-            SqlCommand sCmd = sqlCon.CreateCommand();
-            sCmd.Parameters.AddWithValue("@USERID@", UserID);
-            sCmd.CommandText = "SELECT PermissionsA, PermissionsB FROM [Security.Users.Permissions.Splice] WHERE [UserID] = @USERID@";
-            SqlDataReader sRead = sCmd.ExecuteReader();
+            SqlCommand sCmd = db.NewConnection.CreateCommand();
             try
             {
+                sCmd.Parameters.AddWithValue("@USERID@", UserID);
+                sCmd.CommandText = "SELECT PermissionsA, PermissionsB FROM [Security.Users.Permissions.Splice] WHERE [UserID] = @USERID@";
+                SqlDataReader sRead = sCmd.ExecuteReader();
                 if (sRead.HasRows)
                 {
                     while (sRead.Read())
@@ -66,12 +67,12 @@ namespace iSketch.app.Data
                         perms.PermissionsB |= (PermissionsB)BitConverter.ToUInt64(bytes, 0);
                     }
                 }
+                return perms;
             }
             finally
             {
-                sRead.Close();
+                sCmd.Connection.Close();
             }
-            return perms;
         }
     }
 }

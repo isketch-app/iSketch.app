@@ -30,16 +30,16 @@ namespace iSketch.app.Services
         }
         public void ReloadPermissionsFromDatabase()
         {
-            Permissions = Database.Connection.ReadPermissionsFromDatabase(Session.UserID);
+            Permissions = Database.ReadPermissionsFromDatabase(Session.UserID);
         }
         public void ReloadUserData()
         {
-            SqlCommand cmd = Database.Connection.CreateCommand();
-            cmd.Parameters.AddWithValue("@USERID@", Session.UserID);
-            cmd.CommandText = "SELECT [UserName], [Settings.DarkMode] FROM [Security.Users] WHERE UserID = @USERID@";
-            SqlDataReader rdr = cmd.ExecuteReader();
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
+                cmd.Parameters.AddWithValue("@USERID@", Session.UserID);
+                cmd.CommandText = "SELECT [UserName], [Settings.DarkMode] FROM [Security.Users] WHERE UserID = @USERID@";
+                SqlDataReader rdr = cmd.ExecuteReader();
                 if (!rdr.HasRows)
                 {
                     return;
@@ -49,7 +49,7 @@ namespace iSketch.app.Services
             }
             finally
             {
-                rdr.Close();
+                cmd.Connection.Close();
             }
         }
         public bool Logon(Guid UserID)
@@ -62,54 +62,49 @@ namespace iSketch.app.Services
         public bool Logon(string UserName, string Password = null)
         {
             if (Password == "") Password = null;
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
-                SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERNAME@", UserName);
                 cmd.CommandText = "SELECT UserID, Password, PasswordSalt, [OpenID.IdpID] FROM [Security.Users] WHERE UserName = @USERNAME@";
                 SqlDataReader rdr = cmd.ExecuteReader();
-                try
+                if (!rdr.HasRows)
                 {
-                    if (!rdr.HasRows)
+                    return false;
+                }
+                rdr.Read();
+                Guid UserID = rdr.GetGuid(0);
+                bool IsPasswordNull = rdr.IsDBNull(1);
+                bool IsIdpIDNull = rdr.IsDBNull(3);
+                if (IsPasswordNull && !IsIdpIDNull)
+                {
+                    return false;
+                }
+                if (!IsPasswordNull)
+                {
+                    if (Password == null)
                     {
                         return false;
                     }
-                    rdr.Read();
-                    Guid UserID = rdr.GetGuid(0);
-                    bool IsPasswordNull = rdr.IsDBNull(1);
-                    bool IsIdpIDNull = rdr.IsDBNull(3);
-                    if (IsPasswordNull && !IsIdpIDNull)
-                    {
-                        return false;
-                    }
-                    if (!IsPasswordNull)
-                    {
-                        if (Password == null)
-                        {
-                            return false;
-                        }
-                        byte[] dbHash = new byte[128];
-                        byte[] dbSalt = new byte[128];
-                        rdr.GetBytes(1, 0, dbHash, 0, 128);
-                        rdr.GetBytes(2, 0, dbSalt, 0, 128);
-                        rdr.Close();
-                        Task<PassHashResult> PHQTask = PHQ.GenerateHash(new() { Pass = Password, Salt = dbSalt });
-                        PHQTask.Wait();
-                        string hash1 = Convert.ToBase64String(PHQTask.Result.Hash);
-                        string hash2 = Convert.ToBase64String(dbHash);
-                        if (hash1 != hash2) return false;
-                    }
-                    rdr.Close();
-                    return Logon(UserID);
+                    byte[] dbHash = new byte[128];
+                    byte[] dbSalt = new byte[128];
+                    rdr.GetBytes(1, 0, dbHash, 0, 128);
+                    rdr.GetBytes(2, 0, dbSalt, 0, 128);
+                    Task<PassHashResult> PHQTask = PHQ.GenerateHash(new() { Pass = Password, Salt = dbSalt });
+                    PHQTask.Wait();
+                    string hash1 = Convert.ToBase64String(PHQTask.Result.Hash);
+                    string hash2 = Convert.ToBase64String(dbHash);
+                    if (hash1 != hash2) return false;
                 }
-                finally 
-                {
-                    rdr.Close();
-                }
+                return Logon(UserID);
             }
             catch (Exception)
             {
                 return false;
+            }
+            finally
+            {
+                cmd.Connection.Close();
             }
         }
         public bool Logoff()
@@ -128,9 +123,9 @@ namespace iSketch.app.Services
     {
         public static bool Logon(Session session, Guid UserID)
         {
+            SqlCommand cmd = session.db.NewConnection.CreateCommand();
             try
             {
-                SqlCommand cmd = session.db.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@SESSIONID@", session.SessionID);
                 cmd.CommandText = "UPDATE [Security.Sessions] SET [UserID] = @USERID@ WHERE SessionID = @SESSIONID@";
@@ -143,12 +138,16 @@ namespace iSketch.app.Services
             {
                 return false;
             }
+            finally
+            {
+                cmd.Connection.Close();
+            }
         }
         public static bool Logoff(Session session)
         {
+            SqlCommand cmd = session.db.NewConnection.CreateCommand();
             try
             {
-                SqlCommand cmd = session.db.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@SESSIONID@", session.SessionID);
                 cmd.CommandText = "UPDATE [Security.Sessions] SET UserID = NULL WHERE SessionID = @SESSIONID@";
                 int affected = cmd.ExecuteNonQuery();
@@ -160,13 +159,17 @@ namespace iSketch.app.Services
             {
                 return false;
             }
+            finally
+            {
+                cmd.Connection.Close();
+            }
         }
         public static bool ChangePassword(Database Database, PassHashQueue PHQ, Guid UserID, string NewPassword = null)
         {
             if (NewPassword == "") NewPassword = null;
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
-                SqlCommand cmd = Database.Connection.CreateCommand();
                 if (NewPassword == null)
                 {
                     cmd.Parameters.AddWithValue("@PASSWORD@", null);
@@ -189,14 +192,18 @@ namespace iSketch.app.Services
             {
                 return false;
             }
+            finally
+            {
+                cmd.Connection.Close();
+            }
         }
         public static Guid CreateUser(Database Database, string UserName = null)
         {
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 Guid UserID = Guid.NewGuid();
                 if (UserName == null || UserName == "") UserName = UserID.ToString();
-                SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@USERNAME@", UserName);
                 cmd.CommandText = "INSERT INTO [Security.Users] ([UserID], [UserName]) VALUES (@USERID@, @USERNAME@)";
@@ -208,12 +215,16 @@ namespace iSketch.app.Services
             {
                 return Guid.Empty;
             }
+            finally
+            {
+                cmd.Connection.Close();
+            }
         }
         public static bool SetUserProperties(Database Database, Guid UserID, UserProperties Setting, string Value)
         {
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
-                SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@VALUE@", Value);
                 cmd.CommandText = "UPDATE [Security.Users] SET [" + Setting.ToString().Replace('_', '.') + "] = @VALUE@ WHERE UserID = @USERID@";
@@ -224,12 +235,16 @@ namespace iSketch.app.Services
             {
                 return false;
             }
+            finally
+            {
+                cmd.Connection.Close();
+            }
         }
         public static string GetUserProperties(Database Database, Guid UserID, UserProperties Setting)
         {
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
-                SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.CommandText = "SELECT [" + Setting.ToString().Replace('_', '.') + "] FROM [Security.Users] WHERE UserID = @USERID@";
                 object result = cmd.ExecuteScalar();
@@ -240,12 +255,16 @@ namespace iSketch.app.Services
             {
                 return null;
             }
+            finally
+            {
+                cmd.Connection.Close();
+            }
         }
         public static Guid GetUserID(Database Database, string UserName)
         {
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
-                SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERNAME@", UserName);
                 cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE UserName = @USERNAME@";
                 object oUserID = cmd.ExecuteScalar();
@@ -262,6 +281,10 @@ namespace iSketch.app.Services
             {
                 return Guid.Empty;
             }
+            finally
+            {
+                cmd.Connection.Close();
+            }
         }
         public static bool IsValidUserIDString(string UserName)
         {
@@ -272,35 +295,32 @@ namespace iSketch.app.Services
         }
         public static UserAuthMethodsResult GetUserAuthenticationMethods(Database Database, Guid UserID)
         {
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 UserAuthMethodsResult result = new();
-                SqlCommand cmd = Database.Connection.CreateCommand();
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.CommandText = "SELECT Password, [OpenID.IdpID] FROM [Security.Users] WHERE UserID = @USERID@";
                 SqlDataReader rdr = cmd.ExecuteReader();
-                try
+                rdr.Read();
+                if (!rdr.IsDBNull(0))
                 {
-                    rdr.Read();
-                    if (!rdr.IsDBNull(0))
-                    {
-                        result.Methods |= UserAuthMethods.Password;
-                    }
-                    if (!rdr.IsDBNull(1))
-                    {
-                        result.Methods |= UserAuthMethods.OpenID;
-                        result.IdpID = rdr.GetGuid(1);
-                    }
+                    result.Methods |= UserAuthMethods.Password;
                 }
-                finally
+                if (!rdr.IsDBNull(1))
                 {
-                    rdr.Close();
+                    result.Methods |= UserAuthMethods.OpenID;
+                    result.IdpID = rdr.GetGuid(1);
                 }
                 return result;
             }
             catch (Exception)
             {
                 return null;
+            }
+            finally
+            {
+                cmd.Connection.Close();
             }
         }
         public static bool SetUserEmail(Database Database, Guid UserID, MailAddress Email)

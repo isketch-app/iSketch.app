@@ -18,7 +18,7 @@ namespace iSketch.app.OpenID
     {
         public static List<idP> GetIDPs(Database db, bool includeDisabled = false)
         {
-            SqlCommand cmd = db.Connection.CreateCommand();
+            SqlCommand cmd = db.NewConnection.CreateCommand();
             cmd.CommandText = "SELECT IdpID FROM [Security.OpenID] ";
             if (!includeDisabled)
             {
@@ -36,7 +36,7 @@ namespace iSketch.app.OpenID
             }
             finally
             {
-                rdr.Close();
+                cmd.Connection.Close();
             }
             List<idP> IDPs = new(); 
             foreach(Guid IdpID in IdpIDs)
@@ -48,7 +48,7 @@ namespace iSketch.app.OpenID
         public static idP GetIDP(Database db, Guid IdpID)
         {
             idP idp;
-            SqlCommand cmd = db.Connection.CreateCommand();
+            SqlCommand cmd = db.NewConnection.CreateCommand();
             cmd.Parameters.AddWithValue("@IDPID@", IdpID);
             cmd.CommandText = 
             "SELECT " +
@@ -89,54 +89,61 @@ namespace iSketch.app.OpenID
             }
             finally
             {
-                rdr.Close();
+                cmd.Connection.Close();
             }
             return idp;
         }
         public static TokenHandleResult HandleIdpIdToken(Session session, idP idP, JWT JWT)
         {
-            SqlCommand cmd = session.db.Connection.CreateCommand();
-            cmd.Parameters.AddWithValue("@IDPID@", idP.IdpID);
-            cmd.Parameters.AddWithValue("@SUBJECT@", JWT.Payload["sub"].ToString());
-            cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE [OpenID.IdpID] = @IDPID@ AND [OpenID.Subject] = @SUBJECT@";
-            SqlDataReader rdr = cmd.ExecuteReader();
+            SqlCommand cmd = session.db.NewConnection.CreateCommand();
             try
             {
-                if (rdr.HasRows)
+                cmd.Parameters.AddWithValue("@IDPID@", idP.IdpID);
+                cmd.Parameters.AddWithValue("@SUBJECT@", JWT.Payload["sub"].ToString());
+                cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE [OpenID.IdpID] = @IDPID@ AND [OpenID.Subject] = @SUBJECT@";
+                SqlDataReader rdr = cmd.ExecuteReader();
+                try
                 {
-                    if (session.UserID == Guid.Empty)
+                    if (rdr.HasRows)
                     {
-                        rdr.Read();
-                        Guid UserID = rdr.GetGuid(0);
-                        rdr.Close();
-                        UserTools.Logon(session, UserID);
-                        HandleJwtClaims(session, idP, JWT);
-                        return TokenHandleResult.Success;
-                    }
-                    else
-                    {
-                        return TokenHandleResult.SubjectAlreadyBoundToAnotherAccount;
+                        if (session.UserID == Guid.Empty)
+                        {
+                            rdr.Read();
+                            Guid UserID = rdr.GetGuid(0);
+                            rdr.Close();
+                            UserTools.Logon(session, UserID);
+                            HandleJwtClaims(session, idP, JWT);
+                            return TokenHandleResult.Success;
+                        }
+                        else
+                        {
+                            return TokenHandleResult.SubjectAlreadyBoundToAnotherAccount;
+                        }
                     }
                 }
+                finally
+                {
+                    rdr.Close();
+                }
+                if (session.UserID == Guid.Empty)
+                {
+                    Guid newUserID = UserTools.CreateUser(session.db);
+                    UserTools.Logon(session, newUserID);
+                }
+                cmd.Parameters.AddWithValue("@USERID@", session.UserID);
+                cmd.CommandText = "UPDATE [Security.Users] SET [OpenID.IdpID] = @IDPID@, [OpenID.Subject] = @SUBJECT@ WHERE UserID = @USERID@";
+                int affected = cmd.ExecuteNonQuery();
+                if (affected != 1)
+                {
+                    return TokenHandleResult.FailedToBindToCurrentUserAccount;
+                }
+                HandleJwtClaims(session, idP, JWT);
+                return TokenHandleResult.Success;
             }
             finally
             {
-                rdr.Close();
+                cmd.Connection.Close();
             }
-            if (session.UserID == Guid.Empty)
-            {
-                Guid newUserID = UserTools.CreateUser(session.db);
-                UserTools.Logon(session, newUserID);
-            }
-            cmd.Parameters.AddWithValue("@USERID@", session.UserID);
-            cmd.CommandText = "UPDATE [Security.Users] SET [OpenID.IdpID] = @IDPID@, [OpenID.Subject] = @SUBJECT@ WHERE UserID = @USERID@";
-            int affected = cmd.ExecuteNonQuery();
-            if (affected != 1)
-            {
-                return TokenHandleResult.FailedToBindToCurrentUserAccount;
-            }
-            HandleJwtClaims(session, idP, JWT);
-            return TokenHandleResult.Success;
         }
         public enum TokenHandleResult
         {

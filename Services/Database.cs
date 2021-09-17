@@ -9,14 +9,29 @@ namespace iSketch.app.Services
     public class Database
     {
         public int SchemaVersion = 0;
-        public SqlConnection Connection;
+        public SqlConnection NewConnection { 
+            get { 
+                SqlConnection con = new()
+                {
+                    ConnectionString = new SqlConnectionStringBuilder()
+                    {
+                        DataSource = Environment.GetEnvironmentVariable("IS_SQL_ServerHost"),
+                        UserID = Environment.GetEnvironmentVariable("IS_SQL_User"),
+                        Password = Environment.GetEnvironmentVariable("IS_SQL_Pass"),
+                        InitialCatalog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName")
+                    }.ToString()
+                };
+                con.Open();
+                return con;
+            }
+        }
         public Database()
         {
             string Catelog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName");
             Logger.Info("Database: Initializing database connnection...");
             try
             {
-                Connection = new SqlConnection()
+                SqlConnection con = new()
                 {
                     ConnectionString = new SqlConnectionStringBuilder()
                     {
@@ -26,20 +41,20 @@ namespace iSketch.app.Services
                     }.ToString()
                 };
                 Logger.Info("Database: Connecting...");
-                Connection.Open();
+                con.Open();
                 Logger.Info("Database: Connected.");
                 try
                 {
                     Logger.Info("Database: Opening Catelog: " + Catelog + "...");
-                    Connection.ChangeDatabase(Catelog);
+                    con.ChangeDatabase(Catelog);
                 }
                 catch (Exception)
                 {
                     Logger.Info("Database: Catelog does not exist, creating...");
-                    SqlCommand cmd = Connection.CreateCommand();
+                    SqlCommand cmd = con.CreateCommand();
                     cmd.CommandText = "CREATE DATABASE [" + Catelog + "]";
                     cmd.ExecuteNonQuery();
-                    Connection.ChangeDatabase(Catelog);
+                    con.ChangeDatabase(Catelog);
                 }
                 if (!IsDBSetUp()) InitializeDBSchema();
                 if (!IsSchemaUpToDate()) UpdateDBSchema();
@@ -118,19 +133,26 @@ namespace iSketch.app.Services
                 }
                 scriptGen += line + "\r\n";
             }
-            foreach (string script in scripts)
+            SqlCommand cmd = NewConnection.CreateCommand();
+            try
             {
-                try
+                foreach (string script in scripts)
                 {
-                    SqlCommand cmd = Connection.CreateCommand();
-                    cmd.CommandText = script;
-                    cmd.ExecuteNonQuery();
+                    try
+                    {
+                        cmd.CommandText = script;
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error("Database: " + e.Message);
+                        continue;
+                    }
                 }
-                catch (Exception e)
-                {
-                    Logger.Error("Database: " + e.Message);
-                    continue;
-                }
+            }
+            finally
+            {
+                cmd.Connection.Close();
             }
             Logger.Info("Database: File: " + fileInfo.Name + " done executing.");
         }
