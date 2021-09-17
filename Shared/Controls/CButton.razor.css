@@ -21,6 +21,9 @@ button .icon {
     width: 18px;
     height: 18px;
     background-size: 100% 100%;
+    display: inline-block;
+    float: left;
+    margin-top: -1px;
 }
 
 button.em1 {
@@ -64,7 +67,7 @@ button.em3:active {
 
 button .text {
     font-size: 14px;
-    line-height: 18px;
+    line-height: 17px;
     display: inline-block;
     text-transform: uppercase;
     vertical-align: top;

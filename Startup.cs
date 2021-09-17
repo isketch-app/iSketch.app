@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using iSketch.app.Services;
 using iSketch.app.Data.Middleware;
+using iSketch.app.Data.Photo;
 
 namespace iSketch.app
 {
@@ -49,6 +50,7 @@ namespace iSketch.app
             {
                 endpoints.MapGet("/dynamic/{File}.{Ext}", Dynamic.Delegate);
                 endpoints.MapGet("/_OpenID/{IdpID:guid}/Login", OpenID.Endpoints.Login);
+                endpoints.MapGet("/_Photo/{TableAndRow}/{RowID:guid}", Photo.Endpoint);
                 endpoints.MapHealthChecks("/_Health");
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");

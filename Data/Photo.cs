@@ -25,7 +25,7 @@ namespace iSketch.app.Data.Photo
             "WHERE " + tar.GuidColumnName + " = @ROWID@";
             object rawPhoto = cmd.ExecuteScalar();
             cmd.Connection.Close();
-            if (rawPhoto.GetType() == typeof(System.DBNull)) return;
+            if (rawPhoto == null ||rawPhoto.GetType() == typeof(System.DBNull)) return;
             IImageFormat format = Image.DetectFormat((byte[])rawPhoto);
             if (format != null) context.Response.ContentType = format.DefaultMimeType;
             await context.Response.Body.WriteAsync((byte[])rawPhoto, 0, ((byte[])rawPhoto).Length);
