@@ -36,21 +36,7 @@
         <a href="/Rules"><CMenuItem Icon="" Text="Rules" /></a>
         <a href="/Help"><CMenuItem Icon="" Text="Help" /></a>
         <hr />
-        @{
-            string tosURL = db.GetProperty("IS_Policies_TermsOfServiceURL");
-            if (tosURL != null && tosURL != "")
-            {
-                <a href="@tosURL" target="_blank">
-                    <CMenuItem Icon="" Text="Terms of Service" />
-                </a>
-            }
-            string pURL = db.GetProperty("IS_Policies_PrivacyURL");
-            if (pURL != null && pURL != "")
-            {
-                <a href="@pURL" target="_blank">
-                    <CMenuItem Icon="" Text="Privacy Policy" />
-                </a>
-            }
-        }
+        <a href="/TermsOfService"><CMenuItem Icon="" Text="Terms of Service" /></a>
+        <a href="/Privacy"><CMenuItem Icon="" Text="Privacy Policy" /></a>
     </div>
 </FloaterMenu>

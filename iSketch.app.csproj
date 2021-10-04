@@ -25,6 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Shared\Login\LoginDialog - Copy.razor.css" />
     <None Remove="Shared\Login\LoginDialog.razor.css" />
   </ItemGroup>
 

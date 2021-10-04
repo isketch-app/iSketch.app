@@ -1,0 +1,4 @@
+﻿@page "/TermsOfService";
+@inject Database db;
+
+@((MarkupString)db.GetProperty("IS_HTML_Policy_TermsOfService"))

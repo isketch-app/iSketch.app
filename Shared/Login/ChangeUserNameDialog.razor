@@ -1,0 +1,49 @@
+﻿@inject Services.User user;
+@inject EventHookScoped ehs; 
+
+<Authenticated>
+    @if (user.UserName.ToLower() == user.Session.UserID.ToString().ToLower())
+    {
+        <Dialog AllowBreakOut="false" Header="Choose a user name" @ref="Dialog">
+            @if (Warning != "")
+            {
+                <div class="warning">@Warning</div>
+            }
+            <div class="px-300">
+                <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+            </div>
+            <DialogButtonContainer SpaceEvenly="false">
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="SetUserName">Done</CButton>
+            </DialogButtonContainer>
+</Dialog>
+    }
+</Authenticated>
+
+@code { 
+    public Dialog Dialog;
+    public string Warning = "";
+    public string UserName = "";
+    public async Task SetUserName()
+    {
+        Warning = "";
+        SetUserNameResult result = UserTools.SetUserName(user.Session.db, user.Session.UserID, UserName);
+        if (result == SetUserNameResult.UserNameInvalid)
+        {
+            Warning = "The name entered is not valid.";
+        }
+        if (result == SetUserNameResult.UserNameAlreadyTaken)
+        {
+            Warning = "The name entered is already taken.";
+        }
+        if (result == SetUserNameResult.UnknownFailure)
+        {
+            Warning = "Something went wrong, try a different name.";
+        }
+        if (result == SetUserNameResult.Success)
+        {
+            await Dialog.FadeOut();
+            user.ReloadUserData();
+            ehs.OnLoginLogoutStatusChanged();
+        }
+    }
+}

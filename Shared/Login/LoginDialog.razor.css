@@ -65,7 +65,7 @@ h4 {
     animation: .3s in;
 }
 
-.policies a {
+::deep.policies > * {
     display: inline-block;
     text-align: left;
     margin-top: 10px;

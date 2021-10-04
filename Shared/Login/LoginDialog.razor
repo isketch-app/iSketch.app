@@ -72,22 +72,8 @@
         @if (CurrentStage == Stage.Policies)
         {
             <div class="px-300 policies">
-                @{ 
-                    string tosURL = db.GetProperty("IS_Policies_TermsOfServiceURL");
-                    if (tosURL != null && tosURL != "")
-                    {
-                        <a href="@tosURL" target="_blank">
-                            <CButton Emphasis="CButton.EmphasisStyles.Low" Icon="">Terms of Service</CButton>
-                        </a>
-                    }
-                    string pURL = db.GetProperty("IS_Policies_PrivacyURL");
-                    if (pURL != null && pURL != "")
-                    {
-                        <a href="@pURL" target="_blank">
-                            <CButton Emphasis="CButton.EmphasisStyles.Low" Icon="">Privacy Policy</CButton>
-                        </a>
-                    }
-                }
+                <CButton OnClick='() => { _ = Dialog.FadeOut(); nm.NavigateTo("/TermsOfService"); }' Emphasis="CButton.EmphasisStyles.Low" Icon="">Terms of Service</CButton>
+                <CButton OnClick='() => { _ = Dialog.FadeOut(); nm.NavigateTo("/Privacy"); }' Emphasis="CButton.EmphasisStyles.Low" Icon="">Privacy Policy</CButton>
             </div>
             <DialogButtonContainer>
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>

@@ -341,14 +341,41 @@ namespace iSketch.app.Services
                 return false;
             }
         }
+        public static SetUserNameResult SetUserName(Database Database, Guid UserID, string UserName)
+        {
+            try
+            {
+                if (!IsValidUserIDString(UserName)) return SetUserNameResult.UserNameInvalid;
+                Guid uid = GetUserID(Database, UserName);
+                if (uid != Guid.Empty)
+                {
+                    UserAuthMethodsResult methods = GetUserAuthenticationMethods(Database, uid);
+                    if (methods.Methods != UserAuthMethods.None) return SetUserNameResult.UserNameAlreadyTaken;
+                }
+                SetUserProperties(Database, UserID, UserProperties.UserName, UserName);
+                return SetUserNameResult.Success;
+            }
+            catch
+            {
+                return SetUserNameResult.UnknownFailure;
+            }
+        }
     }
     public class UserAuthMethodsResult
     {
         public Guid IdpID;
         public UserAuthMethods Methods;
     }
+    public enum SetUserNameResult
+    {
+        Success,
+        UserNameAlreadyTaken,
+        UserNameInvalid,
+        UnknownFailure
+    }
     public enum UserProperties
     {
+        UserName,
         Email,
         EmailVerified,
         Settings_DarkMode
