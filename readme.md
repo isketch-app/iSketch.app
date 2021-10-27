@@ -13,10 +13,23 @@
 </p>
 <h2>Hosting your own instance of iSketch.app:</h2>
 
+Pre-reqs:
+
+* Windows / Linux
+* Docker or Docker Desktop
+
 ```bash
 mkdir iSketch.app
 cd iSketch.app
 wget -O docker-compose.yml https://raw.githubusercontent.com/isketch-app/iSketch.app/master/docker-compose.yml
+docker compose up -d
+```
+
+
+```powershell
+mkdir iSketch.app
+cd iSketch.app
+Invoke-WebRequest -OutFile docker-compose.yml -Uri https://raw.githubusercontent.com/isketch-app/iSketch.app/master/docker-compose.yml
 docker compose up -d
 ```
 
