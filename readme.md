@@ -18,6 +18,7 @@ Pre-reqs:
 * Windows / Linux
 * Docker or Docker Desktop
 
+Bash Commands:
 ```bash
 mkdir iSketch.app
 cd iSketch.app
@@ -25,7 +26,7 @@ wget -O docker-compose.yml https://raw.githubusercontent.com/isketch-app/iSketch
 docker compose up -d
 ```
 
-
+PowerShell Commands:
 ```powershell
 mkdir iSketch.app
 cd iSketch.app
