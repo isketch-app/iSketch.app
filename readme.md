@@ -29,7 +29,7 @@ docker compose up -d
 ```powershell
 mkdir iSketch.app
 cd iSketch.app
-Invoke-WebRequest -OutFile docker-compose.yml -Uri https://raw.githubusercontent.com/isketch-app/iSketch.app/master/docker-compose.yml
+Invoke-WebRequest -OutFile "docker-compose.yml" -Uri "https://raw.githubusercontent.com/isketch-app/iSketch.app/master/docker-compose.yml"
 docker compose up -d
 ```
 
