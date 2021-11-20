@@ -43,18 +43,21 @@ namespace iSketch.app.Services
                 Logger.Info("Database: Connecting...");
                 con.Open();
                 Logger.Info("Database: Connected.");
-                try
+                if (con.Database != Catelog)
                 {
-                    Logger.Info("Database: Opening Catelog: " + Catelog + "...");
-                    con.ChangeDatabase(Catelog);
-                }
-                catch (Exception)
-                {
-                    Logger.Info("Database: Catelog does not exist, creating...");
-                    SqlCommand cmd = con.CreateCommand();
-                    cmd.CommandText = "CREATE DATABASE [" + Catelog + "]";
-                    cmd.ExecuteNonQuery();
-                    con.ChangeDatabase(Catelog);
+                    try
+                    {
+                        Logger.Info("Database: Opening Catelog: " + Catelog + "...");
+                        con.ChangeDatabase(Catelog);
+                    }
+                    catch
+                    {
+                        Logger.Info("Database: Catelog does not exist, creating...");
+                        SqlCommand cmd = con.CreateCommand();
+                        cmd.CommandText = "CREATE DATABASE [" + Catelog + "]";
+                        cmd.ExecuteNonQuery();
+                        con.ChangeDatabase(Catelog);
+                    }
                 }
                 if (!IsDBSetUp()) InitializeDBSchema();
                 if (!IsSchemaUpToDate()) UpdateDBSchema();
