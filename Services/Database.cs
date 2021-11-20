@@ -50,9 +50,10 @@ namespace iSketch.app.Services
                         Logger.Info("Database: Opening Catelog: " + Catelog + "...");
                         con.ChangeDatabase(Catelog);
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        Logger.Info("Database: Catelog does not exist, creating...");
+                        Logger.Error("Database: " + e.Message);
+                        Logger.Info("Database: Could not connect to catelog, assuming it doesn't yet exist...");
                         SqlCommand cmd = con.CreateCommand();
                         cmd.CommandText = "CREATE DATABASE [" + Catelog + "]";
                         cmd.ExecuteNonQuery();
