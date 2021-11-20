@@ -27,17 +27,18 @@ namespace iSketch.app.Services
         }
         public Database()
         {
+            SqlConnection con = null;
             Logger.Info("Database: Connecting to database & catelog...");
             try
             {
-                NewConnection.Close();
+                con = NewConnection;
                 Logger.Info("Database: Success.");
             }
             catch
             {
                 string Catelog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName");
                 Logger.Info("Database: Connection failed with catelog, trying without initial catelog...");
-                SqlConnection con = new()
+                con = new()
                 {
                     ConnectionString = new SqlConnectionStringBuilder()
                     {
@@ -67,8 +68,6 @@ namespace iSketch.app.Services
                             con.ChangeDatabase(Catelog);
                         }
                     }
-                    if (!IsDBSetUp()) InitializeDBSchema();
-                    if (!IsSchemaUpToDate()) UpdateDBSchema();
                     Logger.Info("Database: Success.");
                 }
                 catch (ArgumentNullException e)
@@ -85,10 +84,19 @@ namespace iSketch.app.Services
                 {
                     throw new Exception("iSketch.app failed to open a connection to the database!", e);
                 }
-                finally
+            }
+            finally
+            {
+                try
                 {
-                    con.Close();
+                    if (!IsDBSetUp()) InitializeDBSchema();
+                    if (!IsSchemaUpToDate()) UpdateDBSchema();
                 }
+                catch (Exception e)
+                {
+                    Logger.Error("Database: Could not initialize the database: " + e.Message);
+                }
+                con?.Close();
             }
         }
         public bool IsSchemaUpToDate()
