@@ -27,59 +27,68 @@ namespace iSketch.app.Services
         }
         public Database()
         {
-            string Catelog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName");
-            Logger.Info("Database: Initializing database connnection...");
-            SqlConnection con = new()
-            {
-                ConnectionString = new SqlConnectionStringBuilder()
-                {
-                    DataSource = Environment.GetEnvironmentVariable("IS_SQL_ServerHost"),
-                    UserID = Environment.GetEnvironmentVariable("IS_SQL_User"),
-                    Password = Environment.GetEnvironmentVariable("IS_SQL_Pass")
-                }.ToString()
-            };
+            Logger.Info("Database: Connecting to database & catelog...");
             try
             {
-                Logger.Info("Database: Connecting...");
-                con.Open();
-                Logger.Info("Database: Connected.");
-                if (con.Database != Catelog)
+                NewConnection.Close();
+                Logger.Info("Database: Success.");
+            }
+            catch
+            {
+                string Catelog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName");
+                Logger.Info("Database: Connection failed with catelog, trying without initial catelog...");
+                SqlConnection con = new()
                 {
-                    try
+                    ConnectionString = new SqlConnectionStringBuilder()
                     {
-                        Logger.Info("Database: Opening Catelog: " + Catelog + "...");
-                        con.ChangeDatabase(Catelog);
-                    }
-                    catch (Exception e)
+                        DataSource = Environment.GetEnvironmentVariable("IS_SQL_ServerHost"),
+                        UserID = Environment.GetEnvironmentVariable("IS_SQL_User"),
+                        Password = Environment.GetEnvironmentVariable("IS_SQL_Pass")
+                    }.ToString()
+                };
+                try
+                {
+                    con.Open();
+                    Logger.Info("Database: Connected.");
+                    if (con.Database != Catelog)
                     {
-                        Logger.Error("Database: " + e.Message);
-                        Logger.Info("Database: Could not connect to catelog, assuming it doesn't yet exist...");
-                        SqlCommand cmd = con.CreateCommand();
-                        cmd.CommandText = "CREATE DATABASE [" + Catelog + "]";
-                        cmd.ExecuteNonQuery();
-                        con.ChangeDatabase(Catelog);
+                        try
+                        {
+                            Logger.Info("Database: Opening catelog: " + Catelog + "...");
+                            con.ChangeDatabase(Catelog);
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Error("Database: " + e.Message);
+                            Logger.Info("Database: Could not connect to catelog, assuming it doesn't yet exist, creating...");
+                            SqlCommand cmd = con.CreateCommand();
+                            cmd.CommandText = "CREATE DATABASE [" + Catelog + "]";
+                            cmd.ExecuteNonQuery();
+                            con.ChangeDatabase(Catelog);
+                        }
                     }
+                    if (!IsDBSetUp()) InitializeDBSchema();
+                    if (!IsSchemaUpToDate()) UpdateDBSchema();
+                    Logger.Info("Database: Success.");
                 }
-                if (!IsDBSetUp()) InitializeDBSchema();
-                if (!IsSchemaUpToDate()) UpdateDBSchema();
-            }
-            catch (ArgumentNullException e)
-            {
-                throw new Exception(
-                    "iSketch.app needs the following Environment Variables set in order to connect to the database:\n" +
-                    "IS_SQL_ServerHost\n" +
-                    "IS_SQL_DatabaseName\n" +
-                    "IS_SQL_User\n" +
-                    "IS_SQL_Pass"
-                , e);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("iSketch.app failed to open a connection to the database!", e);
-            }
-            finally
-            {
-                con.Close();
+                catch (ArgumentNullException e)
+                {
+                    throw new Exception(
+                        "iSketch.app needs the following Environment Variables set in order to connect to the database:\n" +
+                        "IS_SQL_ServerHost\n" +
+                        "IS_SQL_DatabaseName\n" +
+                        "IS_SQL_User\n" +
+                        "IS_SQL_Pass"
+                    , e);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("iSketch.app failed to open a connection to the database!", e);
+                }
+                finally
+                {
+                    con.Close();
+                }
             }
         }
         public bool IsSchemaUpToDate()
