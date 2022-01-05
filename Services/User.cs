@@ -288,9 +288,7 @@ namespace iSketch.app.Services
         }
         public static bool IsValidUserIDString(string UserName)
         {
-            int maxLength = 25;
-            if (UserName.Length > maxLength) return false;
-            string regexPolicy = "[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]";
+            string regexPolicy = "^[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]{3,25}$";
             return Regex.IsMatch(UserName, regexPolicy);
         }
         public static UserAuthMethodsResult GetUserAuthenticationMethods(Database Database, Guid UserID)
