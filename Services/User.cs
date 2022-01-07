@@ -131,6 +131,8 @@ namespace iSketch.app.Services
                 cmd.CommandText = "UPDATE [Security.Sessions] SET [UserID] = @USERID@ WHERE SessionID = @SESSIONID@";
                 int affected = cmd.ExecuteNonQuery();
                 if (affected != 1) return false;
+                cmd.CommandText = "UPDATE [Security.Users] SET [LastLogonTime] = SYSDATETIME() WHERE UserID = @USERID@";
+                cmd.ExecuteNonQuery();
                 session.RegisterSession();
                 return true;
             }
