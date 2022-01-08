@@ -1,0 +1,79 @@
+﻿@page "/Account"
+@using System.Data.SqlClient
+@inject Services.User User
+@inject Services.Database DB
+
+<Authenticated>
+
+    
+
+
+    <div class="main">
+
+        <div class="sidebar">
+            <CButton Emphasis="Emphasis.Low" Icon="">Set Status</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="">Change Password</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="">Link 3rd Party Account</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="">Request New Username</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="">Change Photo</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="">Change / Verify Email</CButton>
+            <hr />
+            <CButton Emphasis="Emphasis.Low" Icon="">View Public Profile</CButton>
+            <hr />
+            <CButton Emphasis="Emphasis.Low" Icon="">Delete Account</CButton>
+        </div>
+
+        <div class="page">
+
+            <div class="title">
+                <div class="photo"></div>
+                <BPageTitle Icon="" Title='@("Welcome, " + User.UserName)' />
+                <span class="subtext">Manage and customize your iSketch.app profile.</span>
+            </div>
+
+            <div class="details">
+                <CText Icon="" Label="3rd Party Account Provider" Enabled="false" Value="@IdpName" />
+                <CText Icon="" Label="Account Creation Time" Enabled="false" Value="@CreatedTime.ToString()" />
+                <CText Icon="" Label="Last Logon Time" Enabled="false" Value="@LastLogonTime.ToString()" />
+                <CText Icon="" Label="Email" Enabled="false" Value="@Email" />
+                <CText Icon="" Label="Status" Enabled="false" Value="@Biography" />
+            </div>
+        </div>
+
+        
+
+    </div>
+
+    
+</Authenticated>
+
+@code {
+    public DateTime CreatedTime;
+    public string Email;
+    public string Biography;
+    public DateTime LastLogonTime;
+    public string IdpName;
+
+    protected override void OnInitialized()
+    {
+        SqlCommand cmd = DB.NewConnection.CreateCommand();
+        try
+        {
+
+            cmd.Parameters.AddWithValue("@USERID@", User.Session.UserID);
+            cmd.CommandText = "SELECT CreatedTime, Email, Biography, LastLogonTime, IdpName FROM [Security.Users.Splice] WHERE UserID = @USERID@";
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            CreatedTime = reader.GetDateTime(0);
+            if (!reader.IsDBNull(1)) Email = reader.GetString(1);
+            if (!reader.IsDBNull(2)) Biography = reader.GetString(2);
+            if (!reader.IsDBNull(3)) LastLogonTime = reader.GetDateTime(3);
+            if (!reader.IsDBNull(4)) IdpName = reader.GetString(4);
+        }
+        finally
+        {
+            cmd.Connection.Close();
+        }
+        base.OnInitialized();
+    }
+}
