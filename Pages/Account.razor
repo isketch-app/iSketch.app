@@ -4,12 +4,21 @@
 @inject Services.Database DB
 
 <Authenticated>
-
-    
-
-
     <div class="main">
-
+        <div class="page">
+            <div class="title">
+                <div class="photo"></div>
+                <BPageTitle Icon="" Title='@("Welcome, " + User.UserName)' />
+                <span class="subtext">Manage and customize your iSketch.app profile.</span>
+            </div>
+            <div class="details">
+                <CText Icon="" Label="3rd Party Account Provider" Enabled="false" Value="@IdpName" />
+                <CText Icon="" Label="Account Creation Time" Enabled="false" Value="@CreatedTime.ToString()" />
+                <CText Icon="" Label="Last Logon Time" Enabled="false" Value="@LastLogonTime.ToString()" />
+                <CText Icon="" Label="Email" Enabled="false" Value="@Email" />
+                <CText Icon="" Label="Status" Enabled="false" Value="@Biography" />
+            </div>
+        </div>
         <div class="sidebar">
             <CButton Emphasis="Emphasis.Low" Icon="">Set Status</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Change Password</CButton>
@@ -22,29 +31,7 @@
             <hr />
             <CButton Emphasis="Emphasis.Low" Icon="">Delete Account</CButton>
         </div>
-
-        <div class="page">
-
-            <div class="title">
-                <div class="photo"></div>
-                <BPageTitle Icon="" Title='@("Welcome, " + User.UserName)' />
-                <span class="subtext">Manage and customize your iSketch.app profile.</span>
-            </div>
-
-            <div class="details">
-                <CText Icon="" Label="3rd Party Account Provider" Enabled="false" Value="@IdpName" />
-                <CText Icon="" Label="Account Creation Time" Enabled="false" Value="@CreatedTime.ToString()" />
-                <CText Icon="" Label="Last Logon Time" Enabled="false" Value="@LastLogonTime.ToString()" />
-                <CText Icon="" Label="Email" Enabled="false" Value="@Email" />
-                <CText Icon="" Label="Status" Enabled="false" Value="@Biography" />
-            </div>
-        </div>
-
-        
-
     </div>
-
-    
 </Authenticated>
 
 @code {

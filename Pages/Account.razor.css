@@ -4,10 +4,10 @@
 
 .main {
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     flex-wrap: wrap;
-    margin: -20px;
     align-items: center;
+    margin: -10px;
 }
 
 .main > * {
