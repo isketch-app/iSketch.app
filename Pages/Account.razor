@@ -2,6 +2,7 @@
 @using System.Data.SqlClient
 @inject Services.User User
 @inject Services.Database DB
+@inject NavigationManager NM;
 
 <Authenticated>
     <div class="main">
@@ -20,7 +21,7 @@
             </div>
         </div>
         <div class="sidebar">
-            <CButton Emphasis="Emphasis.Low" Icon="">Set Status</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "SetStatus"'>Set Status</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Change Password</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Link 3rd Party Account</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Request New Username</CButton>
@@ -32,6 +33,20 @@
             <CButton Emphasis="Emphasis.Low" Icon="">Delete Account</CButton>
         </div>
     </div>
+    @if (Dialog == "SetStatus")
+    {
+        <Dialog OnFadeOut='() => { Dialog = null; OnInitialized(); }' @ref="StatusMsg" Header="🤔 Set status message">
+            <p>What's on your mind, @(User.UserName)?</p>
+            <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="" />
+            <DialogButtonContainer>
+                 <SavAppCan 
+                    OnCancelClick='() => StatusMsg.FadeOut()'
+                    OnApplyClick='() => SetBiography()'
+                    OnSaveClick='() => { SetBiography(); StatusMsg.FadeOut(); }'
+                 />
+            </DialogButtonContainer>
+        </Dialog>
+    }
 </Authenticated>
 
 @code {
@@ -40,6 +55,9 @@
     public string Biography;
     public DateTime LastLogonTime;
     public string IdpName;
+    public string Dialog;
+    public Dialog StatusMsg;
+    public string ErrorMessage = "";
 
     protected override void OnInitialized()
     {
@@ -53,7 +71,14 @@
             reader.Read();
             CreatedTime = reader.GetDateTime(0);
             if (!reader.IsDBNull(1)) Email = reader.GetString(1);
-            if (!reader.IsDBNull(2)) Biography = reader.GetString(2);
+            if (!reader.IsDBNull(2))
+            {
+                Biography = reader.GetString(2);
+            }
+            else
+            {
+                Biography = "";
+            }
             if (!reader.IsDBNull(3)) LastLogonTime = reader.GetDateTime(3);
             if (!reader.IsDBNull(4)) IdpName = reader.GetString(4);
         }
@@ -62,5 +87,25 @@
             cmd.Connection.Close();
         }
         base.OnInitialized();
+    }
+
+    private void SetBiography()
+    {
+        SqlCommand cmd = DB.NewConnection.CreateCommand();
+        try
+        {
+            cmd.Parameters.AddWithValue("@USERID@", User.Session.UserID);
+            cmd.Parameters.AddWithValue("@BIO@", Biography);
+            cmd.CommandText = "UPDATE [Security.Users] SET [Biography] = @BIO@ WHERE UserID = @USERID@";
+            cmd.ExecuteNonQuery();
+        }
+        catch
+        {
+            NM.NavigateTo("/_Error/Account/set-bio-failed");
+        }
+        finally
+        {
+            cmd.Connection.Close();
+        }
     }
 }
