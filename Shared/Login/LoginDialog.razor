@@ -10,10 +10,7 @@
 @if (user.Session.UserID == Guid.Empty)
 {
     <Dialog AllowBreakOut="false" Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
-        @if (Warning != "")
-        {
-            <div class="warning">@Warning</div>
-        }
+        <Warning Message="@Warning" />
         @if (CurrentStage == Stage.SelectAnIDP)
         {
             <div class="px-300">

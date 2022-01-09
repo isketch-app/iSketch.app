@@ -5,10 +5,7 @@
     @if (user.UserName.ToLower() == user.Session.UserID.ToString().ToLower())
     {
         <Dialog AllowBreakOut="false" Header="Choose a user name" @ref="Dialog">
-            @if (Warning != "")
-            {
-                <div class="warning">@Warning</div>
-            }
+            <Warning Message="@Warning" />
             <div class="px-300">
                 <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
             </div>

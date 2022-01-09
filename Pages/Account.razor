@@ -22,7 +22,7 @@
         </div>
         <div class="sidebar">
             <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "SetStatus"'>Set Status</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="">Change Password</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePassword"'>Change Password</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Link 3rd Party Account</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Request New Username</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Change Photo</CButton>
@@ -35,14 +35,31 @@
     </div>
     @if (Dialog == "SetStatus")
     {
-        <Dialog OnFadeOut='() => { Dialog = null; OnInitialized(); }' @ref="StatusMsg" Header="🤔 Set status message">
+        <Dialog OnFadeOut='() => { CloseDialog(); OnInitialized(); }' @ref="DlgStatusMsg" Header="🤔 Set status message">
+            <Warning Message="@Warning" />
             <p>What's on your mind, @(User.UserName)?</p>
             <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="" />
             <DialogButtonContainer>
                  <SavAppCan 
-                    OnCancelClick='() => StatusMsg.FadeOut()'
+                    OnCancelClick='() => DlgStatusMsg.FadeOut()'
                     OnApplyClick='() => SetBiography()'
-                    OnSaveClick='() => { SetBiography(); StatusMsg.FadeOut(); }'
+                    OnSaveClick='() => SetBiography(true)'
+                 />
+            </DialogButtonContainer>
+        </Dialog>
+    }
+    @if (Dialog == "ChangePassword")
+    {
+        <Dialog OnFadeOut='() => Dialog = null' @ref="DlgChangePassword" Header="Set a new password">
+            <Warning Message="@Warning" />
+            <p><CText Type="password" Icon="" Label="Password (old)" /></p>
+            <p><CText Type="password" Icon="" Label="Password (new)" /></p>
+            <p><CText Type="password" Icon="" Label="Password (confirm)" /></p>
+            <DialogButtonContainer>
+                 <SavAppCan 
+                    OnCancelClick='() => DlgChangePassword.FadeOut()'
+                    OnApplyClick='() => SetPassword()'
+                    OnSaveClick='() => SetPassword(true)'
                  />
             </DialogButtonContainer>
         </Dialog>
@@ -56,15 +73,15 @@
     public DateTime LastLogonTime;
     public string IdpName;
     public string Dialog;
-    public Dialog StatusMsg;
-    public string ErrorMessage = "";
+    public Dialog DlgStatusMsg;
+    public Dialog DlgChangePassword;
+    public string Warning;
 
     protected override void OnInitialized()
     {
         SqlCommand cmd = DB.NewConnection.CreateCommand();
         try
         {
-
             cmd.Parameters.AddWithValue("@USERID@", User.Session.UserID);
             cmd.CommandText = "SELECT CreatedTime, Email, Biography, LastLogonTime, IdpName FROM [Security.Users.Splice] WHERE UserID = @USERID@";
             SqlDataReader reader = cmd.ExecuteReader();
@@ -88,8 +105,12 @@
         }
         base.OnInitialized();
     }
-
-    private void SetBiography()
+    private void CloseDialog()
+    {
+        Dialog = null;
+        Warning = null;
+    }
+    private void SetBiography(bool tryClose = false)
     {
         SqlCommand cmd = DB.NewConnection.CreateCommand();
         try
@@ -98,14 +119,19 @@
             cmd.Parameters.AddWithValue("@BIO@", Biography);
             cmd.CommandText = "UPDATE [Security.Users] SET [Biography] = @BIO@ WHERE UserID = @USERID@";
             cmd.ExecuteNonQuery();
+            if (tryClose) _ = DlgStatusMsg.FadeOut();
         }
         catch
         {
-            NM.NavigateTo("/_Error/Account/set-bio-failed");
+            Warning = "Failed to set status.";
         }
         finally
         {
             cmd.Connection.Close();
         }
+    }
+    private void SetPassword(bool tryClose = false)
+    {
+        
     }
 }

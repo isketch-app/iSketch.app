@@ -1,0 +1,9 @@
+﻿@if (Message != "" && Message != null)
+{
+    <div class="warning">@Message</div>
+}
+
+@code {
+    [Parameter]
+    public string Message { get; set; }
+}
