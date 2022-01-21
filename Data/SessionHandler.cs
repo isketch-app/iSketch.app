@@ -52,7 +52,7 @@ namespace iSketch.app.Data
                     HttpOnly = true,
                     IsEssential = true,
                     MaxAge = CookieMaxAge,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.Lax,
                     Secure = true
                 });
             }
