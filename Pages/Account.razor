@@ -1,15 +1,16 @@
 ﻿@page "/Account"
 @using System.Data.SqlClient
-@inject Services.User User
+@inject Services.User USR;
 @inject Services.Database DB
 @inject NavigationManager NM;
+@inject PassHashQueue PHQ;
 
 <Authenticated>
     <div class="main">
         <div class="page">
             <div class="title">
                 <div class="photo"></div>
-                <BPageTitle Icon="" Title='@("Welcome, " + User.UserName)' />
+                <BPageTitle Icon="" Title='@("Welcome, " + USR.UserName)' />
                 <span class="subtext">Manage and customize your iSketch.app profile.</span>
             </div>
             <div class="details">
@@ -37,7 +38,7 @@
     {
         <Dialog OnFadeOut='() => { CloseDialog(); OnInitialized(); }' @ref="DlgStatusMsg" Header="🤔 Set status message">
             <Warning Message="@Warning" />
-            <p>What's on your mind, @(User.UserName)?</p>
+            <p>What's on your mind, @(USR.UserName)?</p>
             <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="" />
             <DialogButtonContainer>
                  <SavAppCan 
@@ -50,11 +51,11 @@
     }
     @if (Dialog == "ChangePassword")
     {
-        <Dialog OnFadeOut='() => Dialog = null' @ref="DlgChangePassword" Header="Set a new password">
+        <Dialog OnFadeOut='() => { CloseDialog(); OnInitialized(); }' @ref="DlgChangePassword" Header="Set a new password">
             <Warning Message="@Warning" />
-            <p><CText Type="password" Icon="" Label="Password (old)" /></p>
-            <p><CText Type="password" Icon="" Label="Password (new)" /></p>
-            <p><CText Type="password" Icon="" Label="Password (confirm)" /></p>
+            <p><CText Value="@OldPassword" ValueChanged='(v) => OldPassword = v' Type="password" Icon="" Label="Password (old)" /></p>
+            <p><CText Value="@NewPassword" ValueChanged='(v) => NewPassword = v' Type="password" Icon="" Label="Password (new)" /></p>
+            <p><CText Value="@ConfirmPassword" ValueChanged='(v) => ConfirmPassword = v' Type="password" Icon="" Label="Password (confirm)" /></p>
             <DialogButtonContainer>
                  <SavAppCan 
                     OnCancelClick='() => DlgChangePassword.FadeOut()'
@@ -75,14 +76,28 @@
     public string Dialog;
     public Dialog DlgStatusMsg;
     public Dialog DlgChangePassword;
-    public string Warning;
-
+    public string sWarning;
+    public string Warning { 
+        get
+        {
+            return sWarning;
+        } 
+        set
+        {
+            sWarning = value;
+            StateHasChanged();
+        } 
+    }
+    public string OldPassword;
+    public string NewPassword;
+    public string ConfirmPassword;
     protected override void OnInitialized()
     {
+        if (USR.Session.UserID == Guid.Empty) return;
         SqlCommand cmd = DB.NewConnection.CreateCommand();
         try
         {
-            cmd.Parameters.AddWithValue("@USERID@", User.Session.UserID);
+            cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
             cmd.CommandText = "SELECT CreatedTime, Email, Biography, LastLogonTime, IdpName FROM [Security.Users.Splice] WHERE UserID = @USERID@";
             SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
@@ -115,7 +130,7 @@
         SqlCommand cmd = DB.NewConnection.CreateCommand();
         try
         {
-            cmd.Parameters.AddWithValue("@USERID@", User.Session.UserID);
+            cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
             cmd.Parameters.AddWithValue("@BIO@", Biography);
             cmd.CommandText = "UPDATE [Security.Users] SET [Biography] = @BIO@ WHERE UserID = @USERID@";
             cmd.ExecuteNonQuery();
@@ -130,8 +145,33 @@
             cmd.Connection.Close();
         }
     }
-    private void SetPassword(bool tryClose = false)
+    private async Task SetPassword(bool tryClose = false)
     {
-        
+        try
+        {
+            if (NewPassword != ConfirmPassword)
+            {
+                Warning = "New passwords do not match.";
+                return;
+            }
+            Warning = "Validating old password...";
+            if (!await Task.Run<bool>(() => UserTools.TestPassword(DB, PHQ, USR.Session.UserID, OldPassword)))
+            {
+                Warning = "Incorrect password.";
+                return;
+            }
+            Warning = "Setting password...";
+            if (!await Task.Run<bool>(() => UserTools.ChangePassword(DB, PHQ, USR.Session.UserID, NewPassword)))
+            {
+                Warning = "Failed to set password!";
+                return;
+            }
+            Warning = "Success!";
+            if (tryClose) CloseDialog();
+        }
+        finally
+        {
+            OldPassword = NewPassword = ConfirmPassword = null;
+        }
     }
 }

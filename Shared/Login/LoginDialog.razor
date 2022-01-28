@@ -34,8 +34,8 @@
         @if (CurrentStage == Stage.ISSignIn)
         {
             <div class="px-300">
-                <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
-                <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
+                <div class="input"><CText Label="User Name" Value="@UserName" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText Type="password" Label="Password" Value="@Password" ValueChanged="(v) => Password = v"></CText></div>
             </div>
             <DialogButtonContainer SpaceEvenly="true">
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
@@ -79,7 +79,7 @@
     </Dialog>
 }
 
-@code { 
+@code {
     override protected void OnInitialized()
     {
         ehs.LoginButtonPressed += LoginButtonPressed;
@@ -133,6 +133,7 @@
         {
             Warning = "Sign in failed!";
         }
+        UserName = Password = null;
     }
     private async Task ISSignUp()
     {
