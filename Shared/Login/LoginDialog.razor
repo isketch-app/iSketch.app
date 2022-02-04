@@ -4,7 +4,7 @@
 @inject NavigationManager nm;
 @inject Services.Session session;  
 @inject Services.PassHashQueue phq; 
-@inject EventHookScoped ehs; 
+@inject EventHookScoped ehs;
 @using OpenID; 
 
 @if (user.Session.UserID == Guid.Empty)
@@ -20,7 +20,7 @@
                 <div class="idp-buttons">
                     @foreach (idP idP in OpenID.GetIDPs(db))
                     {
-                        <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => nm.NavigateTo(idP.GetRequestURI(session))'>@idP.DisplayName</CButton>
+                        <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => { nm.NavigateTo(idP.GetRequestURI(session));   }'>@idP.DisplayName</CButton>
                     }
                     <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
                 </div>
