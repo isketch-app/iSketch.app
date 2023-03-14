@@ -12,7 +12,7 @@ var iSketchSite = {
 }
 
 document.addEventListener('click', function (e) {
-    e.path.every(function (t) {
+    e.composedPath().every(function (t) {
         if (t.classList != undefined && t.classList.contains('CButton')) {
             t.classList.add('clicked');
             return false;
@@ -20,7 +20,7 @@ document.addEventListener('click', function (e) {
         return true;
     });
     var fmid = "";
-    e.path.every(function (t) {
+    e.composedPath().every(function (t) {
         if (t.attributes != undefined && t.attributes.fmid != undefined) {
             fmid = t.attributes.fmid.value;
             return false;

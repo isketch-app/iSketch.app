@@ -1,12 +1,11 @@
+using iSketch.app.Data.Middleware;
+using iSketch.app.Data.Photo;
+using iSketch.app.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.SignalR;
-using iSketch.app.Services;
-using iSketch.app.Data.Middleware;
-using iSketch.app.Data.Photo;
 
 namespace iSketch.app
 {
@@ -31,6 +30,7 @@ namespace iSketch.app
             services.AddSingleton<Database>();
             services.AddScoped<Session>();
             services.AddScoped<User>();
+            services.AddScoped<Jobs>();
             services.AddSingleton(new PassHashQueue());
         }
 
