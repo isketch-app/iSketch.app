@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS iSketchBuild
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS iSketchBuild
 COPY . /iSketchBuild
 WORKDIR /iSketchBuild
 RUN dotnet restore
 RUN dotnet publish -c release -o /iSketch.app --no-restore
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /iSketch.app
 COPY --from=iSketchBuild /iSketch.app .
 ENV IS_SQL_Pass="iSketch.app"
