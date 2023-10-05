@@ -18,7 +18,7 @@ jobs:
       run: docker build . --file Dockerfile --tag ghcr.io/isketch-app/isketch-app:latest
 
     - name: Add commit SHA to build
-      run: echo ${{ GITHUB_SHA }} > ./Properties/commit
+      run: echo "$GITHUB_SHA" > ./Properties/commit
       
     - name: Login
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u krisdb2009 --password-stdin
