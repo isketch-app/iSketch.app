@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Version>0.0.0.0</Version>
-	<AssemblyVersion>0.0.0.*</AssemblyVersion>
+	<AssemblyVersion>0.0.0.0</AssemblyVersion>
 	<FileVersion>0.0.0.0</FileVersion>
     <Authors>Dylan Bickerstaff</Authors>
     <Company>iSketch.app</Company>
@@ -25,6 +25,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Properties\commit" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.11" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
@@ -33,6 +37,10 @@
 
   <ItemGroup>
     <Folder Include="SQL\Upgrade\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\commit" />
   </ItemGroup>
 
   <ItemGroup>

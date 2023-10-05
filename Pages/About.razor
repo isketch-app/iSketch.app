@@ -3,6 +3,7 @@
 @inject Database db;  
 @using System.Reflection;
 @using System.Timers;
+@using System.IO;
 
 <div class="page">
     <div class="logo"></div>
@@ -25,6 +26,10 @@
         <tr>
             <td>Repository:</td>
             <td><a target="_blank" href="https://github.com/isketch-app/iSketch.app">GitHub</a></td>
+        </tr>
+        <tr>
+            <td>Commit:</td>
+            <td><a target="_blank" href="https://github.com/isketch-app/iSketch.app/commit/@commit">@commit</a></td>
         </tr>
     </table>
     <hr />
@@ -65,12 +70,21 @@
     private string os = System.Environment.OSVersion.ToString();
     private string threads = System.Environment.ProcessorCount.ToString();
     private string netversion = System.Environment.Version.ToString();
+    private string commit = "";
     private Timer timer = new Timer();
+    protected override void OnInitialized()
+    {
+        StreamReader sr = new StreamReader(self.GetManifestResourceStream("iSketch.app.Properties.commit"));
+        commit = sr.ReadToEnd();
+        sr.Close();
+        sr.Dispose();
+        base.OnInitialized();
+    }
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            timer.Interval = 1000;
+            timer.Interval = (DateTime.Now.Millisecond - 1000) * -1;
             timer.AutoReset = true;
             timer.Elapsed += RefreshTime;
             timer.Start();
@@ -79,6 +93,7 @@
     }
     private void RefreshTime(object o, ElapsedEventArgs e)
     {
+        timer.Interval = (DateTime.Now.Millisecond - 1000) * -1;
         InvokeAsync(() => {
             StateHasChanged();
         });
