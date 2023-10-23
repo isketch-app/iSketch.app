@@ -8,7 +8,7 @@
     transition: .3s;
     cursor: pointer;
     margin-left: 5px;
-    background-color: #835683;
+    background-color: var(--accent-color);
     color: white;
     font-family: icons;
     font-size: 22px;

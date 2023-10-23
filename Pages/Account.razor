@@ -9,7 +9,12 @@
     <div class="main">
         <div class="page">
             <div class="title">
-                <div class="photo"></div>
+                <div class="photo">
+                    @if (ProfilePictureID != null)
+                    {
+                        <div style="background-image:url('/_Photo/profile-picture/@ProfilePictureID')"></div>
+                    }
+                </div>
                 <BPageTitle Icon="" Title='@("Welcome, " + USR.UserName)' />
                 <span class="subtext">Manage and customize your iSketch.app profile.</span>
             </div>
@@ -26,7 +31,7 @@
             <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePassword"'>Change Password</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Link 3rd Party Account</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Request New Username</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="">Change Photo</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePhoto"'>Change Photo</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Change / Verify Email</CButton>
             <hr />
             <CButton Emphasis="Emphasis.Low" Icon="">View Public Profile</CButton>
@@ -57,11 +62,30 @@
             <p><CText Value="@NewPassword" ValueChanged='(v) => NewPassword = v' Type="password" Icon="" Label="Password (new)" /></p>
             <p><CText Value="@ConfirmPassword" ValueChanged='(v) => ConfirmPassword = v' Type="password" Icon="" Label="Password (confirm)" /></p>
             <DialogButtonContainer>
-                 <SavAppCan 
+                <SavAppCan 
                     OnCancelClick='() => DlgChangePassword.FadeOut()'
                     OnApplyClick='() => SetPassword()'
                     OnSaveClick='() => SetPassword(true)'
-                 />
+                />
+            </DialogButtonContainer>
+        </Dialog>
+    }
+    @if (Dialog == "ChangePhoto")
+    {
+        <Dialog OnFadeOut='() => { CloseDialog(); OnInitialized(); }' @ref="DlgChangePhoto" Header="Set your account photo">
+            <Warning Message="@Warning" />
+            <p>
+                @foreach(KeyValuePair<string, string> photo in GetAccountPhotos())
+                {
+                    <img src="/_Photo/profile-picture/@photo.Key" />
+                }
+            </p>
+            <DialogButtonContainer>
+                <SavAppCan 
+                    OnCancelClick='() => DlgChangePhoto.FadeOut()'
+                    OnApplyClick='() => {}'
+                    OnSaveClick='() => {}'
+                />
             </DialogButtonContainer>
         </Dialog>
     }
@@ -73,9 +97,11 @@
     public string Biography;
     public DateTime LastLogonTime;
     public string IdpName;
+    public string ProfilePictureID;
     public string Dialog;
     public Dialog DlgStatusMsg;
     public Dialog DlgChangePassword;
+    public Dialog DlgChangePhoto;
     public string sWarning;
     public string Warning { 
         get
@@ -98,7 +124,7 @@
         try
         {
             cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
-            cmd.CommandText = "SELECT CreatedTime, Email, Biography, LastLogonTime, IdpName FROM [Security.Users.Splice] WHERE UserID = @USERID@";
+            cmd.CommandText = "SELECT CreatedTime, Email, Biography, LastLogonTime, IdpName, ProfilePictureID FROM [Security.Users.Splice] WHERE UserID = @USERID@";
             SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
             CreatedTime = reader.GetDateTime(0);
@@ -113,6 +139,7 @@
             }
             if (!reader.IsDBNull(3)) LastLogonTime = reader.GetDateTime(3);
             if (!reader.IsDBNull(4)) IdpName = reader.GetString(4);
+            if (!reader.IsDBNull(5)) ProfilePictureID = reader.GetGuid(5).ToString();
         }
         finally
         {
@@ -124,6 +151,25 @@
     {
         Dialog = null;
         Warning = null;
+    }
+    private Dictionary<string, string> GetAccountPhotos()
+    {
+        Dictionary<string, string> photos = new();
+        SqlCommand cmd = DB.NewConnection.CreateCommand();
+        try
+        {
+            cmd.CommandText = "SELECT ProfilePictureID, DisplayName FROM [System.ProfilePictures] ORDER BY DisplayOrder ASC";
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                photos.Add(reader.GetGuid(0).ToString(), reader.GetString(1));
+            }
+        }
+        finally
+        {
+            cmd.Connection.Close();
+        }
+        return photos;
     }
     private void SetBiography(bool tryClose = false)
     {

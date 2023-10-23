@@ -41,6 +41,14 @@ namespace iSketch.app.Data.Photo
                     PhotoColumnName = "DisplayIcon",
                     GuidColumnName = "IdpID"
                 }
+            }, {
+                "profile-picture",
+                new()
+                {
+                    TableName = "[System.ProfilePictures]",
+                    PhotoColumnName = "Picture",
+                    GuidColumnName = "ProfilePictureID"
+                }
             }
         };
     }

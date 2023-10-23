@@ -38,8 +38,23 @@
     width: 150px;
     height: 150px;
     border-radius: 75px;
-    background-color: pink;
+    background-color: var(--accent-color);
     margin: 0px auto;
+    overflow: hidden;
+}
+
+.photo::after {
+    content: '';
+    color: white;
+    font-family: icons;
+    line-height: 150px;
+    font-size: 100px;
+}
+
+.photo div {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
 }
 
 ::deep.details {
