@@ -67,3 +67,19 @@
     flex: 1;
     margin: 5px;
 }
+
+.photo-selection {
+    line-height: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.photo-selection > span {
+    width: 60px;
+    height: 60px;
+    display: inline-block;
+    background-size: cover;
+    border-radius: 30px;
+}

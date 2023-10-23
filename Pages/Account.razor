@@ -74,12 +74,12 @@
     {
         <Dialog OnFadeOut='() => { CloseDialog(); OnInitialized(); }' @ref="DlgChangePhoto" Header="Set your account photo">
             <Warning Message="@Warning" />
-            <p>
-                @foreach(KeyValuePair<string, string> photo in GetAccountPhotos())
+            <div class="photo-selection">
+                @foreach (KeyValuePair<string, string> photo in AccountPhotos)
                 {
-                    <img src="/_Photo/profile-picture/@photo.Key" />
+                    <span style="background-image:url('/_Photo/profile-picture/@photo.Key')"></span>
                 }
-            </p>
+            </div>
             <DialogButtonContainer>
                 <SavAppCan 
                     OnCancelClick='() => DlgChangePhoto.FadeOut()'
@@ -103,7 +103,17 @@
     public Dialog DlgChangePassword;
     public Dialog DlgChangePhoto;
     public string sWarning;
-    public string Warning { 
+    private Dictionary<string, string> rAccountPhotos;
+    public Dictionary<string, string> AccountPhotos
+    {
+        get
+        {
+            if (rAccountPhotos == null) rAccountPhotos = GetAccountPhotos();
+            return rAccountPhotos;
+        }
+    }
+    public string Warning 
+    { 
         get
         {
             return sWarning;
