@@ -82,4 +82,28 @@
     display: inline-block;
     background-size: cover;
     border-radius: 30px;
+    cursor: pointer;
+    position: relative;
+}
+
+.photo-selection > span::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    bottom: 0px;
+    left: 0px;
+    background-color: var(--accent-color);
+    opacity: 0;
+    transition: .3s;
+    font-family: icons;
+    font-size: 15px;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+    line-height: 20px;
+}
+
+.photo-selection > span:hover::after, .photo-selection > .selected::after {
+    opacity: 1;
 }

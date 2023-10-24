@@ -77,14 +77,16 @@
             <div class="photo-selection">
                 @foreach (KeyValuePair<string, string> photo in AccountPhotos)
                 {
-                    <span style="background-image:url('/_Photo/profile-picture/@photo.Key')"></span>
+                    string spanClass = "";
+                    if (ProfilePictureID == photo.Key) spanClass = "selected";
+                    <span class="@spanClass" @onclick="() => { ProfilePictureID = photo.Key; }" style="background-image:url('/_Photo/profile-picture/@photo.Key')"></span>
                 }
             </div>
             <DialogButtonContainer>
                 <SavAppCan 
                     OnCancelClick='() => DlgChangePhoto.FadeOut()'
-                    OnApplyClick='() => {}'
-                    OnSaveClick='() => {}'
+                    OnApplyClick='() => SetAccountPhoto()'
+                    OnSaveClick='() => SetAccountPhoto(true)'
                 />
             </DialogButtonContainer>
         </Dialog>
@@ -188,13 +190,33 @@
         {
             cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
             cmd.Parameters.AddWithValue("@BIO@", Biography);
-            cmd.CommandText = "UPDATE [Security.Users] SET [Biography] = @BIO@ WHERE UserID = @USERID@";
+            cmd.CommandText = "UPDATE [Security.Users] SET Biography = @BIO@ WHERE UserID = @USERID@";
             cmd.ExecuteNonQuery();
             if (tryClose) _ = DlgStatusMsg.FadeOut();
         }
         catch
         {
             Warning = "Failed to set status.";
+        }
+        finally
+        {
+            cmd.Connection.Close();
+        }
+    }
+    private void SetAccountPhoto(bool tryClose = false)
+    {
+        SqlCommand cmd = DB.NewConnection.CreateCommand();
+        try
+        {
+            cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
+            cmd.Parameters.AddWithValue("@PICID@", ProfilePictureID);
+            cmd.CommandText = "UPDATE [Security.Users] SET ProfilePictureID = @PICID@ WHERE UserID = @USERID@";
+            cmd.ExecuteNonQuery();
+            if (tryClose) _ = DlgChangePhoto.FadeOut();
+        }
+        catch
+        {
+            Warning = "Failed to set profile picture.";
         }
         finally
         {
