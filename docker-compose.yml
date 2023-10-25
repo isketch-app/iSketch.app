@@ -12,7 +12,7 @@ services:
             - IS_SQL_User=sa
             - IS_SQL_DatabaseName=iSketch.app
     mssql:
-        image: "mcr.microsoft.com/mssql/server:2019-latest"
+        image: "mcr.microsoft.com/mssql/server:2022-latest"
         ports:
             - "11434:1433/tcp"
         environment:
