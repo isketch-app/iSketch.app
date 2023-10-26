@@ -12,6 +12,7 @@ namespace iSketch.app.Services
         public Session Session;
         public Permissions Permissions = new();
         public string UserName;
+        public string ProfilePictureID;
         private Database Database;
         private PassHashQueue PHQ;
         private EventHookScoped EHS;
@@ -38,7 +39,7 @@ namespace iSketch.app.Services
             try
             {
                 cmd.Parameters.AddWithValue("@USERID@", Session.UserID);
-                cmd.CommandText = "SELECT [UserName], [Settings.DarkMode] FROM [Security.Users] WHERE UserID = @USERID@";
+                cmd.CommandText = "SELECT UserName, ProfilePictureID, [Settings.DarkMode] FROM [Security.Users] WHERE UserID = @USERID@";
                 SqlDataReader rdr = cmd.ExecuteReader();
                 if (!rdr.HasRows)
                 {
@@ -46,6 +47,7 @@ namespace iSketch.app.Services
                 }
                 rdr.Read();
                 UserName = rdr.GetString(0);
+                if (!rdr.IsDBNull(1)) ProfilePictureID = rdr.GetGuid(1).ToString();
             }
             finally
             {

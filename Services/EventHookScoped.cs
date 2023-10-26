@@ -14,5 +14,10 @@ namespace iSketch.app.Services
         {
             LoginButtonPressed?.Invoke(this, EventArgs.Empty);
         }
+        public event EventHandler AccountPhotoChanged;
+        public void OnAccountPhotoChanged()
+        {
+            AccountPhotoChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

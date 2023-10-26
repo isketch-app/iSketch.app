@@ -1,8 +1,19 @@
-﻿<span onclick="iSketchSite.Elements.FloaterMenuF.Toggle(this)" fmid="@FMID" class="rmi-mi">@Icon</span>
+﻿<span onclick="iSketchSite.Elements.FloaterMenuF.Toggle(this)" fmid="@FMID" class="rmi-mi">
+    @if (Photo == null)
+    {
+        <span class="rmi-icon">@Icon</span>
+    }
+    else
+    {
+        <span class="rmi-photo" style="background-image:url('@Photo')"></span>
+    }
+</span>
 
 @code {
     [Parameter]
     public string Icon { get; set; }
+    [Parameter]
+    public string Photo { get; set; }
     [Parameter]
     public string FMID { get; set; }
 }

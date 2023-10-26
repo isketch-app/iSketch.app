@@ -15,6 +15,14 @@
     line-height: 34px;
     text-align: center;
     vertical-align: top;
+    overflow: hidden;
+}
+
+.rmi-photo {
+    display:inline-block;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
 }
 
 .rmi-mi:hover, .rmi-mi.visible {

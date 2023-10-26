@@ -1,7 +1,8 @@
 ﻿@page "/Account"
 @using System.Data.SqlClient
 @inject Services.User USR;
-@inject Services.Database DB
+@inject Services.Database DB;
+@inject Services.EventHookScoped EHS;
 @inject NavigationManager NM;
 @inject PassHashQueue PHQ;
 
@@ -10,9 +11,9 @@
         <div class="page">
             <div class="title">
                 <div class="photo">
-                    @if (ProfilePictureID != null)
+                    @if (USR.ProfilePictureID != null)
                     {
-                        <div style="background-image:url('/_Photo/profile-picture/@ProfilePictureID')"></div>
+                        <div style="background-image:url('/_Photo/profile-picture/@USR.ProfilePictureID')"></div>
                     }
                 </div>
                 <BPageTitle Icon="" Title='@("Welcome, " + USR.UserName)' />
@@ -31,7 +32,7 @@
             <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePassword"'>Change Password</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Link 3rd Party Account</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Request New Username</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePhoto"'>Change Photo</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="" OnClick="OpenChangeProfilePictureDialog">Change Photo</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Change / Verify Email</CButton>
             <hr />
             <CButton Emphasis="Emphasis.Low" Icon="">View Public Profile</CButton>
@@ -72,14 +73,14 @@
     }
     @if (Dialog == "ChangePhoto")
     {
-        <Dialog OnFadeOut='() => { CloseDialog(); OnInitialized(); }' @ref="DlgChangePhoto" Header="Set your account photo">
+        <Dialog OnFadeOut="CloseProfilePictureDialog" @ref="DlgChangePhoto" Header="Set your account photo">
             <Warning Message="@Warning" />
             <div class="photo-selection">
                 @foreach (KeyValuePair<string, string> photo in AccountPhotos)
                 {
                     string spanClass = "";
-                    if (ProfilePictureID == photo.Key) spanClass = "selected";
-                    <span class="@spanClass" @onclick="() => { ProfilePictureID = photo.Key; }" style="background-image:url('/_Photo/profile-picture/@photo.Key')"></span>
+                    if (USR.ProfilePictureID == photo.Key) spanClass = "selected";
+                    <span class="@spanClass" @onclick="() => { USR.ProfilePictureID = photo.Key; EHS.OnAccountPhotoChanged(); }" style="background-image:url('/_Photo/profile-picture/@photo.Key')"></span>
                 }
             </div>
             <DialogButtonContainer>
@@ -99,8 +100,8 @@
     public string Biography;
     public DateTime LastLogonTime;
     public string IdpName;
-    public string ProfilePictureID;
     public string Dialog;
+    public string SavedProfilePictureID;
     public Dialog DlgStatusMsg;
     public Dialog DlgChangePassword;
     public Dialog DlgChangePhoto;
@@ -136,7 +137,7 @@
         try
         {
             cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
-            cmd.CommandText = "SELECT CreatedTime, Email, Biography, LastLogonTime, IdpName, ProfilePictureID FROM [Security.Users.Splice] WHERE UserID = @USERID@";
+            cmd.CommandText = "SELECT CreatedTime, Email, Biography, LastLogonTime, IdpName FROM [Security.Users.Splice] WHERE UserID = @USERID@";
             SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
             CreatedTime = reader.GetDateTime(0);
@@ -151,7 +152,6 @@
             }
             if (!reader.IsDBNull(3)) LastLogonTime = reader.GetDateTime(3);
             if (!reader.IsDBNull(4)) IdpName = reader.GetString(4);
-            if (!reader.IsDBNull(5)) ProfilePictureID = reader.GetGuid(5).ToString();
         }
         finally
         {
@@ -163,6 +163,18 @@
     {
         Dialog = null;
         Warning = null;
+    }
+    private void OpenChangeProfilePictureDialog()
+    {
+        SavedProfilePictureID = USR.ProfilePictureID;
+        Dialog = "ChangePhoto";
+    }
+    private void CloseProfilePictureDialog()
+    {
+        CloseDialog(); 
+        OnInitialized();
+        USR.ProfilePictureID = SavedProfilePictureID;
+        EHS.OnAccountPhotoChanged();
     }
     private Dictionary<string, string> GetAccountPhotos()
     {
@@ -205,11 +217,12 @@
     }
     private void SetAccountPhoto(bool tryClose = false)
     {
+        SavedProfilePictureID = USR.ProfilePictureID;
         SqlCommand cmd = DB.NewConnection.CreateCommand();
         try
         {
             cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
-            cmd.Parameters.AddWithValue("@PICID@", ProfilePictureID);
+            cmd.Parameters.AddWithValue("@PICID@", USR.ProfilePictureID);
             cmd.CommandText = "UPDATE [Security.Users] SET ProfilePictureID = @PICID@ WHERE UserID = @USERID@";
             cmd.ExecuteNonQuery();
             if (tryClose) _ = DlgChangePhoto.FadeOut();

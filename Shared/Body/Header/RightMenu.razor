@@ -3,14 +3,33 @@
 @inject Database db; 
 
 <span>
-    <RightMenuItem FMID="user" Icon="" />
+    <Authenticated>
+        @if (user.ProfilePictureID == null)
+        {
+            <RightMenuItem FMID="user" Icon="" />
+        }
+        else
+        {
+            <RightMenuItem FMID="user" Photo="@("/_Photo/profile-picture/" + user.ProfilePictureID)" />
+        }
+    </Authenticated>
+    <Authenticated Invert="true">
+        <RightMenuItem FMID="user" Icon="" />
+    </Authenticated>
     <RightMenuItem FMID="general" Icon="" />
 </span>
 
 <FloaterMenu FMID="user">
     <div class="u-top">
         <div class="u-bg">
-            <div class="u-image"></div>
+            <div class="u-image">
+                <Authenticated>
+                @if (user.ProfilePictureID != null)
+                {
+                    <div style="background-image:url('/_Photo/profile-picture/@user.ProfilePictureID')"></div>
+                }
+                </Authenticated>
+            </div>
         </div>
         <Authenticated>
             <div class="u-name">@@@(user.UserName)</div>
@@ -40,3 +59,15 @@
         <a href="/Privacy"><CMenuItem Icon="" Text="Privacy Policy" /></a>
     </div>
 </FloaterMenu>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ehs.AccountPhotoChanged += AccountPhotoChanged;
+        base.OnInitialized();
+    }
+    private void AccountPhotoChanged(object o, EventArgs args)
+    {
+        StateHasChanged();
+    }
+}
