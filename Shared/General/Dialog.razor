@@ -1,7 +1,10 @@
 ﻿<Popup AllowBreakOut="AllowBreakOut" OnFadeOut="OnFadeOut" @ref="Popup">
     @if (Header != "")
     {
-        <div class="header">@Header</div>
+        <div class="header">
+            <span class="icon">@Icon</span>
+            <span class="text">@Header</span>
+        </div>
     }
     <div class="content">@ChildContent</div>
     @if (OnDismissSet)
@@ -17,6 +20,8 @@
     public RenderFragment ChildContent { get; set; }
     [Parameter]
     public string Header { get; set; } = "";
+    [Parameter]
+    public string Icon { get; set; } = "";
     [Parameter]
     public bool AllowBreakOut { get; set; } = true;
     [Parameter]

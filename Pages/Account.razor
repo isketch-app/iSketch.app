@@ -1,39 +1,33 @@
-﻿@page "/Account"
-@using System.Data.SqlClient
-@using iSketch.app.Shared.Profile
-@inject Services.User USR;
-@inject Services.Database DB;
-@inject Services.EventHookScoped EHS;
-@inject NavigationManager NM;
-@inject PassHashQueue PHQ;
+﻿@page "/Account";
+@inject Services.User User;
 
 <Authenticated>
     <div class="main">
         <div class="page">
             <div class="title">
                 <div class="photo">
-                    @if (USR.ProfilePictureID != null)
+                    @if (User.ProfilePictureID != null)
                     {
-                        <div style="background-image:url('/_Photo/profile-picture/@USR.ProfilePictureID')"></div>
+                        <div style="background-image:url('/_Photo/profile-picture/@User.ProfilePictureID')"></div>
                     }
                 </div>
-                <BPageTitle Icon="" Title='@("Welcome, " + USR.UserName)' />
+                <BPageTitle Icon="" Title='@("Welcome, " + User.UserName)' />
                 <span class="subtext">Manage and customize your iSketch.app profile.</span>
             </div>
             <div class="details">
                 <CText Icon="" Label="3rd Party Account Provider" Enabled="false" Value="@IdpName" />
-                <CText Icon="" Label="Account Creation Time" Enabled="false" Value="@CreatedTime.ToString()" />
-                <CText Icon="" Label="Last Logon Time" Enabled="false" Value="@LastLogonTime.ToString()" />
+                <CText Icon="" Label="Account Creation Time" Enabled="false" Value="@CreatedTime" />
+                <CText Icon="" Label="Last Logon Time" Enabled="false" Value="@LastLogonTime" />
                 <CText Icon="" Label="Email" Enabled="false" Value="@Email" />
-                <CText Icon="" Label="Status" Enabled="false" Value="@Biography" />
+                <CText Icon="" Label="Status" Enabled="false" Value="@Biography" />
             </div>
         </div>
         <div class="sidebar">
-            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "SetStatus"'>Set Status</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "SetStatus"'>Set Status</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePassword"'>Change Password</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Link 3rd Party Account</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Request New Username</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="" OnClick="OpenChangeProfilePictureDialog">Change Photo</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePhoto"'>Change Avatar</CButton>
             <CButton Emphasis="Emphasis.Low" Icon="">Change / Verify Email</CButton>
             <hr />
             <CButton Emphasis="Emphasis.Low" Icon="">View Public Profile</CButton>
@@ -43,206 +37,34 @@
     </div>
     @if (Dialog == "SetStatus")
     {
-        <SetStatus @bind-Biography="Biography" OnFadeOut='() => { Dialog = ""; }' />
+        <SetStatusDialog @bind-Biography="Biography" OnFadeOut='() => { Dialog = ""; }' />
     }
     @if (Dialog == "ChangePassword")
     {
-        <Dialog OnFadeOut='() => { CloseDialog(); OnInitialized(); }' @ref="DlgChangePassword" Header="Set a new password">
-            <Warning Message="@Warning" />
-            <p><CText Value="@OldPassword" ValueChanged='(v) => OldPassword = v' Type="password" Icon="" Label="Password (old)" /></p>
-            <p><CText Value="@NewPassword" ValueChanged='(v) => NewPassword = v' Type="password" Icon="" Label="Password (new)" /></p>
-            <p><CText Value="@ConfirmPassword" ValueChanged='(v) => ConfirmPassword = v' Type="password" Icon="" Label="Password (confirm)" /></p>
-            <DialogButtonContainer>
-                <SavAppCan 
-                    OnCancelClick='() => DlgChangePassword.FadeOut()'
-                    OnApplyClick='() => SetPassword()'
-                    OnSaveClick='() => SetPassword(true)'
-                />
-            </DialogButtonContainer>
-        </Dialog>
+        <ChangePasswordDialog OnFadeOut='() => { Dialog = ""; }' />
     }
     @if (Dialog == "ChangePhoto")
     {
-        <Dialog OnFadeOut="CloseProfilePictureDialog" @ref="DlgChangePhoto" Header="Set your account photo">
-            <Warning Message="@Warning" />
-            <div class="photo-selection">
-                @{
-                    string spanClass = "";
-                    if (USR.ProfilePictureID == null) spanClass = "selected";
-                }
-                <span class="@spanClass" @onclick="() => { USR.ProfilePictureID = null; EHS.OnAccountPhotoChanged(); }" style="background-color:gray;"></span>
-                @foreach (KeyValuePair<string, string> photo in AccountPhotos)
-                {
-                    spanClass = "";
-                    if (USR.ProfilePictureID == photo.Key) spanClass = "selected";
-                    <span class="@spanClass" @onclick="() => { USR.ProfilePictureID = photo.Key; EHS.OnAccountPhotoChanged(); }" style="background-image:url('/_Photo/profile-picture/@photo.Key')"></span>
-                }
-            </div>
-            <DialogButtonContainer>
-                <SavAppCan 
-                    OnCancelClick='() => DlgChangePhoto.FadeOut()'
-                    OnApplyClick='() => SetAccountPhoto()'
-                    OnSaveClick='() => SetAccountPhoto(true)'
-                />
-            </DialogButtonContainer>
-        </Dialog>
+        <ChangePhotoDialog OnFadeOut='() => { Dialog = ""; }' />
     }
 </Authenticated>
 
 @code {
-    public DateTime CreatedTime;
-    public string Email;
-    public string Biography;
-    public DateTime LastLogonTime;
-    public string IdpName;
-    public string Dialog;
-    public string SavedProfilePictureID;
-    public Dialog DlgChangePassword;
-    public Dialog DlgChangePhoto;
-    public string sWarning;
-    private Dictionary<string, string> rAccountPhotos;
-    public Dictionary<string, string> AccountPhotos
-    {
-        get
-        {
-            if (rAccountPhotos == null) rAccountPhotos = GetAccountPhotos();
-            return rAccountPhotos;
-        }
-    }
-    public string Warning 
-    { 
-        get
-        {
-            return sWarning;
-        } 
-        set
-        {
-            sWarning = value;
-            StateHasChanged();
-        } 
-    }
-    public string OldPassword;
-    public string NewPassword;
-    public string ConfirmPassword;
+    private string Dialog;
+    private string Biography;
+    private string IdpName;
+    private string CreatedTime;
+    private string LastLogonTime;
+    private string Email;
+
     protected override void OnInitialized()
     {
-        if (USR.Session.UserID == Guid.Empty) return;
-        SqlCommand cmd = DB.NewConnection.CreateCommand();
-        try
-        {
-            cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
-            cmd.CommandText = "SELECT CreatedTime, Email, Biography, LastLogonTime, IdpName FROM [Security.Users.Splice] WHERE UserID = @USERID@";
-            SqlDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-            CreatedTime = reader.GetDateTime(0);
-            if (!reader.IsDBNull(1)) Email = reader.GetString(1);
-            if (!reader.IsDBNull(2))
-            {
-                Biography = reader.GetString(2);
-            }
-            else
-            {
-                Biography = "";
-            }
-            if (!reader.IsDBNull(3)) LastLogonTime = reader.GetDateTime(3);
-            if (!reader.IsDBNull(4)) IdpName = reader.GetString(4);
-        }
-        finally
-        {
-            cmd.Connection.Close();
-        }
+        Email = (string)User.GetProperty(UserProperties.Email);
+        IdpName = (string)User.GetProperty(UserProperties.IdpName);
+        Biography = (string)User.GetProperty(UserProperties.Biography);
+        CreatedTime = User.GetProperty(UserProperties.CreatedTime).ToString();
+        LastLogonTime = User.GetProperty(UserProperties.LastLogonTime).ToString();
+
         base.OnInitialized();
-    }
-    private void CloseDialog()
-    {
-        Dialog = null;
-        Warning = null;
-    }
-    private void OpenChangeProfilePictureDialog()
-    {
-        SavedProfilePictureID = USR.ProfilePictureID;
-        Dialog = "ChangePhoto";
-    }
-    private void CloseProfilePictureDialog()
-    {
-        CloseDialog(); 
-        OnInitialized();
-        USR.ProfilePictureID = SavedProfilePictureID;
-        EHS.OnAccountPhotoChanged();
-    }
-    private Dictionary<string, string> GetAccountPhotos()
-    {
-        Dictionary<string, string> photos = new();
-        SqlCommand cmd = DB.NewConnection.CreateCommand();
-        try
-        {
-            cmd.CommandText = "SELECT ProfilePictureID, DisplayName FROM [System.ProfilePictures] ORDER BY DisplayOrder ASC";
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                photos.Add(reader.GetGuid(0).ToString(), reader.GetString(1));
-            }
-        }
-        finally
-        {
-            cmd.Connection.Close();
-        }
-        return photos;
-    }
-    
-    private void SetAccountPhoto(bool tryClose = false)
-    {
-        SavedProfilePictureID = USR.ProfilePictureID;
-        SqlCommand cmd = DB.NewConnection.CreateCommand();
-        try
-        {
-            object objProfilePicID = USR.ProfilePictureID;
-            if (USR.ProfilePictureID == null)
-            {
-                objProfilePicID = DBNull.Value;
-            }
-            cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
-            cmd.Parameters.AddWithValue("@PICID@", objProfilePicID);
-            cmd.CommandText = "UPDATE [Security.Users] SET ProfilePictureID = @PICID@ WHERE UserID = @USERID@";
-            cmd.ExecuteNonQuery();
-            if (tryClose) _ = DlgChangePhoto.FadeOut();
-        }
-        catch
-        {
-            Warning = "Failed to set profile picture.";
-        }
-        finally
-        {
-            cmd.Connection.Close();
-        }
-    }
-    private async Task SetPassword(bool tryClose = false)
-    {
-        try
-        {
-            if (NewPassword != ConfirmPassword)
-            {
-                Warning = "New passwords do not match.";
-                return;
-            }
-            Warning = "Validating old password...";
-            if (!await Task.Run<bool>(() => UserTools.TestPassword(DB, PHQ, USR.Session.UserID, OldPassword)))
-            {
-                Warning = "Incorrect password.";
-                return;
-            }
-            Warning = "Setting password...";
-            if (!await Task.Run<bool>(() => UserTools.ChangePassword(DB, PHQ, USR.Session.UserID, NewPassword)))
-            {
-                Warning = "Failed to set password!";
-                return;
-            }
-            Warning = "Success!";
-            if (tryClose) CloseDialog();
-        }
-        finally
-        {
-            OldPassword = NewPassword = ConfirmPassword = null;
-        }
     }
 }

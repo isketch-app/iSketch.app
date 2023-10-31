@@ -84,6 +84,18 @@ namespace iSketch.app.Services
         {
             return UserTools.ChangePassword(Database, PHQ, Session.UserID, NewPassword);
         }
+        public bool TestPassword(string Password)
+        {
+            return UserTools.TestPassword(Database, PHQ, Session.UserID, Password);
+        }
+        public bool SetProperty(UserProperties Property, string Value)
+        {
+            return UserTools.SetUserProperty(Database, Session.UserID, Property, Value);
+        }
+        public object GetProperty(UserProperties Property)
+        {
+            return UserTools.GetUserProperty(Database, Session.UserID, Property);
+        }
     }
     public static class UserTools
     {
@@ -225,14 +237,14 @@ namespace iSketch.app.Services
                 cmd.Connection.Close();
             }
         }
-        public static bool SetUserProperties(Database Database, Guid UserID, UserProperties Setting, string Value)
+        public static bool SetUserProperty(Database Database, Guid UserID, UserProperties Property, object Value)
         {
             SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@VALUE@", Value);
-                cmd.CommandText = "UPDATE [Security.Users] SET [" + Setting.ToString().Replace('_', '.') + "] = @VALUE@ WHERE UserID = @USERID@";
+                cmd.CommandText = "UPDATE [Security.Users] SET [" + Property.ToString().Replace('_', '.') + "] = @VALUE@ WHERE UserID = @USERID@";
                 int affected = cmd.ExecuteNonQuery();
                 return (affected == 1);
             }
@@ -245,16 +257,16 @@ namespace iSketch.app.Services
                 cmd.Connection.Close();
             }
         }
-        public static string GetUserProperties(Database Database, Guid UserID, UserProperties Setting)
+        public static object GetUserProperty(Database Database, Guid UserID, UserProperties Property)
         {
             SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
-                cmd.CommandText = "SELECT [" + Setting.ToString().Replace('_', '.') + "] FROM [Security.Users] WHERE UserID = @USERID@";
+                cmd.CommandText = "SELECT [" + Property.ToString().Replace('_', '.') + "] FROM [Security.Users] WHERE UserID = @USERID@";
                 object result = cmd.ExecuteScalar();
                 if (result.GetType() == typeof(DBNull)) return null;
-                return (string)result;
+                return result;
             }
             catch (Exception)
             {
@@ -331,13 +343,13 @@ namespace iSketch.app.Services
         {
             try
             {
-                string sEmail = GetUserProperties(Database, UserID, UserProperties.Email);
+                string sEmail = (string)GetUserProperty(Database, UserID, UserProperties.Email);
                 if (sEmail != null && MailAddress.TryCreate(sEmail, out MailAddress dbEmail))
                 {
                     if (Email.Address == dbEmail.Address) return true;
                 }
-                SetUserProperties(Database, UserID, UserProperties.EmailVerified, "false");
-                SetUserProperties(Database, UserID, UserProperties.Email, Email.Address);
+                SetUserProperty(Database, UserID, UserProperties.EmailVerified, "false");
+                SetUserProperty(Database, UserID, UserProperties.Email, Email.Address);
                 return true;
             }
             catch
@@ -356,7 +368,7 @@ namespace iSketch.app.Services
                     UserAuthMethodsResult methods = GetUserAuthenticationMethods(Database, uid);
                     if (methods.Methods != UserAuthMethods.None) return SetUserNameResult.UserNameAlreadyTaken;
                 }
-                SetUserProperties(Database, UserID, UserProperties.UserName, UserName);
+                SetUserProperty(Database, UserID, UserProperties.UserName, UserName);
                 return SetUserNameResult.Success;
             }
             catch
@@ -382,7 +394,11 @@ namespace iSketch.app.Services
         UserName,
         Email,
         EmailVerified,
-        Settings_DarkMode
+        Settings_DarkMode,
+        Biography,
+        IdpName,
+        CreatedTime,
+        LastLogonTime
     }
     public enum UserAuthMethods
     {

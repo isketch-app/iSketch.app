@@ -1,0 +1,39 @@
+﻿@inject Services.User User;
+
+<Authenticated>
+    <Dialog Icon="" OnFadeOut="OnFadeOut" @ref="Dialog" Header="Set status message">
+        <Warning Message="@Warning" />
+        <p>What's on your mind, @(User.UserName)?</p>
+        <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="" />
+        <DialogButtonContainer>
+            <SavAppCan OnCancelClick='() => Dialog.FadeOut()'
+                       OnApplyClick='() => SetBiography()'
+                       OnSaveClick='() => SetBiography(true)' />
+        </DialogButtonContainer>
+    </Dialog>
+</Authenticated>
+
+@code {
+    [Parameter]
+    public string Biography { get; set; }
+    [Parameter]
+    public EventCallback<string> BiographyChanged { get; set; }
+    [Parameter]
+    public EventCallback OnFadeOut { get; set; }
+    private Dialog Dialog;
+    private string Warning;
+
+    private void SetBiography(bool tryClose = false)
+    {
+        bool success = User.SetProperty(UserProperties.Biography, Biography);
+        if (tryClose) _ = Dialog.FadeOut();
+        if (success)
+        {
+            BiographyChanged.InvokeAsync(Biography);
+        }
+        else
+        {
+            Warning = "Failed to set user status.";
+        }
+    }
+}

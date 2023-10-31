@@ -175,7 +175,7 @@
         }
         if (mail != null)
         {
-            UserTools.SetUserProperties(db, uid, UserProperties.Email, mail.Address);
+            UserTools.SetUserProperty(db, uid, UserProperties.Email, mail.Address);
         }
         await Task.Run<bool>(() => UserTools.ChangePassword(db, phq, uid, Password));
         user.Logon(uid);

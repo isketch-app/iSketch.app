@@ -7,3 +7,7 @@
     color:#808080;
     font-size:16px;
 }
+.icon {
+    font-family: icons;
+    vertical-align: -3px;
+}
