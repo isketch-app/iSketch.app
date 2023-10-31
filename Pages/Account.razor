@@ -1,5 +1,6 @@
 ﻿@page "/Account"
 @using System.Data.SqlClient
+@using iSketch.app.Shared.Profile
 @inject Services.User USR;
 @inject Services.Database DB;
 @inject Services.EventHookScoped EHS;
@@ -42,18 +43,7 @@
     </div>
     @if (Dialog == "SetStatus")
     {
-        <Dialog OnFadeOut='() => { CloseDialog(); OnInitialized(); }' @ref="DlgStatusMsg" Header="🤔 Set status message">
-            <Warning Message="@Warning" />
-            <p>What's on your mind, @(USR.UserName)?</p>
-            <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="" />
-            <DialogButtonContainer>
-                 <SavAppCan 
-                    OnCancelClick='() => DlgStatusMsg.FadeOut()'
-                    OnApplyClick='() => SetBiography()'
-                    OnSaveClick='() => SetBiography(true)'
-                 />
-            </DialogButtonContainer>
-        </Dialog>
+        <SetStatus @bind-Biography="Biography" OnFadeOut='() => { Dialog = ""; }' />
     }
     @if (Dialog == "ChangePassword")
     {
@@ -76,9 +66,14 @@
         <Dialog OnFadeOut="CloseProfilePictureDialog" @ref="DlgChangePhoto" Header="Set your account photo">
             <Warning Message="@Warning" />
             <div class="photo-selection">
+                @{
+                    string spanClass = "";
+                    if (USR.ProfilePictureID == null) spanClass = "selected";
+                }
+                <span class="@spanClass" @onclick="() => { USR.ProfilePictureID = null; EHS.OnAccountPhotoChanged(); }" style="background-color:gray;"></span>
                 @foreach (KeyValuePair<string, string> photo in AccountPhotos)
                 {
-                    string spanClass = "";
+                    spanClass = "";
                     if (USR.ProfilePictureID == photo.Key) spanClass = "selected";
                     <span class="@spanClass" @onclick="() => { USR.ProfilePictureID = photo.Key; EHS.OnAccountPhotoChanged(); }" style="background-image:url('/_Photo/profile-picture/@photo.Key')"></span>
                 }
@@ -102,7 +97,6 @@
     public string IdpName;
     public string Dialog;
     public string SavedProfilePictureID;
-    public Dialog DlgStatusMsg;
     public Dialog DlgChangePassword;
     public Dialog DlgChangePhoto;
     public string sWarning;
@@ -195,34 +189,20 @@
         }
         return photos;
     }
-    private void SetBiography(bool tryClose = false)
-    {
-        SqlCommand cmd = DB.NewConnection.CreateCommand();
-        try
-        {
-            cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
-            cmd.Parameters.AddWithValue("@BIO@", Biography);
-            cmd.CommandText = "UPDATE [Security.Users] SET Biography = @BIO@ WHERE UserID = @USERID@";
-            cmd.ExecuteNonQuery();
-            if (tryClose) _ = DlgStatusMsg.FadeOut();
-        }
-        catch
-        {
-            Warning = "Failed to set status.";
-        }
-        finally
-        {
-            cmd.Connection.Close();
-        }
-    }
+    
     private void SetAccountPhoto(bool tryClose = false)
     {
         SavedProfilePictureID = USR.ProfilePictureID;
         SqlCommand cmd = DB.NewConnection.CreateCommand();
         try
         {
+            object objProfilePicID = USR.ProfilePictureID;
+            if (USR.ProfilePictureID == null)
+            {
+                objProfilePicID = DBNull.Value;
+            }
             cmd.Parameters.AddWithValue("@USERID@", USR.Session.UserID);
-            cmd.Parameters.AddWithValue("@PICID@", USR.ProfilePictureID);
+            cmd.Parameters.AddWithValue("@PICID@", objProfilePicID);
             cmd.CommandText = "UPDATE [Security.Users] SET ProfilePictureID = @PICID@ WHERE UserID = @USERID@";
             cmd.ExecuteNonQuery();
             if (tryClose) _ = DlgChangePhoto.FadeOut();

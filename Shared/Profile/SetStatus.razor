@@ -1,0 +1,49 @@
+﻿@using System.Data.SqlClient;
+@inject Services.User User;
+@inject Services.Database DB;
+
+<Authenticated>
+    <Dialog OnFadeOut="OnFadeOut" @ref="Dialog" Header="🤔 Set status message">
+        <Warning Message="@Warning" />
+        <p>What's on your mind, @(User.UserName)?</p>
+        <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="" />
+        <DialogButtonContainer>
+            <SavAppCan OnCancelClick='() => Dialog.FadeOut()'
+                       OnApplyClick='() => SetBiography()'
+                       OnSaveClick='() => SetBiography(true)' />
+        </DialogButtonContainer>
+    </Dialog>
+</Authenticated>
+
+@code {
+    [Parameter]
+    public EventCallback OnFadeOut { get; set; }
+    [Parameter]
+    public string Biography { get; set; }
+    [Parameter]
+    public EventCallback<string> BiographyChanged { get; set; }
+    private string Warning;
+    private Dialog Dialog;
+
+    private void SetBiography(bool tryClose = false)
+    {
+        SqlCommand cmd = DB.NewConnection.CreateCommand();
+        try
+        {
+            cmd.Parameters.AddWithValue("@USERID@", User.Session.UserID);
+            cmd.Parameters.AddWithValue("@BIO@", Biography);
+            cmd.CommandText = "UPDATE [Security.Users] SET Biography = @BIO@ WHERE UserID = @USERID@";
+            cmd.ExecuteNonQuery();
+            if (tryClose) _ = Dialog.FadeOut();
+            BiographyChanged.InvokeAsync(Biography);
+        }
+        catch
+        {
+            Warning = "Failed to set status.";
+        }
+        finally
+        {
+            cmd.Connection.Close();
+        }
+    }
+}
