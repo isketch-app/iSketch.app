@@ -1,5 +1,6 @@
 ﻿@page "/Account";
-@inject Services.User User;
+@inject User User;
+@inject EventHookScoped EventHookScoped;
 
 <Authenticated>
     <div class="main">
@@ -45,7 +46,7 @@
     }
     @if (Dialog == "ChangePhoto")
     {
-        <ChangePhotoDialog OnFadeOut='() => { Dialog = ""; }' />
+        <ChangeProfilePicture OnFadeOut='() => { Dialog = ""; }' />
     }
 </Authenticated>
 
@@ -64,7 +65,11 @@
         Biography = (string)User.GetProperty(UserProperties.Biography);
         CreatedTime = User.GetProperty(UserProperties.CreatedTime).ToString();
         LastLogonTime = User.GetProperty(UserProperties.LastLogonTime).ToString();
-
+        EventHookScoped.ProfilePictureIDChanged += OnProfilePictureIDChanged;
         base.OnInitialized();
+    }
+    private void OnProfilePictureIDChanged(object obj, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

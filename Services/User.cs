@@ -242,6 +242,7 @@ namespace iSketch.app.Services
             SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
+                if (Value == null) Value = DBNull.Value;
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@VALUE@", Value);
                 cmd.CommandText = "UPDATE [Security.Users] SET [" + Property.ToString().Replace('_', '.') + "] = @VALUE@ WHERE UserID = @USERID@";
@@ -263,7 +264,7 @@ namespace iSketch.app.Services
             try
             {
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
-                cmd.CommandText = "SELECT [" + Property.ToString().Replace('_', '.') + "] FROM [Security.Users] WHERE UserID = @USERID@";
+                cmd.CommandText = "SELECT [" + Property.ToString().Replace('_', '.') + "] FROM [Security.Users.Splice] WHERE UserID = @USERID@";
                 object result = cmd.ExecuteScalar();
                 if (result.GetType() == typeof(DBNull)) return null;
                 return result;
@@ -398,7 +399,8 @@ namespace iSketch.app.Services
         Biography,
         IdpName,
         CreatedTime,
-        LastLogonTime
+        LastLogonTime,
+        ProfilePictureID
     }
     public enum UserAuthMethods
     {
