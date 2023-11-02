@@ -11,12 +11,18 @@
                 string spanClass = "";
                 if (SelectedPictureID == null) spanClass = "selected";
             }
-            <span class="@spanClass" @onclick="() => { SelectedPictureID = null; }" style="background-color:gray;"></span>
+            <div class="selection" @onclick="() => { SelectedPictureID = null; }">
+                <div class="photo none @spanClass"></div>
+                <div class="label">None</div>
+            </div>
             @foreach (KeyValuePair<string, string> photo in ProfilePictures)
             {
                 spanClass = "";
                 if (SelectedPictureID == photo.Key) spanClass = "selected";
-                <span class="@spanClass" @onclick="() => { SelectedPictureID = photo.Key; }" style="background-image:url('/_Photo/profile-picture/@photo.Key')"></span>
+                <div class="selection" @onclick="() => { SelectedPictureID = photo.Key; }">
+                    <div class="photo @spanClass" style="background-image:url('/_Photo/profile-picture/@photo.Key')"></div>
+                    <div class="label">@photo.Value</div>
+                </div>
             }
         </div>
         <DialogButtonContainer>

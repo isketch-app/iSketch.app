@@ -1,22 +1,51 @@
 ﻿.photo-selection {
-    line-height: 0px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
 }
 
-.photo-selection > span {
+.photo-selection .selection {
+    background-color: whitesmoke;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.photo-selection .label
+{
+    user-select: none;
+    font-size: 12px;
+    margin-top: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 60px;
+    height: 14px;
+    text-wrap: nowrap;
+}
+
+.photo-selection .photo {
     width: 60px;
     height: 60px;
-    display: inline-block;
     background-size: cover;
     border-radius: 30px;
-    cursor: pointer;
     position: relative;
 }
 
-.photo-selection > span::after {
+.photo-selection .photo.none {
+    background-color: var(--accent-color);
+}
+
+.photo-selection .photo.none::before {
+    content: '';
+    font-family: icons;
+    color: white;
+    font-size: 32px;
+    line-height: 60px;
+}
+
+.photo-selection .photo::after {
     content: '';
     position: absolute;
     width: 20px;
@@ -34,6 +63,6 @@
     line-height: 20px;
 }
 
-.photo-selection > span:hover::after, .photo-selection > .selected::after {
+.photo-selection .selection:hover .photo::after, .photo-selection .selected::after {
     opacity: 1;
 }
