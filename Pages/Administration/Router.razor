@@ -28,6 +28,11 @@
     {
         <Sessions PageNumber="@PageNumber" SessionID="@OID" />
     }
+
+    @if (PageName == "ProfilePictures")
+    {
+        <ProfilePictures PageNumber="@PageNumber" ProfilePictureID="@OID" />
+    }
 </Authorized>
 
 <Authorized PermissionsA="PMA.Administration" Invert="true">

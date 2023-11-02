@@ -1,0 +1,88 @@
+﻿@using System.IO;
+@using SixLabors.ImageSharp;
+@inject Services.Database Database;
+@inject NavigationManager NavigationManager;
+@inject IJSRuntime JS;
+
+
+@if (ProfilePictureID != null)
+{
+    string header = "Modify a photo";
+    if (ProfilePictureID == "Add") header = "Add a photo";
+    <Dialog Icon="" Header="@header" OnFadeOut="NavBackToList">
+        <Warning Message="@Message" />
+        <Warning Message="@Exception" />
+        <div style="text-align:right;">
+            <CAreYouSure ButtonText="Delete" ButtonIcon="" />
+        </div>
+        <br /><br />
+        <InputFile OnChange="OnFileUpload" />
+        <br /><br /><br />
+        <CText Label="Display name" />
+        <br />
+        <CText Label="Display order" />
+        <br />
+        <SavAppCan />
+    </Dialog>
+}
+
+
+<ListPage PageTitle="Profile Pictures"
+          PageNumber="PageNumber"
+          DB="Database"
+          PagePath="/Administration/ProfilePictures"
+          TableName="[System.ProfilePictures]"
+          VisibleRows='new List<string>() { "[ProfilePictureID]", "[DisplayName]", "[DisplayOrder]" }'
+          VisibleRowsTitles='new List<string>() { "Picture ID", "Display name", "Display order" }' />
+
+@code {
+    [Parameter]
+    public int PageNumber { get; set; }
+    [Parameter]
+    public string ProfilePictureID { get; set; }
+    private string Message;
+    private string Exception;
+
+    private void NavBackToList()
+    {
+        NavigationManager.NavigateTo("/Administration/ProfilePictures/" + PageNumber);
+        Message = "";
+        Exception = "";
+    }
+
+    private async void OnFileUpload(InputFileChangeEventArgs args)
+    {
+
+        Message = "Uploading...";
+        Exception = "";
+        StateHasChanged();
+        try
+        {
+            Stream stream = args.File.OpenReadStream(50000);
+            byte[] fileBytes = new byte[stream.Length];
+            await stream.ReadAsync(fileBytes, 0, fileBytes.Length);
+            stream.Close();
+
+            Image image = Image.Load(fileBytes);
+
+            
+
+            Message = "Uploaded.";
+            StateHasChanged();
+        }
+        catch (UnknownImageFormatException)
+        {
+            Message = "Not an image.";
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Message = "Error uploading.";
+            if (e.Message.Contains("exceeds"))
+            {
+                Message = "Image too large, 50kB Maximum.";
+            }
+            StateHasChanged();
+        }
+    }
+}

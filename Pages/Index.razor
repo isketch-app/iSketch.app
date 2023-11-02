@@ -1,13 +1,11 @@
-@page "/"
+﻿@page "/"
 @inject NavigationManager nm;
 @inject Session session;
 @inject Database db;
 
-<Authorized PermissionsA="PMA.Administration">
-    <a href="/Administration">Administration</a>
-</Authorized>
+
 <div style="text-align:center;"><img src="./static/images/concept.svg" style="width:80%;" /></div>
-<h3>We are not ready quite yet!</h3>
+<h3>👷‍♀ We are not ready quite yet!</h3>
 <hr />
 <p>
     iSketch.app is in early, active development, you can track the progress on <a target="_blank" href="https://github.com/isketch-app/iSketch.app">GitHub</a>
@@ -21,9 +19,23 @@
     Our target go-live date is sometime soon. At this time, the only thing working is account registration. Feel free to reach out if you have any questions to dylan@belowaverage.org.
 </p>
 
-<br />
-<br />
-<br />
-<br />
+<hr />
+<h3>📰 News</h3>
+<hr />
 
-@session.BaseURI
+<p>
+    <ul>
+        <li>
+            <b>📷 Feature drop &bull; 11/1/2023 &bull;</b> You can now select an avatar for your account! Click on your profile and select "My Account", then click "Change Avatar."
+        </li>
+        <li>
+            <b>🧑‍💻 Development restarts &bull; 10/3/2023 &bull;</b> At this time, the plan is to finish the <a href="/Account">Account</a> page before starting iSketch game rooms, initial rooms will likely not be fully functional but may have working chat. All progress will be posted in this news section.
+        </li>
+        <li>
+            <b>🛑 Development stalls &bull; 2/3/2022</b>
+        </li>
+        <li>
+            <b>▶️ Development begins &bull; 5/11/2021</b>
+        </li>
+    </ul>
+</p>

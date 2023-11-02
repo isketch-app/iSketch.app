@@ -21,7 +21,8 @@
     }
     public void LocChanged(object o, LocationChangedEventArgs e)
     {
-        if(nm.Uri.ToLower().EndsWith(URL.ToLower()))
+        string realURI = "/" + nm.Uri.Replace(nm.BaseUri, "");
+        if (realURI.ToLower().StartsWith(URL.ToLower()))
         {
             Selected = "selected";
         }
@@ -29,7 +30,11 @@
         {
             Selected = "";
         }
-        if(SelectedCompare != Selected)
+        if (URL == "/" && realURI != "/")
+        {
+            Selected = "";
+        }
+        if (SelectedCompare != Selected)
         {
             SelectedCompare = Selected;
             StateHasChanged();
