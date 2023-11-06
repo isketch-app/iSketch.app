@@ -1,0 +1,7 @@
+﻿.delete {
+    text-align: right;
+}
+
+::deep.upload button {
+    width: 100%;
+}

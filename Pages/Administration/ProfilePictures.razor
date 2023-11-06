@@ -12,12 +12,14 @@
     <Dialog Icon="" Header="@header" OnFadeOut="NavBackToList">
         <Warning Message="@Message" />
         <Warning Message="@Exception" />
-        <div style="text-align:right;">
+        <div class="delete">
             <CAreYouSure ButtonText="Delete" ButtonIcon="" />
         </div>
+        <br />
+        <div class="upload">
+            <CInputFile OnChange="OnFileUpload" />
+        </div>
         <br /><br />
-        <InputFile OnChange="OnFileUpload" />
-        <br /><br /><br />
         <CText Label="Display name" />
         <br />
         <CText Label="Display order" />

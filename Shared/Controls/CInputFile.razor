@@ -1,0 +1,39 @@
+﻿<span onclick="document.getElementById('@GUID').click()">
+    <CButton Emphasis="@Emphasis" Icon="@Icon">
+        @if (FileName != null)
+        {
+            <span>@FileName</span>
+        }
+        else
+        {
+            if (ChildContent == null)
+            {
+                <span>Upload File</span>
+            }
+            else
+            {
+                <span>@ChildContent</span>
+            }
+        }
+    </CButton>
+    <InputFile id="@GUID" OnChange="FileChanged" />
+</span>
+
+@code {
+    [Parameter]
+    public EventCallback<InputFileChangeEventArgs> OnChange { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public string Icon { get; set; } = "";
+    [Parameter]
+    public Emphasis Emphasis { get; set; } = Emphasis.Medium;
+    private string FileName;
+    private string GUID = "x" + Guid.NewGuid().ToString();
+
+    private void FileChanged(InputFileChangeEventArgs args)
+    {
+        FileName = args.File.Name;
+        _ = OnChange.InvokeAsync(args);
+    }
+}
