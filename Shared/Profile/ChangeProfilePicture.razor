@@ -67,7 +67,7 @@
         SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
-            cmd.CommandText = "SELECT ProfilePictureID, DisplayName FROM [System.ProfilePictures] ORDER BY DisplayOrder ASC";
+            cmd.CommandText = "SELECT ProfilePictureID, DisplayName FROM [System.ProfilePictures] ORDER BY DisplayOrder, DisplayName ASC";
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
