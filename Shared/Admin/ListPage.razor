@@ -18,6 +18,7 @@
         TableName="@TableName"
         VisibleRows='VisibleRows'
         VisibleRowsTitles='VisibleRowsTitles'
+        PhotoEndpoint="@PhotoEndpoint"
     />
 </div>
 
@@ -28,6 +29,8 @@
     public string PageTitle { get; set; }
     [Parameter]
     public string PageTitleIcon { get; set; }
+    [Parameter]
+    public string PhotoEndpoint { get; set; }
     [Parameter]
     public Database DB { get; set; }
     [Parameter]

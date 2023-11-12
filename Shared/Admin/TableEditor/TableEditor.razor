@@ -1,14 +1,22 @@
 ﻿@using System.Data.SqlClient;
 @inject NavigationManager nm;
-@inject IJSRuntime js; 
+@inject IJSRuntime js;
 
-@{ if (!inited) TableInit(); }
+@{
+    if (!inited) TableInit();
+}
 
 <div class="table-body" id="@GUID">
     <table>
         <tr>
             <td class="icon"></td>
-            @{int i = 0;}
+            @if (PhotoEndpoint != null)
+            {
+                <td></td>
+            }
+            @{
+                int i = 0;
+            }
             @foreach (string title in VisibleRowsTitles)
             {
                 int index = i;
@@ -27,7 +35,13 @@
         </tr>
         <tr>
             <td class="icon"></td>
-            @{i = 0;}
+            @if (PhotoEndpoint != null)
+            {
+                <td></td>
+            }
+            @{
+                i = 0;
+            }
             @foreach (string title in VisibleRowsTitles)
             {
                 int index = i;
@@ -45,7 +59,13 @@
         {
             <tr @onclick="() => nm.NavigateTo(PrintMorePath(row[0]))">
                 <td class="icon"></td>
-                @{i = 0;}
+                @if (PhotoEndpoint != null)
+                {
+                    <td><div class="photo" style="background-image:url('/_Photo/@PhotoEndpoint/@row[0]');"></div></td>
+                }
+                @{
+                    i = 0;
+                }
                 @foreach (string field in row)
                 {
                     if (i++ == 0) continue;
@@ -56,7 +76,7 @@
         }
     </table>
     <div class="pagination">
-        @{ 
+        @{
             string star, prev, next, last;
             string page = PagePath + "/";
             uint maxOnPage = ResultOffset + MaxResults;
@@ -82,37 +102,39 @@
 </div>
 
 @code {
-        [Parameter]
-        public Database DB { get; set; }
-        [Parameter]
-        public string TableName { get; set; } = "";
-        [Parameter]
-        public string PagePath { get; set; } = "";
-        [Parameter]
-        public List<string> VisibleRows { get; set; } = new List<string>();
-        [Parameter]
-        public List<string> VisibleRowsTitles { get; set; } = new List<string>();
-        [Parameter]
-        public uint ResultOffset { get; set; } = 0;
-        [Parameter]
-        public uint MaxResults { get; set; } = 25;
-        [Parameter]
-        public bool PathIncludePageNumber { get; set; } = false;
-        [Parameter]
-        public int PageNumber
+    [Parameter]
+    public Database DB { get; set; }
+    [Parameter]
+    public string TableName { get; set; } = "";
+    [Parameter]
+    public string PagePath { get; set; } = "";
+    [Parameter]
+    public string PhotoEndpoint { get; set; }
+    [Parameter]
+    public List<string> VisibleRows { get; set; } = new List<string>();
+    [Parameter]
+    public List<string> VisibleRowsTitles { get; set; } = new List<string>();
+    [Parameter]
+    public uint ResultOffset { get; set; } = 0;
+    [Parameter]
+    public uint MaxResults { get; set; } = 25;
+    [Parameter]
+    public bool PathIncludePageNumber { get; set; } = false;
+    [Parameter]
+    public int PageNumber
     {
-            get
+        get
         {
-                return pPageNumber;
-            }
-            set
-        {
-                pPageNumber = value;
-                ResultOffset = (uint)(MaxResults * pPageNumber);
-                if (inited) OnPageChange();
-                js.InvokeVoidAsync("eval", "document.getElementById('" + GUID + "').scroll(0, 0);");
-            }
+            return pPageNumber;
         }
+        set
+        {
+            pPageNumber = value;
+            ResultOffset = (uint)(MaxResults * pPageNumber);
+            if (inited) OnPageChange();
+            js.InvokeVoidAsync("eval", "document.getElementById('" + GUID + "').scroll(0, 0);");
+        }
+    }
     private string GUID = "x" + Guid.NewGuid();
     private int qTotal = 0;
     private bool inited = false;

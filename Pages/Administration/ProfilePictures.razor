@@ -43,6 +43,7 @@
           DB="Database"
           PagePath="/Administration/ProfilePictures"
           TableName="[System.ProfilePictures]"
+          PhotoEndpoint="profile-picture"
           VisibleRows='new List<string>() { "ProfilePictureID", "DisplayName", "DisplayOrder" }'
           VisibleRowsTitles='new List<string>() { "Picture ID", "Display name", "Display order" }' />
 
@@ -105,7 +106,7 @@
         {
             Stream stream = args.File.OpenReadStream(50000);
             byte[] fileBytes = new byte[stream.Length];
-            await stream.ReadAsync(fileBytes, 0, fileBytes.Length);
+            await stream.ReadExactlyAsync(fileBytes, 0, fileBytes.Length);
             stream.Close();
             Image image = Image.Load(fileBytes);
             if (image.Bounds.Width != image.Bounds.Height)
