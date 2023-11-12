@@ -28,7 +28,14 @@ namespace iSketch.app.Data.Photo
             if (rawPhoto == null || rawPhoto.GetType() == typeof(System.DBNull)) return;
             IImageFormat format = Image.DetectFormat((byte[])rawPhoto);
             if (format != null) context.Response.ContentType = format.DefaultMimeType;
-            context.Response.Headers.Add("Cache-Control", "public, max-age=2592000, immutable");
+            if (context.Request.Query.Keys.Contains("no-cache"))
+            {
+                context.Response.Headers.Append("Cache-Control", "no-cache");
+            }
+            else
+            {
+                context.Response.Headers.Append("Cache-Control", "public, max-age=2592000, immutable");
+            }
             await context.Response.Body.WriteAsync((byte[])rawPhoto, 0, ((byte[])rawPhoto).Length);
         });
         public static Dictionary<string, TableAndRow> TableAndRows = new()

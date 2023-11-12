@@ -5,3 +5,11 @@
 ::deep.upload button {
     width: 100%;
 }
+
+.photo {
+    width: 100px;
+    height: 100px;
+    background-color: whitesmoke;
+    margin: 0 auto 20px;
+    background-size: cover;
+}

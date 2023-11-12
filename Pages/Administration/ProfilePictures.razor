@@ -1,30 +1,39 @@
 ﻿@using System.IO;
 @using SixLabors.ImageSharp;
+@using System.Data.SqlClient;
 @inject Services.Database Database;
 @inject NavigationManager NavigationManager;
 @inject IJSRuntime JS;
 
 
-@if (ProfilePictureID != null)
+@if ((Guid.TryParse(ProfilePictureID, out _) || ProfilePictureID == "Add") && LoadPhotoDetails())
 {
     string header = "Modify a photo";
     if (ProfilePictureID == "Add") header = "Add a photo";
-    <Dialog Icon="" Header="@header" OnFadeOut="NavBackToList">
+    <Dialog Icon="" Header="@header" @ref="Dialog" OnFadeOut="NavBackToList">
         <Warning Message="@Message" />
         <Warning Message="@Exception" />
-        <div class="delete">
-            <CAreYouSure ButtonText="Delete" ButtonIcon="" />
-        </div>
+        @if (ProfilePictureID != "Add")
+        {
+            <div style="background-image:url('/_Photo/profile-picture/@ProfilePictureID?no-cache=@CacheGuid')" class="photo"></div>
+            <div class="delete">
+                <CAreYouSure OnYesClick="OnDelete" ButtonText="Delete" ButtonIcon="" />
+            </div>
+        }
         <br />
         <div class="upload">
             <CInputFile OnChange="OnFileUpload" />
         </div>
         <br /><br />
-        <CText Label="Display name" />
+        <CText Value="@DisplayName" ValueChanged="(value) => DisplayName = value" Label="Display name" />
         <br />
-        <CText Label="Display order" />
+        <CText Value="@DisplayOrder" ValueChanged="(value) => DisplayOrder = value" Type="number" Label="Display order" />
         <br />
-        <SavAppCan />
+        <DialogButtonContainer>
+            <SavAppCan OnApplyClick='() => { if (OnSave()) Message = "Saved!"; }'
+                       OnSaveClick="() => { if (OnSave()) _ = Dialog.FadeOut(); }"
+                       OnCancelClick="() => Dialog.FadeOut()"/>
+        </DialogButtonContainer>
     </Dialog>
 }
 
@@ -34,7 +43,7 @@
           DB="Database"
           PagePath="/Administration/ProfilePictures"
           TableName="[System.ProfilePictures]"
-          VisibleRows='new List<string>() { "[ProfilePictureID]", "[DisplayName]", "[DisplayOrder]" }'
+          VisibleRows='new List<string>() { "ProfilePictureID", "DisplayName", "DisplayOrder" }'
           VisibleRowsTitles='new List<string>() { "Picture ID", "Display name", "Display order" }' />
 
 @code {
@@ -42,21 +51,55 @@
     public int PageNumber { get; set; }
     [Parameter]
     public string ProfilePictureID { get; set; }
+    private Dialog Dialog;
     private string Message;
     private string Exception;
+    private byte[] ImageBytes;
+    private string DisplayName;
+    private string DisplayOrder;
+    private string LoadedProfilePictureID;
+    private string CacheGuid = Guid.NewGuid().ToString();
 
     private void NavBackToList()
     {
         NavigationManager.NavigateTo("/Administration/ProfilePictures/" + PageNumber);
-        Message = "";
-        Exception = "";
+        Message = null;
+        Exception = null;
+    }
+
+    private bool LoadPhotoDetails()
+    {
+        if (ProfilePictureID == LoadedProfilePictureID) return true;
+        if (ProfilePictureID == "Add")
+        {
+            ImageBytes = null;
+            DisplayName = null;
+            DisplayOrder = null;
+            LoadedProfilePictureID = ProfilePictureID;
+            return true;
+        }
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
+        cmd.Parameters.AddWithValue("@GUID@", ProfilePictureID);
+        cmd.CommandText = "SELECT DisplayName, DisplayOrder, Picture from [System.ProfilePictures] WHERE ProfilePictureID = @GUID@";
+        SqlDataReader reader = cmd.ExecuteReader();
+        bool rows = reader.Read();
+        if (!rows)
+        {
+            cmd.Connection.Close();
+            return false;
+        }
+        DisplayName = reader.GetString(0);
+        DisplayOrder = reader.GetInt32(1).ToString();
+        ImageBytes = (byte[])reader.GetValue(2);
+        cmd.Connection.Close();
+        LoadedProfilePictureID = ProfilePictureID;
+        return true;
     }
 
     private async void OnFileUpload(InputFileChangeEventArgs args)
     {
-
         Message = "Uploading...";
-        Exception = "";
+        Exception = null;
         StateHasChanged();
         try
         {
@@ -64,11 +107,14 @@
             byte[] fileBytes = new byte[stream.Length];
             await stream.ReadAsync(fileBytes, 0, fileBytes.Length);
             stream.Close();
-
             Image image = Image.Load(fileBytes);
-
-            
-
+            if (image.Bounds.Width != image.Bounds.Height)
+            {
+                Message = "Image not square.";
+                StateHasChanged();
+                return;
+            }
+            ImageBytes = fileBytes;
             Message = "Uploaded.";
             StateHasChanged();
         }
@@ -86,5 +132,81 @@
             }
             StateHasChanged();
         }
+    }
+
+    private bool OnSave()
+    {
+        if (!CheckValues()) return false;
+        bool result = true;
+        Message = null;
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
+        Guid newGuid = Guid.NewGuid();
+        cmd.Parameters.AddWithValue("@PICTURE@", ImageBytes);
+        cmd.Parameters.AddWithValue("@DISPLAYNAME@", DisplayName);
+        cmd.Parameters.AddWithValue("@DISPLAYORDER@", DisplayOrder);
+        if (ProfilePictureID == "Add")
+        {
+
+            cmd.Parameters.AddWithValue("@GUID@", newGuid);
+            cmd.CommandText = "INSERT INTO [System.ProfilePictures] (ProfilePictureID, Picture, DisplayName, DisplayOrder) VALUES (@GUID@, @PICTURE@, @DISPLAYNAME@, @DISPLAYORDER@)";
+        }
+        else
+        {
+            cmd.Parameters.AddWithValue("@GUID@", ProfilePictureID);
+            cmd.CommandText = "UPDATE [System.ProfilePictures] SET Picture = @PICTURE@, DisplayName = @DISPLAYNAME@, DisplayOrder = @DISPLAYORDER@ WHERE ProfilePictureID = @GUID@";
+        }
+        try
+        {
+            cmd.ExecuteNonQuery();
+            if (ProfilePictureID == "Add")
+            {
+                NavigationManager.NavigateTo("/Administration/ProfilePictures/" + PageNumber + "/" + newGuid.ToString());
+            }
+        }
+        catch
+        {
+            Message = "Error saving.";
+            result = false;
+        }
+        cmd.Connection.Close();
+        CacheGuid = Guid.NewGuid().ToString();
+        return result;
+    }
+
+    private void OnDelete()
+    {
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
+        cmd.Parameters.AddWithValue("@GUID@", ProfilePictureID);
+        cmd.CommandText = "DELETE FROM [System.ProfilePictures] WHERE ProfilePictureID = @GUID@";
+        try
+        {
+            cmd.ExecuteNonQuery();
+            _ = Dialog.FadeOut();
+        }
+        catch
+        {
+            Message = "Failed to delete, picture is being used.";
+        }
+        cmd.Connection.Close();
+    }
+
+    private bool CheckValues()
+    {
+        if (ImageBytes == null || ImageBytes.Length == 0)
+        {
+            Message = "Please supply a photo.";
+            return false;
+        }
+        if (DisplayName == null || DisplayName.Length == 0)
+        {
+            Message = "Please supply a display name.";
+            return false;
+        }
+        if (DisplayOrder == null || !int.TryParse(DisplayOrder, out _))
+        {
+            Message = "Please supply a display order.";
+            return false;
+        }
+        return true;
     }
 }
