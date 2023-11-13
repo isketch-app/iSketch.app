@@ -15,7 +15,9 @@
         <Warning Message="@Exception" />
         @if (ProfilePictureID != "Add")
         {
-            <div style="background-image:url('/_Photo/profile-picture/@ProfilePictureID?no-cache=@CacheGuid')" class="photo"></div>
+            <a target="_blank" href="/_Photo/profile-picture/@ProfilePictureID?download">
+                <div style="background-image:url('/_Photo/profile-picture/@ProfilePictureID?no-cache=@CacheGuid')" class="photo"></div>
+            </a>
             <div class="delete">
                 <CAreYouSure OnYesClick="OnDelete" ButtonText="Delete" ButtonIcon="" />
             </div>

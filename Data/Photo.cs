@@ -28,6 +28,10 @@ namespace iSketch.app.Data.Photo
             if (rawPhoto == null || rawPhoto.GetType() == typeof(System.DBNull)) return;
             IImageFormat format = Image.DetectFormat((byte[])rawPhoto);
             if (format != null) context.Response.ContentType = format.DefaultMimeType;
+            if (context.Request.Query.Keys.Contains("download"))
+            {
+                context.Response.Headers.Append("Content-Disposition", "attachment");
+            }
             if (context.Request.Query.Keys.Contains("no-cache"))
             {
                 context.Response.Headers.Append("Cache-Control", "no-cache");
