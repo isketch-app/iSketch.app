@@ -1,0 +1,20 @@
+﻿<div class="profile-picture">
+    @if (ProfilePictureID == Guid.Empty)
+    {
+        <div class="placeholder">
+            <div class="icon">@Icon</div>
+        </div>
+    }
+    else
+    {
+        <div class="picture" style="background-image:url('/_Photo/profile-picture/@ProfilePictureID');"></div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Icon { get; set; } = "";
+
+    [Parameter]
+    public Guid ProfilePictureID { get; set; }
+}

@@ -9,13 +9,13 @@
         <div class="photo-selection">
             @{
                 string spanClass = "";
-                if (SelectedPictureID == null) spanClass = "selected";
+                if (SelectedPictureID == Guid.Empty) spanClass = "selected";
             }
-            <div class="selection" @onclick="() => { SelectedPictureID = null; }">
+            <div class="selection" @onclick="() => { SelectedPictureID = Guid.Empty; }">
                 <div class="photo none @spanClass"></div>
                 <div class="label">None</div>
             </div>
-            @foreach (KeyValuePair<string, string> photo in ProfilePictures)
+            @foreach (KeyValuePair<Guid, string> photo in ProfilePictures)
             {
                 spanClass = "";
                 if (SelectedPictureID == photo.Key) spanClass = "selected";
@@ -38,10 +38,10 @@
     public EventCallback OnFadeOut { get; set; }
     private Dialog Dialog;
     private string Warning;
-    private Dictionary<string, string> ProfilePictures;
-    private string OriginalPictureID;
-    private string rSelectedPictureID;
-    private string SelectedPictureID
+    private Dictionary<Guid, string> ProfilePictures;
+    private Guid OriginalPictureID;
+    private Guid rSelectedPictureID;
+    private Guid SelectedPictureID
     {
         get
         {
@@ -61,9 +61,9 @@
         ProfilePictures = GetProfilePictures();
         base.OnInitialized();
     }
-    private Dictionary<string, string> GetProfilePictures()
+    private Dictionary<Guid, string> GetProfilePictures()
     {
-        Dictionary<string, string> photos = new();
+        Dictionary<Guid, string> photos = new();
         SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
@@ -71,7 +71,7 @@
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                photos.Add(reader.GetGuid(0).ToString(), reader.GetString(1));
+                photos.Add(reader.GetGuid(0), reader.GetString(1));
             }
         }
         finally

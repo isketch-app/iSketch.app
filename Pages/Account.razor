@@ -1,17 +1,13 @@
 ﻿@page "/Account";
 @inject User User;
 @inject EventHookScoped EventHookScoped;
+@inject NavigationManager NavigationManager;
 
 <Authenticated>
     <div class="main">
         <div class="page">
             <div class="title">
-                <div class="photo">
-                    @if (User.ProfilePictureID != null)
-                    {
-                        <div style="background-image:url('/_Photo/profile-picture/@User.ProfilePictureID')"></div>
-                    }
-                </div>
+                <ProfilePicture ProfilePictureID="User.ProfilePictureID" />
                 <BPageTitle Icon="" Title='@("Welcome, " + User.UserName)' />
                 <span class="subtext">Manage and customize your iSketch.app profile.</span>
             </div>
@@ -57,18 +53,30 @@
     private string CreatedTime;
     private string LastLogonTime;
     private string Email;
-
     protected override void OnInitialized()
     {
+        EventHookScoped.LoginLogoutStatusChanged += OnLoginLogoutStatusChanged;
+        EventHookScoped.ProfilePictureIDChanged += OnProfilePictureIDChanged;
+        LoadUserData();
+        base.OnInitialized();
+    }
+
+    private void LoadUserData()
+    {
+        if (User.Session.UserID == Guid.Empty) return;
         Email = (string)User.GetProperty(UserProperties.Email);
         IdpName = (string)User.GetProperty(UserProperties.IdpName);
         Biography = (string)User.GetProperty(UserProperties.Biography);
         CreatedTime = User.GetProperty(UserProperties.CreatedTime).ToString();
         LastLogonTime = User.GetProperty(UserProperties.LastLogonTime).ToString();
-        EventHookScoped.ProfilePictureIDChanged += OnProfilePictureIDChanged;
-        base.OnInitialized();
     }
-    private void OnProfilePictureIDChanged(object obj, EventArgs args)
+
+    private void OnLoginLogoutStatusChanged(object o, EventArgs a)
+    {
+        LoadUserData();
+    }
+
+    private void OnProfilePictureIDChanged(object o, EventArgs a)
     {
         StateHasChanged();
     }

@@ -12,7 +12,7 @@ namespace iSketch.app.Services
         public Session Session;
         public Permissions Permissions = new();
         public string UserName;
-        public string ProfilePictureID;
+        public Guid ProfilePictureID;
         private Database Database;
         private PassHashQueue PHQ;
         private EventHookScoped EHS;
@@ -35,6 +35,8 @@ namespace iSketch.app.Services
         }
         public void ReloadUserData()
         {
+            UserName = null;
+            ProfilePictureID = Guid.Empty;
             SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
@@ -47,7 +49,7 @@ namespace iSketch.app.Services
                 }
                 rdr.Read();
                 UserName = rdr.GetString(0);
-                if (!rdr.IsDBNull(1)) ProfilePictureID = rdr.GetGuid(1).ToString();
+                if (!rdr.IsDBNull(1)) ProfilePictureID = rdr.GetGuid(1);
             }
             finally
             {
@@ -89,6 +91,10 @@ namespace iSketch.app.Services
             return UserTools.TestPassword(Database, PHQ, Session.UserID, Password);
         }
         public bool SetProperty(UserProperties Property, string Value)
+        {
+            return UserTools.SetUserProperty(Database, Session.UserID, Property, Value);
+        }
+        public bool SetProperty(UserProperties Property, Guid Value)
         {
             return UserTools.SetUserProperty(Database, Session.UserID, Property, Value);
         }
@@ -243,6 +249,7 @@ namespace iSketch.app.Services
             try
             {
                 if (Value == null) Value = DBNull.Value;
+                if (Value.GetType() == typeof(Guid) && (Guid)Value == Guid.Empty) Value = DBNull.Value;
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
                 cmd.Parameters.AddWithValue("@VALUE@", Value);
                 cmd.CommandText = "UPDATE [Security.Users] SET [" + Property.ToString().Replace('_', '.') + "] = @VALUE@ WHERE UserID = @USERID@";

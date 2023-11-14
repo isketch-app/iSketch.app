@@ -22,41 +22,25 @@
     margin-bottom: 50px;
 }
 
-.u-image {
+.white-circle {
+    background-color: white;
     position: absolute;
-    bottom: -40px;
+    width: 90px;
+    height: 90px;
+    top: 25px;
+    left: calc(50% - 45px);
+    border-radius: 45px;
+}
+
+::deep .profile-picture {
+    top: 30px;
     left: calc(50% - 40px);
-    width: 70px;
-    height: 70px;
-    border-radius: 40px;
-    overflow: hidden;
-    z-index: 1;
-    border: 5px solid white;
+    width: 80px !important;
+    height: 80px !important;
 }
 
 .u-menu {
     margin-top: 150px;
-}
-
-.u-image::after {
-    content: '';
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 70px;
-    height: 70px;
-    color: white;
-    font-family: icons;
-    z-index: -1;
-    line-height: 70px;
-    background-color: var(--accent-color);
-    font-size: 45px;
-}
-
-.u-image > div {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
 }
 
 hr {

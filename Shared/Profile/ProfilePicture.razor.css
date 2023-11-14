@@ -1,0 +1,28 @@
+﻿.profile-picture {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    border-radius: 100%;
+    overflow: hidden;
+}
+
+.profile-picture .placeholder {
+    width: 100%;
+    height: 100%;
+    container-type: size; 
+    background-color: var(--accent-color);
+}
+
+.profile-picture .placeholder .icon {
+    color: white;
+    font-family: icons;
+    font-size: 70cqh;
+    line-height: 92cqh;
+    user-select: none;
+}
+
+.profile-picture .picture {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}

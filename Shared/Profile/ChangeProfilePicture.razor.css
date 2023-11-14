@@ -11,6 +11,8 @@
     border-radius: 10px;
     cursor: pointer;
     text-align: center;
+    flex: 1;
+    max-width: 100px;
 }
 
 .photo-selection .label
@@ -18,11 +20,6 @@
     user-select: none;
     font-size: 12px;
     margin-top: 10px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    width: 60px;
-    height: 14px;
-    text-wrap: nowrap;
 }
 
 .photo-selection .photo {
@@ -31,6 +28,7 @@
     background-size: cover;
     border-radius: 30px;
     position: relative;
+    margin: 0px auto;
 }
 
 .photo-selection .photo.none {

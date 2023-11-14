@@ -1,16 +1,15 @@
-﻿@inject User user;
-@inject EventHookScoped ehs; 
-@inject Database db; 
+﻿@inject User User;
+@inject EventHookScoped EventHookScoped;
 
 <span>
     <Authenticated>
-        @if (user.ProfilePictureID == null)
+        @if (User.ProfilePictureID == Guid.Empty)
         {
             <RightMenuItem FMID="user" Icon="" />
         }
         else
         {
-            <RightMenuItem FMID="user" Photo="@("/_Photo/profile-picture/" + user.ProfilePictureID)" />
+            <RightMenuItem FMID="user" ProfilePictureID="User.ProfilePictureID" />
         }
     </Authenticated>
     <Authenticated Invert="true">
@@ -22,17 +21,11 @@
 <FloaterMenu FMID="user">
     <div class="u-top">
         <div class="u-bg">
-            <div class="u-image">
-                <Authenticated>
-                @if (user.ProfilePictureID != null)
-                {
-                    <div style="background-image:url('/_Photo/profile-picture/@user.ProfilePictureID')"></div>
-                }
-                </Authenticated>
-            </div>
+            <div class="white-circle"></div>
+            <ProfilePicture ProfilePictureID="User.ProfilePictureID" />
         </div>
         <Authenticated>
-            <div class="u-name">@@@(user.UserName)</div>
+            <div class="u-name">@@@(User.UserName)</div>
         </Authenticated>
         <Authenticated Invert="true">
             <div class="u-name">iSketch.app</div>
@@ -41,10 +34,10 @@
     <div fmid class="u-menu">
         <Authenticated>
             <a href="/Account"><CMenuItem Icon="" Text="My Account" /></a>
-            <CMenuItem Icon="" Text="Sign out" OnClick="() => user.Logoff()" />
+            <CMenuItem Icon="" Text="Sign out" OnClick="() => User.Logoff()" />
         </Authenticated>
         <Authenticated Invert="true">
-            <CMenuItem Icon="" Text="Sign in / Sign up" OnClick="ehs.OnLoginButtonPressed" />
+            <CMenuItem Icon="" Text="Sign in / Sign up" OnClick="EventHookScoped.OnLoginButtonPressed" />
         </Authenticated>
     </div>
 </FloaterMenu>
@@ -63,11 +56,12 @@
 @code {
     protected override void OnInitialized()
     {
-        ehs.ProfilePictureIDChanged += AccountPhotoChanged;
+        EventHookScoped.LoginLogoutStatusChanged += OnProfileStatusChanged;
+        EventHookScoped.ProfilePictureIDChanged += OnProfileStatusChanged;
         base.OnInitialized();
     }
-    private void AccountPhotoChanged(object o, EventArgs args)
+    private void OnProfileStatusChanged(object o, EventArgs a)
     {
-        StateHasChanged();
+        InvokeAsync(() => StateHasChanged());
     }
 }

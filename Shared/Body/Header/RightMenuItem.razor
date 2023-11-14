@@ -1,11 +1,11 @@
 ﻿<span onclick="iSketchSite.Elements.FloaterMenuF.Toggle(this)" fmid="@FMID" class="rmi-mi">
-    @if (Photo == null)
+    @if (ProfilePictureID == Guid.Empty)
     {
         <span class="rmi-icon">@Icon</span>
     }
     else
     {
-        <span class="rmi-photo" style="background-image:url('@Photo')"></span>
+        <ProfilePicture ProfilePictureID="ProfilePictureID" />
     }
 </span>
 
@@ -13,7 +13,7 @@
     [Parameter]
     public string Icon { get; set; }
     [Parameter]
-    public string Photo { get; set; }
+    public Guid ProfilePictureID { get; set; }
     [Parameter]
     public string FMID { get; set; }
 }
