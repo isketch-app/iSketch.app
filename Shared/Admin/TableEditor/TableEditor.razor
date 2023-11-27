@@ -81,7 +81,7 @@
             string page = PagePath + "/";
             uint maxOnPage = ResultOffset + MaxResults;
             uint minOnPage = ResultOffset + 1;
-            int lastPage = (qTotal / (int)MaxResults);
+            int lastPage = (int)Math.Round(((float)qTotal / (float)MaxResults), MidpointRounding.ToPositiveInfinity) - 1;
             star = page + 0;
             prev = page + (PageNumber - 1);
             next = page + (PageNumber + 1);
