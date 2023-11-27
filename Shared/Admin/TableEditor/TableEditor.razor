@@ -160,8 +160,8 @@
                 SVRows += vRow + ",";
             }
             SVRows = SVRows.Substring(0, SVRows.Length - 1);
-            qTotal = (int)(new SqlCommand("SELECT COUNT(*) AS Count FROM " + TableName, SQLCon).ExecuteScalar());
             SqlCommand cmd = new SqlCommand("SELECT " + SVRows + " FROM " + TableName, SQLCon);
+            string whereClause = "";
             int filterIndex = 0;
             int validFilters = 0;
             foreach (string filter in RowFilters)
@@ -173,15 +173,16 @@
                     cmd.Parameters.AddWithValue("@FilterString" + i, '%' + filter + '%');
                     if (validFilters++ == 0)
                     {
-                        cmd.CommandText += " WHERE ";
+                        whereClause += " WHERE ";
                     }
                     else
                     {
-                        cmd.CommandText += " AND ";
+                        whereClause += " AND ";
                     }
-                    cmd.CommandText += VisibleRows[i] + " LIKE @FilterString" + i;
+                    whereClause += VisibleRows[i] + " LIKE @FilterString" + i;
                 }
             }
+            cmd.CommandText += whereClause;
             if (SortColumnAndDirection >= 1)
             {
                 cmd.CommandText += " ORDER BY " + VisibleRows[SortColumnAndDirection] + " ASC";
@@ -201,6 +202,9 @@
                 }
                 TableData.Add(fields);
             }
+            rdr.Close();
+            cmd.CommandText = "SELECT COUNT(*) AS Count FROM " + TableName + whereClause;
+            qTotal = (int)cmd.ExecuteScalar();
             StateHasChanged();
         }
         finally
