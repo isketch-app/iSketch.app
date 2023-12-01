@@ -34,20 +34,21 @@
         <DialogButtonContainer>
             <SavAppCan OnApplyClick='() => { if (OnSave()) Message = "Saved!"; }'
                        OnSaveClick="() => { if (OnSave()) _ = Dialog.FadeOut(); }"
-                       OnCancelClick="() => Dialog.FadeOut()"/>
+                       OnCancelClick="() => Dialog.FadeOut()" />
         </DialogButtonContainer>
     </Dialog>
 }
-
 
 <ListPage PageTitle="Profile Pictures"
           PageNumber="PageNumber"
           DB="Database"
           PagePath="/Administration/ProfilePictures"
           TableName="[System.ProfilePictures.Splice]"
-          PhotoEndpoint="profile-picture"
-          VisibleRows='new List<string>() { "ProfilePictureID", "DisplayName", "DisplayOrder", "Usage" }'
-          VisibleRowsTitles='new List<string>() { "Picture ID", "Display name", "Display order", "Usage" }' />
+          PhotoEndpoints='new List<string>() { "profile-picture" }'
+          PhotoColumns="new List<int>() { 1 }"
+          InitialSortColumnAndDirection="2"
+          VisibleRows='new List<string>() { "ProfilePictureID", "ProfilePictureID", "DisplayName", "DisplayOrder", "Usage" }'
+          VisibleRowsTitles='new List<string>() { "ProfilePictureID", "Profile picture", "Display name", "Display order", "Usage" }' />
 
 @code {
     [Parameter]

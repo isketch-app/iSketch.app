@@ -45,7 +45,7 @@ tr {
 }
 
 td, th {
-    padding: 1px 16px 1px 16px;
+    padding: 1px 0px 1px 16px;
     height: 50px;
     white-space: nowrap;
 }
@@ -155,11 +155,11 @@ th {
 .filter input {
     border: 0px;
     outline: 0px;
-    width: 100%;
+    width: calc(100% - 10px);
     padding: 6px 10px 6px 10px;
     background-color: #f5f5f5;
     border-radius: 14px;
-    margin-left: -10px;
+    margin: 0px 0px 0px -10px;
     font-size: 14px;
     color: var(--foreground-color);
 }
@@ -168,6 +168,11 @@ th {
     font-family: icons;
     font-size: 22px;
     user-select: none;
+    text-align: center;
+}
+
+.icon.faded {
+    color: #e5e5e5;
 }
 
 .photo {
@@ -175,6 +180,5 @@ th {
     width: 32px;
     height: 32px;
     border-radius: 16px;
-    margin: 0 -20px;
     background-color: whitesmoke;
 }

@@ -10,16 +10,16 @@
             <CButton Emphasis="Emphasis.Medium" Icon="">Add</CButton>
         </a>
     </div>
-    <TableEditor 
-        PageNumber="PageNumber"
-        DB="DB"
-        PagePath="@PagePath"
-        PathIncludePageNumber="true"
-        TableName="@TableName"
-        VisibleRows='VisibleRows'
-        VisibleRowsTitles='VisibleRowsTitles'
-        PhotoEndpoint="@PhotoEndpoint"
-    />
+    <TableEditor PageNumber="PageNumber"
+                 DB="DB"
+                 PagePath="@PagePath"
+                 PathIncludePageNumber="true"
+                 TableName="@TableName"
+                 VisibleRows='VisibleRows'
+                 VisibleRowsTitles='VisibleRowsTitles'
+                 PhotoEndpoints="@PhotoEndpoints"
+                 PhotoColumns="@PhotoColumns"
+                 InitialSortColumnAndDirection="@InitialSortColumnAndDirection" />
 </div>
 
 @code {
@@ -30,7 +30,9 @@
     [Parameter]
     public string PageTitleIcon { get; set; }
     [Parameter]
-    public string PhotoEndpoint { get; set; }
+    public List<string> PhotoEndpoints { get; set; }
+    [Parameter]
+    public List<int> PhotoColumns { get; set; }
     [Parameter]
     public Database DB { get; set; }
     [Parameter]
@@ -41,4 +43,6 @@
     public List<string> VisibleRows { get; set; }
     [Parameter]
     public List<string> VisibleRowsTitles { get; set; }
-} 
+    [Parameter]
+    public int InitialSortColumnAndDirection { get; set; }
+}
