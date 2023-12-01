@@ -61,9 +61,7 @@ namespace iSketch.app.OpenID
             "[Endpoint.Authorization], " +
             "[Endpoint.Token], " +
             "[Endpoint.Logout], " +
-            "[Claims.UserName], " +
-            "[Claims.Email], " +
-            "[Claims.UserPhoto] " +
+            "[Claims.Email] " +
             "FROM [Security.OpenID] WHERE IdpID = @IDPID@";
             SqlDataReader rdr = cmd.ExecuteReader();
             try
@@ -79,9 +77,7 @@ namespace iSketch.app.OpenID
                 idp.EndpointAuthorization = rdr.GetString(6);
                 idp.EndpointToken = rdr.GetString(7);
                 if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
-                if (!rdr.IsDBNull(9)) idp.ClaimsUserName = rdr.GetString(9);
-                if (!rdr.IsDBNull(10)) idp.ClaimsEmail = rdr.GetString(10);
-                if (!rdr.IsDBNull(11)) idp.ClaimsUserPhoto = rdr.GetString(11);
+                if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
             }
             catch (Exception)
             {
