@@ -17,6 +17,24 @@ namespace iSketch.app.Services
         {
             this.db = db;
         }
+        public bool TrySetExistingSessionID(Guid ExistingSessionID)
+        {
+            SqlCommand cmd = db.NewConnection.CreateCommand();
+            try
+            {
+                cmd.Parameters.AddWithValue("@SESSID@", ExistingSessionID);
+                cmd.CommandText = "SELECT SessionID FROM [Security.Sessions] WHERE SessionID = @SESSID@";
+                SqlDataReader reader = cmd.ExecuteReader();
+                Existing = reader.HasRows;
+                reader.Close();
+                if (Existing) SessionID = ExistingSessionID;
+            }
+            finally
+            {
+                cmd.Connection.Close();
+            }
+            return Existing;
+        }
         public void RegisterSession()
         {
             SqlCommand cmd = db.NewConnection.CreateCommand();

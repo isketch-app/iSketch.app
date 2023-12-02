@@ -45,26 +45,19 @@ namespace iSketch.app.Data
             {
                 session.IPAddress = con.Connection.RemoteIpAddress;
             }
-            if (!con.Request.Cookies.ContainsKey(CookieName))
+            if (!con.Request.Cookies.TryGetValue(CookieName, out string cookieValStr) ||
+                !Guid.TryParse(cookieValStr, out Guid cookieVal) ||
+                !session.TrySetExistingSessionID(cookieVal))
             {
                 session.SessionID = Guid.NewGuid();
-                con.Response.Cookies.Append(CookieName, session.SessionID.ToString(), new CookieOptions() { 
+                con.Response.Cookies.Append(CookieName, session.SessionID.ToString(), new CookieOptions()
+                {
                     HttpOnly = true,
                     IsEssential = true,
                     MaxAge = CookieMaxAge,
                     SameSite = SameSiteMode.Lax,
                     Secure = true
                 });
-            }
-            else
-            {
-                if (
-                    con.Request.Cookies.TryGetValue(CookieName, out string cookieValStr) &&
-                    Guid.TryParse(cookieValStr, out Guid cookieVal)
-                ) {
-                    session.SessionID = cookieVal;
-                    session.Existing = true;
-                }
             }
             session.RegisterSession();
             return session;
