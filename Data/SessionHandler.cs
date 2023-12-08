@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using iSketch.app.Services;
 using Microsoft.Extensions.Primitives;
 using System.Net;
+using System.Security.Cryptography;
 
 namespace iSketch.app.Data
 {
@@ -45,12 +46,20 @@ namespace iSketch.app.Data
             {
                 session.IPAddress = con.Connection.RemoteIpAddress;
             }
-            if (!con.Request.Cookies.TryGetValue(CookieName, out string cookieValStr) ||
-                !Guid.TryParse(cookieValStr, out Guid cookieVal) ||
-                !session.TrySetExistingSessionID(cookieVal))
+            Guid cookieGuid = Guid.Empty;
+            byte[] cookieKey = Array.Empty<byte>();
+            if (con.Request.Cookies.TryGetValue(CookieName, out string cookieOut))
+            {
+                string[] cookie = cookieOut.Split('_');
+                if (cookie.Length > 0) Guid.TryParse(cookie[0], out cookieGuid);
+                if (cookie.Length > 1) cookieKey = Convert.FromHexString(cookie[1]);
+            }
+            if (!session.Test(cookieGuid, cookieKey))
             {
                 session.SessionID = Guid.NewGuid();
-                con.Response.Cookies.Append(CookieName, session.SessionID.ToString(), new CookieOptions()
+                session.SessionKey = RandomNumberGenerator.GetBytes(16);
+                string cookieValue = (session.SessionID.ToString() + "_" + Convert.ToHexString(session.SessionKey)).ToLower();
+                con.Response.Cookies.Append(CookieName, cookieValue, new CookieOptions()
                 {
                     HttpOnly = true,
                     IsEssential = true,
@@ -59,7 +68,7 @@ namespace iSketch.app.Data
                     Secure = true
                 });
             }
-            session.RegisterSession();
+            session.UpdateInDatabase();
             return session;
         }
     }

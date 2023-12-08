@@ -9,6 +9,7 @@ namespace iSketch.app.Services
     {
         public Database db;
         public Guid SessionID = Guid.Empty;
+        public byte[] SessionKey = Array.Empty<byte>();
         public Guid UserID = Guid.Empty;
         public IPAddress IPAddress;
         public Uri BaseURI;
@@ -17,17 +18,22 @@ namespace iSketch.app.Services
         {
             this.db = db;
         }
-        public bool TrySetExistingSessionID(Guid ExistingSessionID)
+        public bool Test(Guid SessionID, byte[] SessionKey)
         {
             SqlCommand cmd = db.NewConnection.CreateCommand();
             try
             {
-                cmd.Parameters.AddWithValue("@SESSID@", ExistingSessionID);
-                cmd.CommandText = "SELECT SessionID FROM [Security.Sessions] WHERE SessionID = @SESSID@";
+                cmd.Parameters.AddWithValue("@SESSID@", SessionID);
+                cmd.Parameters.AddWithValue("@SESSKEY@", SessionKey);
+                cmd.CommandText = "SELECT SessionID FROM [Security.Sessions] WHERE SessionID = @SESSID@ AND SessionKey = @SESSKEY@";
                 SqlDataReader reader = cmd.ExecuteReader();
                 Existing = reader.HasRows;
                 reader.Close();
-                if (Existing) SessionID = ExistingSessionID;
+                if (Existing)
+                {
+                    this.SessionID = SessionID;
+                    this.SessionKey = SessionKey;
+                }
             }
             finally
             {
@@ -35,12 +41,13 @@ namespace iSketch.app.Services
             }
             return Existing;
         }
-        public void RegisterSession()
+        public void UpdateInDatabase()
         {
             SqlCommand cmd = db.NewConnection.CreateCommand();
             try
             {
                 cmd.Parameters.AddWithValue("@SESSID@", SessionID);
+                cmd.Parameters.AddWithValue("@SESSKEY@", SessionKey);
                 cmd.Parameters.AddWithValue("@IPADDR@", IPAddress.ToString());
                 if (IPAddress.AddressFamily == AddressFamily.InterNetwork) cmd.Parameters.AddWithValue("@IPVER@", 4);
                 if (IPAddress.AddressFamily == AddressFamily.InterNetworkV6) cmd.Parameters.AddWithValue("@IPVER@", 6);
@@ -61,7 +68,7 @@ namespace iSketch.app.Services
                 }
                 else
                 {
-                    cmd.CommandText = "INSERT INTO [Security.Sessions] (SessionID, SessionIP, SessionIPVersion) VALUES (@SESSID@, @IPADDR@, @IPVER@)";
+                    cmd.CommandText = "INSERT INTO [Security.Sessions] (SessionID, SessionKey, SessionIP, SessionIPVersion) VALUES (@SESSID@, @SESSKEY@, @IPADDR@, @IPVER@)";
                 }
                 reader.Close();
                 cmd.ExecuteNonQuery();
