@@ -9,7 +9,7 @@
 
 @if (user.Session.UserID == Guid.Empty)
 {
-    <Dialog AllowBreakOut="false" Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
+    <Dialog AllowBreakOut="false" Icon="@(HeaderIcons[(int)CurrentStage])" Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
         <Warning Message="@Warning" />
         @if (CurrentStage == Stage.SelectAnIDP)
         {
@@ -22,48 +22,48 @@
                     {
                         <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => { nm.NavigateTo(idP.GetRequestURI(session));   }'>@idP.DisplayName</CButton>
                     }
-                    <CButton Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
+                    <CButton Icon="" Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
                 </div>
             </div>
             <DialogButtonContainer SpaceEvenly="true">
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.Policies">Policies</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignGuest">Guest</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.Policies">Policies</CButton>
+                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignGuest">Guest</CButton>
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Viewer</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.ISSignIn)
         {
             <div class="px-300">
-                <div class="input"><CText Label="User Name" Value="@UserName" ValueChanged="(v) => UserName = v"></CText></div>
-                <div class="input"><CText Type="password" Label="Password" Value="@Password" ValueChanged="(v) => Password = v"></CText></div>
+                <div class="input"><CText AutoFocus="true" FocusOnEnter="password" Icon="" Label="User Name" Value="@UserName" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText Name="password" ClickOnEnter="signin" Icon="" Type="password" Label="Password" Value="@Password" ValueChanged="(v) => Password = v"></CText></div>
             </div>
             <DialogButtonContainer SpaceEvenly="true">
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignUp">Sign up</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignIn">Sign in</CButton>
+                <CButton Name="signin" Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignIn">Sign in</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.ISSignUp)
         {
             <div class="px-300">
-                <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
-                <div class="input"><CText Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
-                <div class="input"><CText Type="password" Label="Password (confirm)" ValueChanged="(v) => Password2 = v"></CText></div>
-                <div class="input"><CText Type="email" Label="Recovery Email (optional)" ValueChanged="(v) => Email = v"></CText></div>
+                <div class="input"><CText FocusOnEnter="password" AutoFocus="true" Icon="" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText FocusOnEnter="confirm" Name="password" Icon="" Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
+                <div class="input"><CText FocusOnEnter="email" Name="confirm" Icon="" Type="password" Label="Password (confirm)" ValueChanged="(v) => Password2 = v"></CText></div>
+                <div class="input"><CText ClickOnEnter="signup" Name="email" Icon="" Type="email" Label="Recovery Email (optional)" ValueChanged="(v) => Email = v"></CText></div>
             </div>
             <DialogButtonContainer>
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignIn">Back</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignUp">Sign up</CButton>
+                <CButton Name="signup" Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignUp">Sign up</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.ISSignGuest)
         {
             <div class="px-300">
-                <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText ClickOnEnter="continue" AutoFocus="true" Icon="" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
             </div>
             <DialogButtonContainer>
                 <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignGuest">Continue</CButton>
+                <CButton Name="continue" Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignGuest">Continue</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.Policies)
@@ -111,7 +111,16 @@
         "Sign up",
         "Sign in",
         "Choose a user name",
-        "Our policies:"
+        "Our policies"
+    };
+    private string[] HeaderIcons = new string[]
+    {
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
     };
     private enum Stage : int
     {

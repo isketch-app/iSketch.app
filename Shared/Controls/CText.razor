@@ -5,7 +5,7 @@
     <div class="container">
         @if (Enabled)
         {
-            <input id="@GUID" value="@Value" @onchange="OnChange" type="@Type" />
+            <input name="@Name" autofocus="@AutoFocus" focusonenter="@FocusOnEnter" clickonenter="@ClickOnEnter" id="@GUID" value="@Value" @onchange="OnChange" type="@Type" />
         }
         else
         {
@@ -23,6 +23,14 @@
     public string Label { get; set; }
     [Parameter]
     public string Icon { get; set; }
+    [Parameter]
+    public string Name { get; set; }
+    [Parameter]
+    public string FocusOnEnter { get; set; }
+    [Parameter]
+    public bool AutoFocus { get; set; }
+    [Parameter]
+    public string ClickOnEnter { get; set; }
     [Parameter]
     public string Value
     {

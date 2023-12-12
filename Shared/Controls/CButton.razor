@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime js;
 
-<button id="@ID" class="CButton @("em" + (int)Emphasis)" @onclick="CButtClick">
+<button name="@Name" id="@ID" class="CButton @("em" + (int)Emphasis)" @onclick="CButtClick">
     @if (Icon != "")
     {
         <span class="icon">@Icon</span>
@@ -22,6 +22,8 @@
     public string Icon { get; set; } = "";
     [Parameter]
     public string IconURL { get; set; } = "";
+    [Parameter]
+    public string Name { get; set; }
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     [Parameter]

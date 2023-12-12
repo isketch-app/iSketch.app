@@ -4,6 +4,7 @@ var iSketchSite = {
     Blazor: {},
     JSInteropHelpers: {},
     Theme: {},
+    MutationObserver: new MutationObserver(MutationObserverCallback),
     Elements: {
         FloaterMenuF: {},
         PageLoader: {},
@@ -32,19 +33,36 @@ document.addEventListener('click', function (e) {
     });
 });
 
+document.addEventListener('keydown', function (e) {
+    if (e.target.attributes['clickonenter'] !== undefined &&
+        e.target.attributes['clickonenter'] !== '' &&
+        e.key == 'Enter') {
+        var target = document.querySelector('[name=' + e.target.attributes['clickonenter'].value + ']');
+        target.focus();
+        target.click();
+    }
+    if (e.target.attributes['focusonenter'] !== undefined &&
+        e.target.attributes['focusonenter'] !== '' &&
+        e.key == 'Enter') {
+        document.querySelector('[name=' + e.target.attributes['focusonenter'].value + ']').focus();
+    }
+});
+
 iSketchSite.Elements.ISBody.addEventListener('scroll', function (e) {
-    if (e.srcElement.scrollTop > 0) {
-        e.srcElement.classList.add('scrolled');
+    if (e.target.scrollTop > 0) {
+        e.target.classList.add('scrolled');
     } else {
-        e.srcElement.classList.remove('scrolled');
+        e.target.classList.remove('scrolled');
     }
 });
 
 class WebSocketOverride extends WebSocket {
     constructor(url, protos) {
         super(url, protos);
-        iSketchSite.WebSocket = this;
-        iSketchSite.onconnect();
+        if (url.includes('_blazor')) {
+            iSketchSite.WebSocket = this;
+            iSketchSite.onconnect();
+        }
     }
 }
 
@@ -78,7 +96,7 @@ iSketchSite.Elements.FloaterMenuF.Toggle = function (item) {
 
 iSketchSite.Elements.PageLoader.Hide = function () {
     document.querySelector('.pl_body').classList.add('fadeout');
-    setTimeout(function() { document.querySelector('.pl_body').remove(); }, 300);
+    setTimeout(function () { document.querySelector('.pl_body').remove(); }, 300);
 };
 
 iSketchSite.Theme.ChangeTheme = function (setDark) {
@@ -95,3 +113,15 @@ iSketchSite.Theme.ChangeTheme(window.matchMedia && window.matchMedia('(prefers-c
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
     iSketchSite.Theme.ChangeTheme(e.matches);
 });
+
+function MutationObserverCallback(list, observer) {
+    list.forEach(function (record) {
+        record.addedNodes.forEach(function (node) {
+            if (node.attributes !== undefined && node.attributes['autofocus'] !== undefined) {
+                node.focus();
+            }
+        });
+    });
+}
+
+iSketchSite.MutationObserver.observe(document, {childList: true, subtree: true});

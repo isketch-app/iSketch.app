@@ -105,6 +105,7 @@ namespace iSketch.app.Services
     }
     public static class UserTools
     {
+        private static string UserNameRegex = "^[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]{3,25}$";
         public static bool Logon(Session session, Guid UserID)
         {
             SqlCommand cmd = session.db.NewConnection.CreateCommand();
@@ -314,8 +315,7 @@ namespace iSketch.app.Services
         }
         public static bool IsValidUserIDString(string UserName)
         {
-            string regexPolicy = "^[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]{3,25}$";
-            return Regex.IsMatch(UserName, regexPolicy);
+            return Regex.IsMatch(UserName, UserNameRegex);
         }
         public static UserAuthMethodsResult GetUserAuthenticationMethods(Database Database, Guid UserID)
         {

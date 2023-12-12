@@ -33,11 +33,11 @@
     </div>
     <div fmid class="u-menu">
         <Authenticated>
-            <a href="/Account"><CMenuItem Icon="" Text="My Account" /></a>
+            <a href="/Account"><CMenuItem Icon="" Text="My Account" /></a>
             <CMenuItem Icon="" Text="Sign out" OnClick="() => User.Logoff()" />
         </Authenticated>
         <Authenticated Invert="true">
-            <CMenuItem Icon="" Text="Sign in / Sign up" OnClick="EventHookScoped.OnLoginButtonPressed" />
+            <CMenuItem Icon="" Text="Sign in / Sign up" OnClick="EventHookScoped.OnLoginButtonPressed" />
         </Authenticated>
     </div>
 </FloaterMenu>
