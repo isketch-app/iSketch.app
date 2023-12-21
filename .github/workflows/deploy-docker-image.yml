@@ -1,4 +1,4 @@
-name: Build iSketch-app
+name: Deploy iSketch.app
 
 on:
   push:
