@@ -1,0 +1,20 @@
+name: Build iSketch.app
+
+on:
+  pull_request:
+    branches: [ release ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Add commit SHA to build
+      run: echo "$GITHUB_SHA" > ./Properties/commit
+    
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ghcr.io/isketch-app/isketch-app:latest
