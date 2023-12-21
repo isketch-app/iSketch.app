@@ -2,7 +2,7 @@ name: Build iSketch.app
 
 on:
   pull_request:
-    branches: [ release ]
+    branches: [ release, development ]
 
 jobs:
 
