@@ -65,7 +65,7 @@
     {
         if (User.Session.UserID == Guid.Empty) return;
         Email = (string)User.GetProperty(UserProperties.Email);
-        IdpName = (string)User.GetProperty(UserProperties.IdpName);
+        IdpName = (string)User.GetProperty(UserProperties.OpenID_IdpName);
         Biography = (string)User.GetProperty(UserProperties.Biography);
         CreatedTime = User.GetProperty(UserProperties.CreatedTime).ToString();
         LastLogonTime = User.GetProperty(UserProperties.LastLogonTime).ToString();
