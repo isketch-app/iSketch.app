@@ -404,7 +404,7 @@ namespace iSketch.app.Services
         EmailVerified,
         Settings_DarkMode,
         Biography,
-        IdpName,
+        OpenID_IdpName,
         CreatedTime,
         LastLogonTime,
         ProfilePictureID
