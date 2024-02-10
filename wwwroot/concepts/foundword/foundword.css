@@ -7,38 +7,42 @@
     background-color: rgba(0,0,0,0);
     animation: ease-in-out fw-fadeinout 3s;
     font-family: Gluten;
-    color: white;
-    font-size: 50px;
+    color: black;
     pointer-events: none;
     user-select: none;
 }
 #foundword .middle {
     position: fixed;
-    outline: 1px solid red;
     width: 100%;
     top: calc(0% - 300px);
     left: 0px;
     height: 200px;
     animation: ease-in-out fw-slidedown 3s;
-    line-height: 200px;
+    background-color: white;
 }
-
-    #foundword .message {
-        text-align: center;
-    }
+#foundword .message {
+    font-size: 50px;
+    line-height: 200px;
+    text-align: center;
+    animation: fw-textzoom 1s alternate-reverse infinite ease-in-out;
+}
+#foundword .outline {
+    background-image: url('outline.svg');
+    background-repeat: repeat-x;
+    height: 12px;
+    width: 100%;
+    animation: fw-outlineslide 1s infinite linear;
+}
 @keyframes fw-slidedown {
     0% {
         top: calc(0% - 300px);
     }
-
     30% {
         top: calc(50% - 150px);
     }
-
     70% {
         top: calc(50% - 150px);
     }
-
     100% {
         top: calc(100% + 300px);
     }
@@ -47,16 +51,29 @@
     0% {
         background-color: rgba(0,0,0,0);
     }
-
     30% {
         background-color: rgba(0,0,0,0.8);
     }
-
     70% {
         background-color: rgba(0,0,0,0.8);
     }
-
     100% {
         background-color: rgba(0,0,0,0);
+    }
+}
+@keyframes fw-textzoom {
+    from {
+        font-size: 50px;
+    }
+    to {
+        font-size: 60px;
+    }
+}
+@keyframes fw-outlineslide {
+    from {
+        background-position-x: 0px;
+    }
+    to {
+        background-position-x: 600px;
     }
 }
