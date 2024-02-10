@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 
 namespace iSketch.app
 {
@@ -37,6 +38,7 @@ namespace iSketch.app
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseHttpsRedirection();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -45,7 +47,17 @@ namespace iSketch.app
             {
                 app.UseExceptionHandler("/_Error");
             }
-            app.UseHttpsRedirection();
+            app.UseWhen(
+                (con) =>
+                {
+                    if (con.Request.Path == "/") return false;
+                    return Directory.Exists(Path.Join(env.WebRootPath, con.Request.Path));
+                },
+                (app) =>
+                {
+                    app.UseDirectoryBrowser();
+                }
+            );
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
