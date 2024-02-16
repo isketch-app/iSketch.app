@@ -1,18 +1,6 @@
 var CACHE_NAME = ['is-cache-v$VERSION$'];
 
-var assets = [
-    '/static/pages/offline.html',
-    '/static/images/isketch.svg',
-    '/static/images/logo_512_square.svg',
-    '/static/images/logo_32_square.png',
-    '/static/images/spinner.svg',
-    '/static/fonts/icons.otf',
-    '/static/fonts/Roboto.woff2',
-    '/static/styles/main.css',
-    '/static/styles/offline.css',
-    '/static/images/outline.svg',
-    '/static/images/foundword.svg'
-];
+var assets = $STATICJSON$;
 
 self.addEventListener('install', function (event) {
     event.waitUntil(
