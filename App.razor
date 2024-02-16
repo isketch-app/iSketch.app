@@ -34,7 +34,7 @@
     {
         if (firstRender)
         {
-            js.InvokeVoidAsync("eval", "iSketchSite.Elements.PageLoader.Hide();");
+            js.InvokeVoidAsync("eval", "iSketchSite.Blazor.Ready();");
         }
         base.OnAfterRender(firstRender);
     }

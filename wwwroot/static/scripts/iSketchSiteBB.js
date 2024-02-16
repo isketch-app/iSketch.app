@@ -4,10 +4,16 @@ var iSketchSite = {
     Blazor: {},
     JSInteropHelpers: {},
     Theme: {},
+    Loader: {
+        AssetsToLoad: 0,
+        AssetsLoaded: 0
+    },
     MutationObserver: new MutationObserver(MutationObserverCallback),
     Elements: {
         FloaterMenuF: {},
-        PageLoader: {},
+        PageLoader: {
+            Message: document.querySelector('.pl_body .message')
+        },
         ISBody: document.getElementById("is_body")
     }
 }
@@ -97,6 +103,38 @@ iSketchSite.Elements.FloaterMenuF.Toggle = function (item) {
 iSketchSite.Elements.PageLoader.Hide = function () {
     document.querySelector('.pl_body').classList.add('fadeout');
     setTimeout(function () { document.querySelector('.pl_body').remove(); }, 300);
+};
+
+iSketchSite.Blazor.Ready = function () {
+    iSketchSite.Loader.Start();
+};
+
+iSketchSite.Loader.Start = function () {
+    iSketchSite.Elements.PageLoader.Message.textContent = 'Retrieving asset list...';
+    var req = new XMLHttpRequest();
+    req.open('GET', '/dynamic/static.json');
+    req.onload = function () {
+        var assets = JSON.parse(req.response);
+        iSketchSite.Loader.AssetsToLoad = assets.length;
+        iSketchSite.Elements.PageLoader.Message.textContent = 'Loading assets (0 / ' + iSketchSite.Loader.AssetsToLoad + ')...';
+        assets.forEach(function (asset) {
+            iSketchSite.Loader.LoadAsset(asset);
+        });
+    };
+    req.send();
+};
+
+iSketchSite.Loader.LoadAsset = function (path) {
+    var req = new XMLHttpRequest();
+    req.open('GET', path);
+    req.onload = function () {
+        iSketchSite.Loader.AssetsLoaded++;
+        iSketchSite.Elements.PageLoader.Message.textContent = 'Loading assets (' + iSketchSite.Loader.AssetsLoaded + ' / ' + iSketchSite.Loader.AssetsToLoad + ')...';
+        if (iSketchSite.Loader.AssetsToLoad == iSketchSite.Loader.AssetsLoaded) {
+            iSketchSite.Elements.PageLoader.Hide();
+        }
+    };
+    req.send();
 };
 
 iSketchSite.Theme.ChangeTheme = function (setDark) {

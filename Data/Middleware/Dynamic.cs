@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace iSketch.app.Data.Middleware
 {
@@ -10,7 +12,8 @@ namespace iSketch.app.Data.Middleware
     {
         private static Dictionary<string, string> Replacements = new Dictionary<string, string>()
         {
-            { "$VERSION$", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.ToString() }
+            { "$VERSION$", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.ToString() },
+            { "$STATICJSON$", GetStaticJSON() }
         };
         private static Dictionary<string, string> MIME = new Dictionary<string, string>()
         {
@@ -40,6 +43,18 @@ namespace iSketch.app.Data.Middleware
             {
                 await con.Response.WriteAsync("Nothing here!");
             }
+        }
+        private static string GetStaticJSON()
+        {
+            if (!Directory.Exists("./wwwroot/static")) return "[]";
+            string[] files = Directory.EnumerateFiles("./wwwroot/static", "*", SearchOption.AllDirectories).ToArray();
+            for (int i = 0; files.Length > i; i++)
+            {
+                string newPath = Path.GetRelativePath("./wwwroot/", files[i]);
+                newPath = newPath.Replace('\\', '/');
+                files[i] = '/' + newPath;
+            }
+            return JsonSerializer.Serialize(files);
         }
     }
 }

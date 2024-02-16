@@ -4,10 +4,6 @@
 @inject Session session;
 @inject Database db;
 
-<iSketch.app.Shared.Game.Animations.WordGuessed.WordGuessed @ref="WordGuessed" />
-
-<CButton OnClick="() => { WordGuessed.Play(); }">Play Animation</CButton>
-
 <div style="text-align:center;">
     <h3>💬 Join our discord server! 💬</h3>
     <p>Join us in this adventure as we bring iSketch.app to life.</p>
@@ -52,6 +48,13 @@
         </li>
     </ul>
 </p>
+
+<hr />
+<h3>Things to try out:</h3>
+<hr />
+
+<iSketch.app.Shared.Game.Animations.WordGuessed.WordGuessed @ref="WordGuessed" />
+<CButton OnClick="() => { WordGuessed.Play(); }">Word Guessed Animation</CButton>
 
 @code {
     public WordGuessed WordGuessed;
