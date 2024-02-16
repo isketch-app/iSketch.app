@@ -1,0 +1,20 @@
+﻿@inherits Animation
+
+@if (Visible)
+{
+    <div id="foundword">
+        <div class="middle">
+            <div class="outline"></div>
+            <div class="message"></div>
+            <div class="outline"></div>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        Duration = TimeSpan.FromSeconds(3);
+    }
+}

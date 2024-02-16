@@ -10,7 +10,7 @@ namespace iSketch.app.Data.Middleware
     {
         private static Dictionary<string, string> Replacements = new Dictionary<string, string>()
         {
-            { "$VERSION$", Assembly.GetExecutingAssembly().GetName().Version.ToString() }
+            { "$VERSION$", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.ToString() }
         };
         private static Dictionary<string, string> MIME = new Dictionary<string, string>()
         {
