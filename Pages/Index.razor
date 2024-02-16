@@ -1,7 +1,12 @@
 ﻿@page "/"
+@using iSketch.app.Shared.Game.Animations.WordGuessed
 @inject NavigationManager nm;
 @inject Session session;
 @inject Database db;
+
+<iSketch.app.Shared.Game.Animations.WordGuessed.WordGuessed @ref="WordGuessed" />
+
+<CButton OnClick="() => { WordGuessed.Play(); }">Play Animation</CButton>
 
 <div style="text-align:center;">
     <h3>💬 Join our discord server! 💬</h3>
@@ -47,3 +52,7 @@
         </li>
     </ul>
 </p>
+
+@code {
+    public WordGuessed WordGuessed;
+}

@@ -9,7 +9,9 @@ var assets = [
     '/static/fonts/icons.otf',
     '/static/fonts/Roboto.woff2',
     '/static/styles/main.css',
-    '/static/styles/offline.css'
+    '/static/styles/offline.css',
+    '/static/images/outline.svg',
+    '/static/images/foundword.svg'
 ];
 
 self.addEventListener('install', function (event) {
