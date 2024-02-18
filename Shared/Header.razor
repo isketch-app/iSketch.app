@@ -1,0 +1,12 @@
+﻿@inject Services.Header HeaderService;
+
+<title>@HeaderService.TitleText</title>
+<meta name="theme-color" content="@HeaderService.ThemeColor" />
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        HeaderService.StateHasChanged = new EventCallback(null, StateHasChanged);
+    }
+}

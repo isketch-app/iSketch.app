@@ -1,4 +1,5 @@
-﻿@inject IJSRuntime js;
+﻿@inject IJSRuntime JS;
+@inject Services.Header H;
 
 <div @onclick="BreakOutFadeOut" id="@ID" style="z-index:@ZIndex;" class="popup">
     <div></div>
@@ -20,20 +21,20 @@
     private string ID = "x" + Guid.NewGuid().ToString();
     public async Task FadeOut()
     {
-        _ = js.InvokeVoidAsync("eval",
+        H.ThemeColor = "#ffffff";
+        _ = JS.InvokeVoidAsync("eval",
             "var elm = document.getElementById('" + ID + "');" +
-            "if (elm != null) elm.classList.add('closing');" +
-            "document.querySelector('[name=theme-color]').content = '#ffffff';"
+            "if (elm != null) elm.classList.add('closing');"            
         );
         await Task.Delay(75);
         await OnFadeOut.InvokeAsync();
     }
     public async Task FadeIn()
     {
-        await js.InvokeVoidAsync("eval",
+        H.ThemeColor = "#adadad";
+        await JS.InvokeVoidAsync("eval",
             "var elm = document.getElementById('" + ID + "');" +
-            "if (elm != null) elm.classList.remove('closing');" +
-            "document.querySelector('[name=theme-color]').content = '#adadad';"
+            "if (elm != null) elm.classList.remove('closing');"
         );
     }
     private async Task BreakOutFadeOut()
@@ -42,7 +43,7 @@
     }
     protected override Task OnInitializedAsync()
     {
-        _ = js.InvokeVoidAsync("eval", "document.querySelector('[name=theme-color]').content = '#adadad';");
+        H.ThemeColor = "#adadad";
         return base.OnInitializedAsync();
     }
 }
