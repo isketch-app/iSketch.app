@@ -5,6 +5,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0);
+    backdrop-filter: blur(0px);
     animation: ease-in-out fw-fadeinout 3s;
     pointer-events: none;
     user-select: none;
@@ -14,11 +15,12 @@
     #foundword .middle {
         position: fixed;
         width: 100%;
-        top: calc(0% - 300px);
+        top: calc(0% - 400px);
         left: 0px;
         height: 300px;
         animation: ease-in-out fw-slidedown 3s;
-        background-color: white;
+        background: linear-gradient(0deg, #ffe3a3, #ffffff);
+        box-shadow: black 0px 0px 50px;
     }
 
     #foundword .message {
@@ -43,7 +45,7 @@
 
 @keyframes fw-slidedown {
     0% {
-        top: calc(0% - 300px);
+        top: calc(0% - 400px);
     }
 
     30% {
@@ -55,25 +57,29 @@
     }
 
     100% {
-        top: calc(100% + 300px);
+        top: calc(100% + 400px);
     }
 }
 
 @keyframes fw-fadeinout {
     0% {
         background-color: rgba(0,0,0,0);
+        backdrop-filter: blur(0px);
     }
 
     30% {
         background-color: rgba(0,0,0,0.8);
+        backdrop-filter: blur(10px);
     }
 
     70% {
         background-color: rgba(0,0,0,0.8);
+        backdrop-filter: blur(10px);
     }
 
     100% {
         background-color: rgba(0,0,0,0);
+        backdrop-filter: blur(0px);
     }
 }
 

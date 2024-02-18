@@ -31,7 +31,8 @@ namespace iSketch.app
             services.AddSingleton<Database>();
             services.AddScoped<Session>();
             services.AddScoped<User>();
-            services.AddScoped<Jobs>();
+            services.AddScoped<Header>();
+            services.AddSingleton<Jobs>();
             services.AddSingleton(new PassHashQueue());
         }
 
