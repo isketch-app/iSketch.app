@@ -64,22 +64,18 @@
 @keyframes fw-fadeinout {
     0% {
         background-color: rgba(0,0,0,0);
-        backdrop-filter: blur(0px);
     }
 
     30% {
         background-color: rgba(0,0,0,0.8);
-        backdrop-filter: blur(10px);
     }
 
     70% {
         background-color: rgba(0,0,0,0.8);
-        backdrop-filter: blur(10px);
     }
 
     100% {
         background-color: rgba(0,0,0,0);
-        backdrop-filter: blur(0px);
     }
 }
 
