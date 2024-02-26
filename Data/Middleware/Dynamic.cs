@@ -47,13 +47,15 @@ namespace iSketch.app.Data.Middleware
         private static string GetStaticJSON()
         {
             if (!Directory.Exists("./wwwroot/static")) return "[]";
-            string[] files = Directory.EnumerateFiles("./wwwroot/static", "*", SearchOption.AllDirectories).ToArray();
-            for (int i = 0; files.Length > i; i++)
+            List<string> files = Directory.EnumerateFiles("./wwwroot/static", "*", SearchOption.AllDirectories).ToList();
+            for (int i = 0; files.Count > i; i++)
             {
                 string newPath = Path.GetRelativePath("./wwwroot/", files[i]);
                 newPath = newPath.Replace('\\', '/');
                 files[i] = '/' + newPath;
             }
+            files.Add("/iSketch.app.styles.css");
+            files.Add("/_framework/blazor.server.js");
             return JsonSerializer.Serialize(files);
         }
     }
