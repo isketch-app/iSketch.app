@@ -35,7 +35,7 @@
         width: 100%;
         top: calc(0% - 400px);
         left: 0px;
-        height: 300px;
+        height: 200px;
         animation: ease-in-out fw-slidedown 3s;
         background: linear-gradient(0deg, #ffe3a3, #ffffff);
         box-shadow: black 0px 0px 50px;
@@ -67,11 +67,11 @@
     }
 
     30% {
-        top: calc(50% - 125px);
+        top: calc(50% + 55px);
     }
 
     70% {
-        top: calc(50% - 175px);
+        top: calc(50% + 5px);
     }
 
     100% {
