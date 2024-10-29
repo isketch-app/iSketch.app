@@ -10,18 +10,13 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     [Parameter]
-    public PermissionsA PermissionsA { get; set; } = PermissionsA.None;
-    [Parameter]
-    public PermissionsB PermissionsB { get; set; } = PermissionsB.None;
-    [Parameter]
-    public bool MatchAny { get; set; } = false;
+    public Access Access { get; set; }
     [Parameter]
     public bool Invert { get; set; } = false;
     private bool IsAuthorized()
     {
         bool ret = false;
-        if (!MatchAny && user.Permissions.HasEachPermission(PermissionsA, PermissionsB)) ret = true;
-        if (MatchAny && user.Permissions.HasAnyPermission(PermissionsA, PermissionsB)) ret = true;
+        //Do checks here
         if (Invert) ret = !ret;
         return ret;
     }
