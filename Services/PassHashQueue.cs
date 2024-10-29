@@ -1,17 +1,25 @@
 ﻿using Konscious.Security.Cryptography;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace iSketch.app.Services
 {
     public class PassHashQueue
     {
+        public ILogger<PassHashQueue> Logger;
+        public PassHashQueue(ILogger<PassHashQueue> Logger)
+        {
+            this.Logger = Logger;
+        }
         public bool QueueRunning = false;
         public Task<PassHashResult> GenerateHash(PassHashRequest Request)
         {
             if (Request.Pass == null || Request.Pass == "") return Task.FromResult<PassHashResult>(null);
+            Logger.LogInformation("Password queued.");
             Task<PassHashResult> tsk = new(RunHashAction, Request);
             Queue.Enqueue(tsk);
             if (!QueueRunning) _ = RunQueue();
@@ -28,7 +36,9 @@ namespace iSketch.app.Services
                     Task<PassHashResult> tsk;
                     if (Queue.TryDequeue(out tsk))
                     {
+                        Logger.LogInformation("Hashing...");
                         tsk.RunSynchronously();
+                        Logger.LogInformation("{0} left in the queue.", Queue.Count);
                     }
                 }
                 QueueRunning = false;
@@ -57,7 +67,8 @@ namespace iSketch.app.Services
             };
         };
     }
-    public class PassHashResult {
+    public class PassHashResult
+    {
         public byte[] Salt;
         public byte[] Hash;
     }

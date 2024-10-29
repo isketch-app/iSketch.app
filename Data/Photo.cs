@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using iSketch.app.Services;
-using System.Data.SqlClient;
+﻿using iSketch.app.Services;
+using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 
 namespace iSketch.app.Data.Photo
 {
     public static class Photo
     {
-        public static RequestDelegate Endpoint = new(async (context) => {
+        public static RequestDelegate Endpoint = new(async (context) =>
+        {
             if (!TableAndRows.TryGetValue(context.Request.RouteValues["TableAndRow"].ToString(), out TableAndRow tar))
             {
                 await context.Response.WriteAsync("Invalid Photo Location.");
@@ -19,7 +20,7 @@ namespace iSketch.app.Data.Photo
             Database db = (Database)context.RequestServices.GetService(typeof(Database));
             SqlCommand cmd = db.NewConnection.CreateCommand();
             cmd.Parameters.AddWithValue("@ROWID@", context.Request.RouteValues["RowID"]);
-            cmd.CommandText = 
+            cmd.CommandText =
             "SELECT " + tar.PhotoColumnName + " " +
             "FROM " + tar.TableName + " " +
             "WHERE " + tar.GuidColumnName + " = @ROWID@";

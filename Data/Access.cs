@@ -1,4 +1,6 @@
 ﻿using iSketch.app.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -28,6 +30,7 @@ namespace iSketch.app.Data
     }
     public static class AccessStatic
     {
+        public static ILogger Logger = Program.Host.Services.GetService<ILoggerFactory>().CreateLogger(typeof(AccessStatic).FullName);
         public static Access[] ReadUserAccessFromDatabase(this Database db, Guid UserID)
         {
             SqlCommand sCmd = db.NewConnection.CreateCommand();
@@ -60,9 +63,9 @@ namespace iSketch.app.Data
                                 )
                             );
                         }
-                        catch
+                        catch (Exception e)
                         {
-                            Logger.Warning("Permission: " + (string)sRead["Permission"] + ", is not a defined permission.");
+                            Logger.LogWarning(e, (string)sRead["Permission"] + ", is not a defined permission.");
                         }
                     }
                 };

@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using iSketch.app.Data;
+﻿using iSketch.app.Data;
 using iSketch.app.Services;
-using System.Collections.Generic;
-using System.Web;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Net.Http;
-using System.Text.Json;
-using System.Text;
 using System.IO;
+using System.Net.Http;
 using System.Net.Mail;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace iSketch.app.OpenID
 {
@@ -38,8 +38,8 @@ namespace iSketch.app.OpenID
             {
                 cmd.Connection.Close();
             }
-            List<idP> IDPs = new(); 
-            foreach(Guid IdpID in IdpIDs)
+            List<idP> IDPs = new();
+            foreach (Guid IdpID in IdpIDs)
             {
                 IDPs.Add(GetIDP(db, IdpID));
             }
@@ -50,7 +50,7 @@ namespace iSketch.app.OpenID
             idP idp;
             SqlCommand cmd = db.NewConnection.CreateCommand();
             cmd.Parameters.AddWithValue("@IDPID@", IdpID);
-            cmd.CommandText = 
+            cmd.CommandText =
             "SELECT " +
             "IdpID, " +
             "DisplayName, " +
@@ -154,7 +154,8 @@ namespace iSketch.app.OpenID
                 idP.ClaimsEmail != "" &&
                 JWT.Payload.TryGetValue(idP.ClaimsEmail, out object oClaimEmail) &&
                 MailAddress.TryCreate(oClaimEmail.ToString(), out MailAddress mailAddress)
-            ) {
+            )
+            {
                 UserTools.SetUserEmail(Session.db, Session.UserID, mailAddress);
             }
             return true;
@@ -175,7 +176,7 @@ namespace iSketch.app.OpenID
         public string ClaimsUserName;
         public string ClaimsEmail;
         public string ClaimsUserPhoto;
-        public string GetRedirectURI(Session session) 
+        public string GetRedirectURI(Session session)
         {
             return session.BaseURI.ToString() + "_OpenID/" + IdpID.ToString() + "/Login";
         }
