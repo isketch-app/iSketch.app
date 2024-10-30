@@ -14,7 +14,13 @@ var iSketchSite = {
         PageLoader: {
             Message: document.querySelector('.pl_body .message')
         },
-        ISBody: document.getElementById("is_body")
+        ISBody: document.getElementById('is_body'),
+        ISTX: null,
+        ISRX: null
+    },
+    Communications: {
+        TX: new Event('istx'),
+        RX: new Event('isrx')
     }
 }
 
@@ -26,7 +32,7 @@ document.addEventListener('click', function (e) {
         }
         return true;
     });
-    var fmid = "";
+    var fmid = '';
     e.composedPath().every(function (t) {
         if (t.attributes != undefined && t.attributes.fmid != undefined) {
             fmid = t.attributes.fmid.value;
@@ -70,6 +76,12 @@ class WebSocketOverride extends WebSocket {
             iSketchSite.onconnect();
         }
     }
+    send(data) {
+        super.send(data);
+        if (super.url.includes('_blazor')) {
+            document.dispatchEvent(iSketchSite.Communications.TX);
+        }
+    }
 }
 
 WebSocket = WebSocketOverride;
@@ -80,6 +92,15 @@ iSketchSite.onconnect = function () {
     });
     iSketchSite.WebSocket.addEventListener('close', function () {
         //window.location.reload();
+    });
+    iSketchSite.WebSocket.addEventListener('message', function () {
+        document.dispatchEvent(iSketchSite.Communications.RX);
+    });
+    document.addEventListener('istx', function () {
+        
+    });
+    document.addEventListener('isrx', function () {
+        
     });
 }
 
@@ -107,7 +128,28 @@ iSketchSite.Elements.PageLoader.Hide = function () {
 
 iSketchSite.Blazor.Ready = function () {
     iSketchSite.Loader.Start();
+    iSketchSite.Communications.Init();
 };
+
+iSketchSite.Communications.Flicker = function (element) {
+    if (!element.classList.contains('on')) {
+        element.classList.add('on');
+        setTimeout(function () {
+            element.classList.remove('on');
+        }, 100);
+    }
+}
+
+iSketchSite.Communications.Init = function () {
+    iSketchSite.Elements.ISTX = document.querySelector('.indicator .tx');
+    iSketchSite.Elements.ISRX = document.querySelector('.indicator .rx');
+    document.addEventListener('istx', function () {
+        iSketchSite.Communications.Flicker(iSketchSite.Elements.ISTX);
+    });
+    document.addEventListener('isrx', function () {
+        iSketchSite.Communications.Flicker(iSketchSite.Elements.ISRX);
+    });
+}
 
 iSketchSite.Loader.Start = function () {
     iSketchSite.Elements.PageLoader.Message.textContent = 'Retrieving asset list...';
