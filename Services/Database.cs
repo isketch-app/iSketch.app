@@ -1,16 +1,20 @@
-﻿using System;
-using System.Data.SqlClient;
-using iSketch.app.Data;
-using System.IO;
+﻿using iSketch.app.Data;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.IO;
 
 namespace iSketch.app.Services
 {
     public class Database
     {
         public int SchemaVersion = 0;
-        public SqlConnection NewConnection { 
-            get { 
+        public ILogger<Database> Logger;
+        public SqlConnection NewConnection
+        {
+            get
+            {
                 SqlConnection con = new()
                 {
                     ConnectionString = new SqlConnectionStringBuilder()
@@ -25,19 +29,20 @@ namespace iSketch.app.Services
                 return con;
             }
         }
-        public Database()
+        public Database(ILogger<Database> Logger)
         {
+            this.Logger = Logger;
             SqlConnection con = null;
-            Logger.Info("Database: Connecting to database & catelog...");
+            Logger.LogInformation("Connecting to database & catelog...");
             try
             {
                 con = NewConnection;
-                Logger.Info("Database: Success.");
+                Logger.LogInformation("Success.");
             }
             catch
             {
                 string Catelog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName");
-                Logger.Info("Database: Connection failed with catelog, trying without initial catelog...");
+                Logger.LogInformation("Connection failed with catelog, trying without initial catelog...");
                 con = new()
                 {
                     ConnectionString = new SqlConnectionStringBuilder()
@@ -50,25 +55,25 @@ namespace iSketch.app.Services
                 try
                 {
                     con.Open();
-                    Logger.Info("Database: Connected.");
+                    Logger.LogInformation("Connected.");
                     if (con.Database != Catelog)
                     {
                         try
                         {
-                            Logger.Info("Database: Opening catelog: " + Catelog + "...");
+                            Logger.LogInformation("Opening catelog: " + Catelog + "...");
                             con.ChangeDatabase(Catelog);
                         }
                         catch (Exception e)
                         {
-                            Logger.Error("Database: " + e.Message);
-                            Logger.Info("Database: Could not connect to catelog, assuming it doesn't yet exist, creating...");
+                            Logger.LogError(e, "Exception encountered.");
+                            Logger.LogInformation("Could not connect to catelog, assuming it doesn't yet exist, creating...");
                             SqlCommand cmd = con.CreateCommand();
                             cmd.CommandText = "CREATE DATABASE [" + Catelog + "]";
                             cmd.ExecuteNonQuery();
                             con.ChangeDatabase(Catelog);
                         }
                     }
-                    Logger.Info("Database: Success.");
+                    Logger.LogInformation("Success.");
                 }
                 catch (ArgumentNullException e)
                 {
@@ -94,56 +99,56 @@ namespace iSketch.app.Services
                 }
                 catch (Exception e)
                 {
-                    Logger.Error("Database: Could not initialize the database: " + e.Message);
+                    Logger.LogError(e, "Could not initialize the database.");
                 }
                 con?.Close();
             }
         }
         public bool IsSchemaUpToDate()
         {
-            Logger.Info("Database: Checking if schema is up to date...");
+            Logger.LogInformation("Checking if schema is up to date...");
             if (int.TryParse(this.GetProperty("IS_SQL_SchemaVersion"), out int sv))
             {
                 if (sv == SchemaVersion)
                 {
-                    Logger.Info("Database: The schema is up to date.");
-                    return true; 
+                    Logger.LogInformation("The schema is up to date.");
+                    return true;
                 }
             }
-            Logger.Info("Database: The schema is NOT up to date.");
+            Logger.LogInformation("The schema is NOT up to date.");
             return false;
         }
         public bool IsDBSetUp()
         {
-            Logger.Info("Database: Checking if database is setup...");
+            Logger.LogInformation("Checking if database is setup...");
             try
             {
                 int.TryParse(this.GetProperty("IS_SQL_SchemaVersion"), out int _);
             }
-            catch(Exception)
+            catch (Exception)
             {
-                Logger.Info("Database: Database is not setup.");
+                Logger.LogInformation("Database is not setup.");
                 return false;
             }
-            Logger.Info("Database: Database is already setup.");
+            Logger.LogInformation("Database is already setup.");
             return true;
         }
         public void InitializeDBSchema()
         {
-            Logger.Info("Database: Initializing schema...");
+            Logger.LogInformation("Initializing schema...");
             RunSQLScript(new FileInfo("./SQL/Schema/iSketch.app.sql"));
             this.SetProperty("IS_SQL_SchemaVersion", SchemaVersion.ToString());
-            Logger.Info("Database: Initialization done.");
+            Logger.LogInformation("Initialization done.");
         }
         public void UpdateDBSchema()
         {
-            Logger.Info("Database: Updating schema...");
+            Logger.LogInformation("Updating schema...");
             this.SetProperty("IS_SQL_SchemaVersion", SchemaVersion.ToString());
-            Logger.Info("Database: Schema update done.");
+            Logger.LogInformation("Schema update done.");
         }
         public void RunSQLScript(FileInfo fileInfo)
         {
-            Logger.Info("Database: Running file: " + fileInfo.Name);
+            Logger.LogInformation("Running file: " + fileInfo.Name);
             List<string> scripts = new List<string>();
             string file = File.ReadAllText(fileInfo.FullName);
             string scriptGen = "";
@@ -170,7 +175,7 @@ namespace iSketch.app.Services
                     }
                     catch (Exception e)
                     {
-                        Logger.Error("Database: " + e.Message);
+                        Logger.LogError(e, "Error running SQL script.");
                         continue;
                     }
                 }
@@ -179,7 +184,7 @@ namespace iSketch.app.Services
             {
                 cmd.Connection.Close();
             }
-            Logger.Info("Database: File: " + fileInfo.Name + " done executing.");
+            Logger.LogInformation("File: " + fileInfo.Name + " done executing.");
         }
     }
 }

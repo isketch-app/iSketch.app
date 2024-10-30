@@ -1,7 +1,13 @@
 ﻿@inject User User;
 @inject EventHookScoped EventHookScoped;
 
-<span>
+<span class="r-menu">
+    <RightMenuItem FMID="connection">
+        <span class="indicator">
+            <span class="tx"></span>
+            <span class="rx"></span>
+        </span>
+    </RightMenuItem>
     <Authenticated>
         @if (User.ProfilePictureID == Guid.Empty)
         {
@@ -9,7 +15,9 @@
         }
         else
         {
-            <RightMenuItem FMID="user" ProfilePictureID="User.ProfilePictureID" />
+            <RightMenuItem FMID="user">
+                <ProfilePicture ProfilePictureID="User.ProfilePictureID" />
+            </RightMenuItem>
         }
     </Authenticated>
     <Authenticated Invert="true">
@@ -51,6 +59,10 @@
         <a href="/TermsOfService"><CMenuItem Icon="" Text="Terms of Service" /></a>
         <a href="/Privacy"><CMenuItem Icon="" Text="Privacy Policy" /></a>
     </div>
+</FloaterMenu>
+
+<FloaterMenu FMID="connection">
+    <div fmid>Connected to iSketch.app</div>
 </FloaterMenu>
 
 @code {

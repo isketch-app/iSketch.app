@@ -3,7 +3,7 @@
 @page "/Administration/{PageName}/{OID}";
 @page "/Administration/{PageName}/{PageNumber:int}/{OID}";
 
-<Authorized PermissionsA="PMA.Administration">
+<Authorized Permission="Permission.Administrator">
     @if (PageName == "Words")
     {
         <Words PageNumber="@PageNumber" WordID="@OID" />
@@ -35,7 +35,7 @@
     }
 </Authorized>
 
-<Authorized PermissionsA="PMA.Administration" Invert="true">
+<Authorized Permission="Permission.Administrator" Invert="true">
     <PageError ReturnTo="/Administration" Emoji="👮" Message="You do not have permissions to perform this action." />
 </Authorized>
 

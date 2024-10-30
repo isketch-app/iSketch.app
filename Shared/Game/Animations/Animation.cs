@@ -17,7 +17,7 @@ namespace iSketch.app.Shared.Game.Animations
         {
             if (Playing) return;
             Visible = Playing = true;
-            
+
             string originalTitleText = HeaderService.TitleText;
             string originalThemeColor = HeaderService.ThemeColor;
             if (TitleText != null) HeaderService.TitleText = TitleText;

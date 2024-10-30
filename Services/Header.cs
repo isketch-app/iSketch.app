@@ -5,7 +5,8 @@ namespace iSketch.app.Services
     public class Header
     {
         private string _TitleText = "iSketch.app";
-        public string TitleText { 
+        public string TitleText
+        {
             get
             {
                 return _TitleText;

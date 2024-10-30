@@ -3,7 +3,7 @@
     <span class="center">
         <span class="items">
             <MenuItem Icon="" Text="Play" URL="/" />
-            <Authorized PermissionsA="PMA.Administration">
+            <Authorized Access="new(Permission.Administrator, Read: true)">
                 <MenuItem Icon="" Text="Administration" URL="/Administration" />
             </Authorized>
             <!--<MenuItem Icon="" Text="Leaderboard" URL="/Leaderboard" />

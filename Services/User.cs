@@ -1,16 +1,16 @@
 ﻿using iSketch.app.Data;
 using System;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace iSketch.app.Services
 {
     public class User
     {
         public Session Session;
-        public Permissions Permissions = new();
+        public Access[] Access;
         public string UserName;
         public Guid ProfilePictureID;
         private Database Database;
@@ -26,15 +26,11 @@ namespace iSketch.app.Services
         }
         public void Init()
         {
-            ReloadPermissionsFromDatabase();
             ReloadUserData();
-        }
-        public void ReloadPermissionsFromDatabase()
-        {
-            Permissions = Database.ReadPermissionsFromDatabase(Session.UserID);
         }
         public void ReloadUserData()
         {
+            Access = Database.ReadUserAccessFromDatabase(Session.UserID);
             UserName = null;
             ProfilePictureID = Guid.Empty;
             SqlCommand cmd = Database.NewConnection.CreateCommand();
@@ -272,7 +268,7 @@ namespace iSketch.app.Services
             try
             {
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
-                cmd.CommandText = "SELECT [" + Property.ToString().Replace('_', '.') + "] FROM [Security.Users.Splice] WHERE UserID = @USERID@";
+                cmd.CommandText = "SELECT [" + Property.ToString().Replace('_', '.') + "] FROM [Security.Users] WHERE UserID = @USERID@";
                 object result = cmd.ExecuteScalar();
                 if (result.GetType() == typeof(DBNull)) return null;
                 return result;
@@ -404,7 +400,6 @@ namespace iSketch.app.Services
         EmailVerified,
         Settings_DarkMode,
         Biography,
-        OpenID_IdpName,
         CreatedTime,
         LastLogonTime,
         ProfilePictureID

@@ -1,15 +1,14 @@
 ﻿<span onclick="iSketchSite.Elements.FloaterMenuF.Toggle(this)" fmid="@FMID" class="rmi-mi">
-    @if (ProfilePictureID == Guid.Empty)
+    @ChildContent
+    @if (Icon != null)
     {
         <span class="rmi-icon">@Icon</span>
-    }
-    else
-    {
-        <ProfilePicture ProfilePictureID="ProfilePictureID" />
     }
 </span>
 
 @code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
     [Parameter]
     public string Icon { get; set; }
     [Parameter]
