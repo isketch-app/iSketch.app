@@ -1,5 +1,5 @@
 ﻿using iSketch.app.Services;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace iSketch.app.Data
 {

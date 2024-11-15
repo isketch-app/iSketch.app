@@ -1,6 +1,6 @@
 ﻿using iSketch.app.Data;
 using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;

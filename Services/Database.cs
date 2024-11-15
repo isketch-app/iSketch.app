@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.IO;
 
 namespace iSketch.app.Services
@@ -22,7 +22,8 @@ namespace iSketch.app.Services
                         DataSource = Environment.GetEnvironmentVariable("IS_SQL_ServerHost"),
                         UserID = Environment.GetEnvironmentVariable("IS_SQL_User"),
                         Password = Environment.GetEnvironmentVariable("IS_SQL_Pass"),
-                        InitialCatalog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName")
+                        InitialCatalog = Environment.GetEnvironmentVariable("IS_SQL_DatabaseName"),
+                        TrustServerCertificate = true
                     }.ToString()
                 };
                 con.Open();
