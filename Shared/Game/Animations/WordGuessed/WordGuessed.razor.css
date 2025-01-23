@@ -58,7 +58,7 @@
         background-size: 1200px 24px;
         height: 24px;
         width: 100%;
-        animation: fw-outlineslide 6s infinite linear;
+        animation: fw-outlineslide 16s infinite linear;
     }
 
 @keyframes fw-slidedown {
