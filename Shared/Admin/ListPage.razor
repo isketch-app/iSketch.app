@@ -14,7 +14,7 @@
                  DB="DB"
                  PagePath="@PagePath"
                  PathIncludePageNumber="true"
-                 TableName="@TableName"
+                 From="@From"
                  VisibleRows='VisibleRows'
                  VisibleRowsTitles='VisibleRowsTitles'
                  PhotoEndpoints="@PhotoEndpoints"
@@ -38,7 +38,7 @@
     [Parameter]
     public string PagePath { get; set; }
     [Parameter]
-    public string TableName { get; set; }
+    public string From { get; set; }
     [Parameter]
     public List<string> VisibleRows { get; set; }
     [Parameter]

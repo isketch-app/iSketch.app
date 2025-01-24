@@ -12,39 +12,22 @@ namespace iSketch.app.Data
         Administrator, //Main administrator page.
         Words //Words administrator page.
     }
-    public struct Access
+    public static class PermissionStatic
     {
-        public Access(Permission Permission, bool Read = false, bool Write = false, bool Create = false, bool Delete = false)
-        {
-            this.Permission = Permission;
-            this.Read = Read;
-            this.Write = Write;
-            this.Create = Create;
-            this.Delete = Delete;
-        }
-        public Permission Permission;
-        public bool Read;
-        public bool Write;
-        public bool Create;
-        public bool Delete;
-    }
-    public static class AccessStatic
-    {
-        public static ILogger Logger = Program.Host.Services.GetService<ILoggerFactory>().CreateLogger(typeof(AccessStatic).FullName);
-        public static Access[] ReadUserAccessFromDatabase(this Database db, Guid UserID)
+        public static ILogger Logger = Program.Host.Services.GetService<ILoggerFactory>().CreateLogger(typeof(PermissionStatic).FullName);
+        public static Permission[] ReadUserPermissionsFromDatabase(this Database db, Guid UserID)
         {
             SqlCommand sCmd = db.NewConnection.CreateCommand();
             try
             {
-                List<Access> access = new List<Access>();
+                List<Permission> access = new List<Permission>();
                 sCmd.Parameters.AddWithValue("@USERID@", UserID);
                 sCmd.CommandText = @"
-                    SELECT P.Permission, PM.[Read], PM.[Write], PM.[Create], PM.[Delete] FROM [Security.Groups.Membership] GM
+                    SELECT P.Permission FROM [Security.Groups.Membership] GM
                     JOIN [Security.Groups] G ON GM.GroupID = G.GroupID
                     JOIN [Security.Permissions.Membership] PM ON GM.GroupID = PM.GroupID
                     JOIN [Security.Permissions] P ON PM.PermissionID = P.PermissionID
                     WHERE GM.UserID = @USERID@
-                    AND G.[Enabled] = 1 AND P.[Enabled] = 1
                 ";
                 SqlDataReader sRead = sCmd.ExecuteReader();
                 if (sRead.HasRows)
@@ -53,15 +36,7 @@ namespace iSketch.app.Data
                     {
                         try
                         {
-                            access.Add(
-                                new(
-                                    Enum.Parse<Permission>((string)sRead["Permission"]),
-                                    (bool)sRead["Read"],
-                                    (bool)sRead["Write"],
-                                    (bool)sRead["Create"],
-                                    (bool)sRead["Delete"]
-                                )
-                            );
+                            access.Add(Enum.Parse<Permission>((string)sRead["Permission"]));
                         }
                         catch (Exception e)
                         {
