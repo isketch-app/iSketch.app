@@ -10,7 +10,7 @@ namespace iSketch.app.Services
     public class User
     {
         public Session Session;
-        public Access[] Access;
+        public Permission[] Permissions;
         public string UserName;
         public Guid ProfilePictureID;
         private Database Database;
@@ -30,7 +30,7 @@ namespace iSketch.app.Services
         }
         public void ReloadUserData()
         {
-            Access = Database.ReadUserAccessFromDatabase(Session.UserID);
+            Permissions = Database.ReadUserPermissionsFromDatabase(Session.UserID);
             UserName = null;
             ProfilePictureID = Guid.Empty;
             SqlCommand cmd = Database.NewConnection.CreateCommand();

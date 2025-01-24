@@ -7,11 +7,11 @@
           PageNumber="PageNumber"
           DB="db"
           PagePath="/Administration/Users"
-          TableName="[Security.Users.Splice]"
+          From="[Security.Users] U LEFT JOIN [Security.OpenID] O ON U.[OpenID.IdpID] = O.IdpID"
           PhotoEndpoints='new List<string>() { "profile-picture", "idP-icon" }'
           PhotoColumns="new List<int>() { 1, 6 }"
           InitialSortColumnAndDirection="-4"
-          VisibleRows='new List<string>() { "UserID", "ProfilePictureID", "UserName", "Email", "CreatedTime", "LastLogonTime", "[OpenID.IdpID]", "[OpenID.IdpName]" }'
+          VisibleRows='new List<string>() { "UserID", "ProfilePictureID", "UserName", "Email", "CreatedTime", "LastLogonTime", "[OpenID.IdpID]", "O.DisplayName" }'
           VisibleRowsTitles='new List<string>() { "UserID", "Profile picture", "User name", "Email", "Created", "Last logon", "IDP icon", "IDP" }' />
 
 @code {

@@ -120,7 +120,7 @@
     [Parameter]
     public Database DB { get; set; }
     [Parameter]
-    public string TableName { get; set; } = "";
+    public string From { get; set; } = "";
     [Parameter]
     public string PagePath { get; set; } = "";
     [Parameter]
@@ -198,7 +198,7 @@
                 SVRows += vRow + ",";
             }
             SVRows = SVRows.Substring(0, SVRows.Length - 1);
-            SqlCommand cmd = new SqlCommand("SELECT " + SVRows + " FROM " + TableName, SQLCon);
+            SqlCommand cmd = new SqlCommand("SELECT " + SVRows + " FROM " + From, SQLCon);
             string whereClause = "";
             int filterIndex = 0;
             int validFilters = 0;
@@ -241,7 +241,7 @@
                 TableData.Add(fields);
             }
             rdr.Close();
-            cmd.CommandText = "SELECT COUNT(*) AS Count FROM " + TableName + whereClause;
+            cmd.CommandText = "SELECT COUNT(*) AS Count FROM " + From + whereClause;
             qTotal = (int)cmd.ExecuteScalar();
             StateHasChanged();
         }

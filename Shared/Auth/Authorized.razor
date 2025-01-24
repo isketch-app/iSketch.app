@@ -10,13 +10,12 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     [Parameter]
-    public Access Access { get; set; }
+    public Permission Permission { get; set; }
     [Parameter]
     public bool Invert { get; set; } = false;
     private bool IsAuthorized()
     {
-        bool ret = false;
-        //Do checks here
+        bool ret = user.Permissions.Contains(Permission);
         if (Invert) ret = !ret;
         return ret;
     }

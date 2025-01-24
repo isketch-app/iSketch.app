@@ -43,12 +43,12 @@
           PageNumber="PageNumber"
           DB="Database"
           PagePath="/Administration/ProfilePictures"
-          TableName="[System.ProfilePictures.Splice]"
+          From="[System.ProfilePictures]"
           PhotoEndpoints='new List<string>() { "profile-picture" }'
           PhotoColumns="new List<int>() { 1 }"
           InitialSortColumnAndDirection="2"
-          VisibleRows='new List<string>() { "ProfilePictureID", "ProfilePictureID", "DisplayName", "DisplayOrder", "Usage" }'
-          VisibleRowsTitles='new List<string>() { "ProfilePictureID", "Profile picture", "Display name", "Display order", "Usage" }' />
+          VisibleRows='new List<string>() { "ProfilePictureID", "ProfilePictureID", "DisplayName", "DisplayOrder" }'
+          VisibleRowsTitles='new List<string>() { "ProfilePictureID", "Profile picture", "Display name", "Display order" }' />
 
 @code {
     [Parameter]
