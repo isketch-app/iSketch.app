@@ -5,7 +5,7 @@
 @using Microsoft.Data.SqlClient;
 @using System.Text.RegularExpressions;
 
-@if (WordID != null)
+@if (WordID != null && false) //Added false to keep this from running, needs modified.
 {
     string Title = "";
     InitStat = InitEditWord();
@@ -66,9 +66,9 @@
     PageNumber="PageNumber"
     DB="db"
     PagePath="/Administration/Words"
-    From="[Words.Game.Difficulties.Splice]"
-    VisibleRows='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
-    VisibleRowsTitles='new List<string>() { "WordID", "Word", "Difficulty", "Score" }'
+    From="Words"
+    VisibleRows='new List<string>() { "WordID", "Word" }'
+    VisibleRowsTitles='new List<string>() { "WordID", "Word" }'
 />
 
 @code {
