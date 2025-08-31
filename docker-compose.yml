@@ -13,8 +13,6 @@ services:
             - IS_SQL_DatabaseName=iSketch.app
     mssql:
         image: "mcr.microsoft.com/mssql/server:2022-latest"
-        ports:
-            - "11434:1433/tcp"
         environment:
             - ACCEPT_EULA=Y
             - MSSQL_SA_PASSWORD=iSketch.app
