@@ -3,7 +3,7 @@ COPY . /isketch-build
 WORKDIR /isketch-build
 RUN dotnet restore
 RUN dotnet publish -c release -o /iSketch.app --no-restore
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS isketch-app
 LABEL org.opencontainers.image.authors="support@belowaverage.org"
 WORKDIR /iSketch.app
 COPY --from=isketch-build /iSketch.app .
