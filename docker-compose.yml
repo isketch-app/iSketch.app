@@ -1,7 +1,7 @@
 version: "3.9"
 services:
     isketch:
-        image: "ghcr.io/isketch-app/isketch-app:latest"
+        image: "isketch-app:latest"
         ports:
             - "8080:80/tcp"
         depends_on:
