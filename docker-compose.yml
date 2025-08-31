@@ -3,7 +3,7 @@ services:
     isketch:
         image: "isketch-app:latest"
         ports:
-            - "8080:80/tcp"
+            - "8080:8080/tcp"
         depends_on:
             - mssql
         environment:

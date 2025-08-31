@@ -4,15 +4,14 @@ WORKDIR /isketch-build
 RUN dotnet restore
 RUN dotnet publish -c release -o /iSketch.app --no-restore
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS isketch-app
-LABEL org.opencontainers.image.authors="support@belowaverage.org"
+RUN apt update && apt install curl --yes && rm -rf /var/lib/apt/lists/*
 WORKDIR /iSketch.app
 COPY --from=isketch-build /iSketch.app .
-RUN apt update
-RUN apt install curl --yes
+LABEL org.opencontainers.image.authors="support@belowaverage.org"
 EXPOSE 8080/tcp
-HEALTHCHECK CMD curl --fail http://localhost:8080/_health || exit 1
 ENV IS_SQL_Pass="iSketch.app"
 ENV IS_SQL_ServerHost="localhost, 1433"
 ENV IS_SQL_User="sa"
 ENV IS_SQL_DatabaseName="iSketch.app"
+HEALTHCHECK CMD curl --fail http://localhost:8080/_health || exit 1
 ENTRYPOINT ["./iSketch.app"]
