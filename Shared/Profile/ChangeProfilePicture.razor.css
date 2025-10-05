@@ -18,6 +18,7 @@
 .photo-selection .label
 {
     user-select: none;
+    -webkit-user-select: none;
     font-size: 12px;
     margin-top: 10px;
 }

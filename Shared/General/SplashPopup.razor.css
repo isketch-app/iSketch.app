@@ -11,6 +11,7 @@
     animation-delay: 1.5s;
     animation-fill-mode: forwards;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 ::deep svg {

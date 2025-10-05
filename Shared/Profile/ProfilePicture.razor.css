@@ -19,6 +19,7 @@
     font-size: 70cqh;
     line-height: 92cqh;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .profile-picture .picture {

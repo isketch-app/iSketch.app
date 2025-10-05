@@ -30,7 +30,7 @@ body {
 
 #is_body {
     overflow-y: auto;
-    position: fixed;
+    position: absolute;
     top: 0px;
     left: 0px;
     width: 100%;
@@ -52,6 +52,7 @@ a {
     text-decoration: none;
     transition: .3s;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 ::-webkit-scrollbar,
@@ -105,6 +106,7 @@ a {
     width: 100%;
     background-color: transparent !important;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 #components-reconnect-modal h5 {
