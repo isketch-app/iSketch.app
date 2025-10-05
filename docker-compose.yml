@@ -1,9 +1,9 @@
 version: "3.9"
 services:
     isketch:
-        image: "ghcr.io/isketch-app/isketch-app:latest"
+        image: "isketch-app:latest"
         ports:
-            - "8080:80/tcp"
+            - "8080:8080/tcp"
         depends_on:
             - mssql
         environment:
@@ -13,8 +13,6 @@ services:
             - IS_SQL_DatabaseName=iSketch.app
     mssql:
         image: "mcr.microsoft.com/mssql/server:2022-latest"
-        ports:
-            - "11434:1433/tcp"
         environment:
             - ACCEPT_EULA=Y
             - MSSQL_SA_PASSWORD=iSketch.app

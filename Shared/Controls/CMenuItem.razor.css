@@ -6,6 +6,7 @@
     padding: 5px 10px 5px 10px;
     transition: .3s;
     user-select: none;
+    -webkit-user-select: none;
     cursor: pointer;
     background-color: transparent;
     border-radius: 5px;

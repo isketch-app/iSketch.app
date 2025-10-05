@@ -1,47 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Version>0.0.0.0</Version>
-	<AssemblyVersion>0.0.0.0</AssemblyVersion>
-	<FileVersion>0.0.0.0</FileVersion>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0.0</FileVersion>
     <Authors>Dylan Bickerstaff</Authors>
     <Company>iSketch.app</Company>
     <Description>iSketch.app is a free, open source, Pictionary-style, online drawing game!</Description>
     <RepositoryUrl>https://github.com/isketch-app/iSketch.app</RepositoryUrl>
     <PackageProjectUrl>https://github.com/isketch-app/iSketch.app</PackageProjectUrl>
-    <Copyright>below average (C) 2023</Copyright>
+    <Copyright>below average (C) 2025</Copyright>
     <RepositoryType>Git</RepositoryType>
     <UserSecretsId>a33985b7-df42-40fb-b627-368dd17a4cf6</UserSecretsId>
     <Deterministic>false</Deterministic>
   </PropertyGroup>
-	
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Properties\commit" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="SQL\Upgrade\" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Properties\commit" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Update="wwwroot\.well-known\assetlinks.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -50,11 +42,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="SQL\Schema\iSketch.app.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>

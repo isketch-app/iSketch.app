@@ -8,6 +8,7 @@
     border-radius: 4px;
     min-width: 64px;
     user-select: none;
+    -webkit-user-select: none;
     position: relative;
     border: 1px solid #420042;
     margin: 0px;

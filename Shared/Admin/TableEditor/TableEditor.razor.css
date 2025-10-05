@@ -56,6 +56,7 @@ th {
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
+    -webkit-user-select: none;
     height: 52px;
 }
 
@@ -119,6 +120,7 @@ th {
     font-family: icons;
     font-size: 0px;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .pagination .buttons a {
@@ -168,6 +170,7 @@ th {
     font-family: icons;
     font-size: 22px;
     user-select: none;
+    -webkit-user-select: none;
     text-align: center;
 }
 
