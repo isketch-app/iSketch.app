@@ -50,6 +50,8 @@ namespace iSketch.app.Data.Middleware
             List<string> files = Directory.EnumerateFiles("./wwwroot/static", "*", SearchOption.AllDirectories).ToList();
             for (int i = 0; files.Count > i; i++)
             {
+                if (files[i].EndsWith(".gz")) continue;
+                if (files[i].EndsWith(".br")) continue;
                 string newPath = Path.GetRelativePath("./wwwroot/", files[i]);
                 newPath = newPath.Replace('\\', '/');
                 files[i] = '/' + newPath;

@@ -34,4 +34,4 @@ Invoke-WebRequest -OutFile "docker-compose.yml" -Uri "https://raw.githubusercont
 docker compose up -d
 ```
 
-Browse to http://docker-host:8080
+Browse to http://docker-host
