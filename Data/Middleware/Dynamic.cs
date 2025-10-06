@@ -48,10 +48,17 @@ namespace iSketch.app.Data.Middleware
         {
             if (!Directory.Exists("./wwwroot/static")) return "[]";
             List<string> files = Directory.EnumerateFiles("./wwwroot/static", "*", SearchOption.AllDirectories).ToList();
+            files.FindAll((file) =>
+            {
+                if (file.EndsWith(".br")) return true;
+                if (file.EndsWith(".gz")) return true;
+                return false;
+            }).ForEach((file) =>
+            {
+                files.Remove(file);
+            });
             for (int i = 0; files.Count > i; i++)
             {
-                if (files[i].EndsWith(".gz")) continue;
-                if (files[i].EndsWith(".br")) continue;
                 string newPath = Path.GetRelativePath("./wwwroot/", files[i]);
                 newPath = newPath.Replace('\\', '/');
                 files[i] = '/' + newPath;
