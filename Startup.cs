@@ -35,7 +35,8 @@ namespace iSketch.app
             services.AddScoped<Header>();
             services.AddSingleton<Jobs>();
             services.AddSingleton<PassHashQueue>();
-            services.AddResponseCompression(options => {
+            services.AddResponseCompression(options =>
+            {
                 options.EnableForHttps = true;
             });
         }
