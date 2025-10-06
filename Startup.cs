@@ -35,10 +35,6 @@ namespace iSketch.app
             services.AddScoped<Header>();
             services.AddSingleton<Jobs>();
             services.AddSingleton<PassHashQueue>();
-            services.AddResponseCompression(options =>
-            {
-                options.EnableForHttps = true;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,7 +61,6 @@ namespace iSketch.app
                 }
             );
             app.UseRouting();
-            app.UseResponseCompression();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/dynamic/{File}.{Ext}", Dynamic.Delegate);
