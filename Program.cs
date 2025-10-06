@@ -16,7 +16,8 @@ namespace iSketch.app
             Logger.LogInformation("Starting iSketch.app...");
             Host.Run();
         }
-        public static IHostBuilder CreateHostBuilder(string[] args) => Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => {
+        public static IHostBuilder CreateHostBuilder(string[] args) => Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
+        {
             webBuilder.UseStartup<Startup>();
         });
     }
