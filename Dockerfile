@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS isketch-build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS isketch-build
 COPY . /isketch-build
 WORKDIR /isketch-build
 RUN dotnet restore
 RUN dotnet publish -c release -o /iSketch.app --no-restore
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS isketch-app
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS isketch-app
 RUN apt update && apt install curl --yes && rm -rf /var/lib/apt/lists/*
 WORKDIR /iSketch.app
 COPY --from=isketch-build /iSketch.app .
