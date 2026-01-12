@@ -1,21 +1,30 @@
 ﻿@using System.Net.Http
+@using Microsoft.JSInterop
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
-@using Microsoft.JSInterop
+
 @using iSketch.app
-@using iSketch.app.Data
+
+@using iSketch.app.Classes
+@using iSketch.app.Classes.Access
+@using iSketch.app.Classes.User
+
+@using iSketch.app.Services
+
 @using iSketch.app.Pages
+
 @using iSketch.app.Shared
-@using iSketch.app.Shared.Admin.TableEditor;
-@using iSketch.app.Shared.Admin;
-@using iSketch.app.Shared.Auth;
-@using iSketch.app.Shared.Body;
-@using iSketch.app.Shared.Controls;
-@using iSketch.app.Shared.General;
-@using iSketch.app.Shared.Profile;
-@using iSketch.app.Services;
+@using iSketch.app.Shared.Admin.TableEditor
+@using iSketch.app.Shared.Admin
+@using iSketch.app.Shared.Auth
+@using iSketch.app.Shared.Body
+@using iSketch.app.Shared.Controls
+@using iSketch.app.Shared.General
+@using iSketch.app.Shared.Profile
+
+
 @using Emphasis = iSketch.app.Shared.Controls.CButton.EmphasisStyles

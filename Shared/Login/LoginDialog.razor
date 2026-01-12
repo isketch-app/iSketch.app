@@ -5,7 +5,8 @@
 @inject Services.Session session;  
 @inject Services.PassHashQueue phq; 
 @inject EventHookScoped ehs;
-@using OpenID; 
+
+@using iSketch.app.Classes.OpenID;
 
 @if (user.Session.UserID == Guid.Empty)
 {
@@ -18,7 +19,7 @@
                 <h3>Ready to sketch?</h3>
                 <h4>Select an option to continue with:</h4>
                 <div class="idp-buttons">
-                    @foreach (idP idP in OpenID.GetIDPs(db))
+                    @foreach (idP idP in Helpers.GetIDPs(db))
                     {
                         <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => { nm.NavigateTo(idP.GetRequestURI(session));   }'>@idP.DisplayName</CButton>
                     }

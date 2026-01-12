@@ -1,4 +1,5 @@
-﻿using Konscious.Security.Cryptography;
+﻿using iSketch.app.Classes.PassHash;
+using Konscious.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;

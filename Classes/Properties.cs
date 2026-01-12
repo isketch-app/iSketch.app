@@ -1,7 +1,7 @@
 ﻿using iSketch.app.Services;
 using Microsoft.Data.SqlClient;
 
-namespace iSketch.app.Data
+namespace iSketch.app.Classes
 {
     public static class Properties
     {

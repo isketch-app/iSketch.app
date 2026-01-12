@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace iSketch.app.Data
+namespace iSketch.app.Classes
 {
     public static class Strings
     {

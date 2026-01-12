@@ -1,18 +1,17 @@
-﻿using iSketch.app.Services;
+using iSketch.app.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.IO;
+using static iSketch.app.Classes.Photo;
 
-namespace iSketch.app.Data.Photo
-{
+namespace iSketch.app.Endpoints {
+
     public static class Photo
     {
         public static RequestDelegate Endpoint = new(async (context) =>
         {
-            if (!TableAndRows.TryGetValue(context.Request.RouteValues["TableAndRow"].ToString(), out TableAndRow tar))
+            if (!Classes.Photo.Endpoints.TryGetValue(context.Request.RouteValues["TableAndRow"].ToString(), out TableAndRow tar))
             {
                 await context.Response.WriteAsync("Invalid Photo Location.");
                 return;
@@ -43,31 +42,5 @@ namespace iSketch.app.Data.Photo
             }
             await context.Response.Body.WriteAsync((byte[])rawPhoto, 0, ((byte[])rawPhoto).Length);
         });
-        public static Dictionary<string, TableAndRow> TableAndRows = new()
-        {
-            {
-                "idP-icon",
-                new()
-                {
-                    TableName = "[Security.OpenID]",
-                    PhotoColumnName = "DisplayIcon",
-                    GuidColumnName = "IdpID"
-                }
-            }, {
-                "profile-picture",
-                new()
-                {
-                    TableName = "[System.ProfilePictures]",
-                    PhotoColumnName = "Picture",
-                    GuidColumnName = "ProfilePictureID"
-                }
-            }
-        };
-    }
-    public class TableAndRow
-    {
-        public string PhotoColumnName;
-        public string GuidColumnName;
-        public string TableName;
     }
 }

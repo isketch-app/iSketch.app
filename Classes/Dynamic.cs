@@ -1,50 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-namespace iSketch.app.Data.Middleware
+namespace iSketch.app.Classes
 {
     public static class Dynamic
     {
-        private static Dictionary<string, string> Replacements = new Dictionary<string, string>()
+        public static Dictionary<string, string> Replacements = new Dictionary<string, string>()
         {
             { "$VERSION$", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.ToString() },
             { "$STATICJSON$", GetStaticJSON() }
         };
-        private static Dictionary<string, string> MIME = new Dictionary<string, string>()
+        public static Dictionary<string, string> MIME = new Dictionary<string, string>()
         {
             { "js", "text/javascript" },
             { "json", "application/json" }
         };
-        public static async Task Delegate(HttpContext con)
-        {
-            string file = con.Request.RouteValues["File"].ToString();
-            string ext = con.Request.RouteValues["Ext"].ToString();
-            string path = Path.Combine("./wwwroot/dynamic/", file + '.' + ext);
-            con.Response.Headers.Add("Service-Worker-Allowed", "/");
-            if (MIME.ContainsKey(ext))
-            {
-                con.Response.ContentType = MIME[ext];
-            }
-            if (File.Exists(path))
-            {
-                string data = await File.ReadAllTextAsync(path);
-                foreach (KeyValuePair<string, string> replacement in Replacements)
-                {
-                    data = data.Replace(replacement.Key, replacement.Value);
-                }
-                await con.Response.WriteAsync(data);
-            }
-            else
-            {
-                await con.Response.WriteAsync("Nothing here!");
-            }
-        }
-        private static string GetStaticJSON()
+        public static string GetStaticJSON()
         {
             if (!Directory.Exists("./wwwroot/static")) return "[]";
             List<string> files = Directory.EnumerateFiles("./wwwroot/static", "*", SearchOption.AllDirectories).ToList();
