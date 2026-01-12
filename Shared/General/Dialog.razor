@@ -7,7 +7,7 @@
         </div>
     }
     <div class="content">@ChildContent</div>
-    @if (OnDismissSet)
+    @if (OnDismiss.HasDelegate)
     {
         <DialogButtonContainer>
             <CButton OnClick="@(() => OnDismiss.InvokeAsync(this))" Emphasis="Emphasis.Low">Dismiss</CButton>
@@ -27,17 +27,7 @@
     [Parameter]
     public EventCallback OnFadeOut { get; set; }
     [Parameter]
-    public EventCallback<Dialog> OnDismiss {
-        get
-        {
-            return pOnDismiss;
-        }
-        set
-        {
-            pOnDismiss = value;
-            OnDismissSet = true;
-        }
-    }
+    public EventCallback<Dialog> OnDismiss { get; set; }
     public async Task FadeOut()
     {
         await Popup.FadeOut();
@@ -47,6 +37,4 @@
         await Popup.FadeIn();
     }
     private Popup Popup;
-    private EventCallback<Dialog> pOnDismiss;
-    private bool OnDismissSet = false;
 }

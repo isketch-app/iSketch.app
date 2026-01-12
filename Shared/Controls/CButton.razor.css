@@ -25,6 +25,7 @@ button .icon {
     display: inline-block;
     float: left;
     margin-top: -1px;
+    line-height: 19px;
 }
 
 button.em1 {
