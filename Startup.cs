@@ -24,7 +24,7 @@ public class Startup
     {
         services.AddLogging();
         services.AddHealthChecks();
-        services.AddRazorPages();
+        services.AddRazorPages(rp => { rp.RootDirectory = "/Razor/Pages"; });
         services.AddServerSideBlazor();
         services.AddSingleton<EventHookGlobal>();
         services.AddScoped<EventHookScoped>();

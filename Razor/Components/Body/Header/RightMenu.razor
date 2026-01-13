@@ -4,14 +4,14 @@
 <span class="r-menu">
     <RightMenuItem FMID="connection">
         <span class="indicator">
-            <span class="tx"></span>
-            <span class="rx"></span>
+            <span class="tx">@Icons.Get("north_east")</span>
+            <span class="rx">@Icons.Get("south_west")</span>
         </span>
     </RightMenuItem>
     <Authenticated>
         @if (User.ProfilePictureID == Guid.Empty)
         {
-            <RightMenuItem FMID="user" Icon="" />
+            <RightMenuItem FMID="user" Icon="person" />
         }
         else
         {
@@ -21,9 +21,9 @@
         }
     </Authenticated>
     <Authenticated Invert="true">
-        <RightMenuItem FMID="user" Icon="" />
+        <RightMenuItem FMID="user" Icon="person" />
     </Authenticated>
-    <RightMenuItem FMID="general" Icon="" />
+    <RightMenuItem FMID="general" Icon="more_vert" />
 </span>
 
 <FloaterMenu FMID="user">
@@ -41,23 +41,23 @@
     </div>
     <div fmid class="u-menu">
         <Authenticated>
-            <a href="/Account"><CMenuItem Icon="" Text="My Account" /></a>
-            <CMenuItem Icon="" Text="Sign out" OnClick="() => User.Logoff()" />
+            <a href="/Account"><CMenuItem Icon="account_circle" Text="My Account" /></a>
+            <CMenuItem Icon="logout" Text="Sign out" OnClick="() => User.Logoff()" />
         </Authenticated>
         <Authenticated Invert="true">
-            <CMenuItem Icon="" Text="Sign in / Sign up" OnClick="EventHookScoped.OnLoginButtonPressed" />
+            <CMenuItem Icon="login" Text="Sign in / Sign up" OnClick="EventHookScoped.OnLoginButtonPressed" />
         </Authenticated>
     </div>
 </FloaterMenu>
 
 <FloaterMenu FMID="general">
     <div fmid>
-        <a href="/About"><CMenuItem Icon="" Text="About iSketch.app" /></a>
-        <a href="/Rules"><CMenuItem Icon="" Text="Rules" /></a>
-        <a href="/Help"><CMenuItem Icon="" Text="Help" /></a>
+        <a href="/About"><CMenuItem Icon="info" Text="About iSketch.app" /></a>
+        <a href="/Rules"><CMenuItem Icon="gavel" Text="Rules" /></a>
+        <a href="/Help"><CMenuItem Icon="help" Text="Help" /></a>
         <hr />
-        <a href="/TermsOfService"><CMenuItem Icon="" Text="Terms of Service" /></a>
-        <a href="/Privacy"><CMenuItem Icon="" Text="Privacy Policy" /></a>
+        <a href="/TermsOfService"><CMenuItem Icon="contract" Text="Terms of Service" /></a>
+        <a href="/Privacy"><CMenuItem Icon="policy" Text="Privacy Policy" /></a>
     </div>
 </FloaterMenu>
 

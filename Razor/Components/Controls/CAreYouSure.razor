@@ -15,17 +15,17 @@
     [Parameter]
     public string ButtonText { get; set; } = "Do a thing.";
     [Parameter]
-    public string ButtonIcon { get; set; } = "";
+    public string ButtonIcon { get; set; } = Icons.Get("");
     [Parameter]
     public string AreYouSureText { get; set; } = "Are you sure?";
     [Parameter]
     public string YesText { get; set; } = "Yes";
     [Parameter]
-    public string YesIcon { get; set; } = "";
+    public string YesIcon { get; set; } = Icons.Get("");
     [Parameter]
     public string NoText { get; set; } = "No";
     [Parameter]
-    public string NoIcon { get; set; } = "";
+    public string NoIcon { get; set; } = Icons.Get("");
     [Parameter]
     public EventCallback<MouseEventArgs> OnYesClick { get; set; }
     private int Status = 0;

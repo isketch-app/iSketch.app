@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace iSketch.app.Shared.Game.Animations
+namespace iSketch.app.Razor.Components.Game.Animations
 {
     public class Animation() : ComponentBase
     {
