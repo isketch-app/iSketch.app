@@ -36,6 +36,9 @@
     <EmbeddedResource Include="Properties\commit" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data/icons.json" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Update="wwwroot\.well-known\assetlinks.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

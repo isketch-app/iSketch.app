@@ -1,6 +1,6 @@
 ﻿@page "/"
-@using iSketch.app.Shared.Game.Animations.WordGuessed
-@using iSketch.app.Shared.Game.Timer
+@using iSketch.app.Razor.Components.Game.Animations.WordGuessed
+@using iSketch.app.Razor.Components.Game.Timer
 @inject NavigationManager nm;
 @inject Session session;
 @inject Database db;
@@ -57,10 +57,10 @@
 <h3>Things to try out:</h3>
 <hr />
 
-<iSketch.app.Shared.Game.Timer.Timer @ref="Timer" />
+<iSketch.app.Razor.Components.Game.Timer.Timer @ref="Timer" />
 <CButton OnClick="async () => { await Timer.StartTimer(); }">Start Timer</CButton>
 
-<iSketch.app.Shared.Game.Animations.WordGuessed.WordGuessed @ref="WordGuessed" />
+<iSketch.app.Razor.Components.Game.Animations.WordGuessed.WordGuessed @ref="WordGuessed" />
 <CButton OnClick="() => { WordGuessed.Play(); }">Word Guessed Animation</CButton>
 @code {
     public WordGuessed WordGuessed;

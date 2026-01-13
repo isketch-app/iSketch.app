@@ -8,12 +8,14 @@ namespace iSketch.app
     public static class Program
     {
         public static IHost Host;
-        public static ILogger Logger;
+        public static ILogger DefaultLogger;
+        public static ILoggerFactory LoggerFactory;
         public static void Main(string[] args)
         {
             Host = CreateHostBuilder(args).Build();
-            Logger = Host.Services.GetService<ILoggerFactory>().CreateLogger(typeof(Program).FullName);
-            Logger.LogInformation("Starting iSketch.app...");
+            LoggerFactory = Host.Services.GetService<ILoggerFactory>();
+            DefaultLogger = LoggerFactory.CreateLogger("iSketch.app");
+            DefaultLogger.LogInformation("Starting iSketch.app...");
             Host.Run();
         }
         public static IHostBuilder CreateHostBuilder(string[] args) => Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
