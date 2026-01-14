@@ -48,14 +48,20 @@ public class Startup
         {
             app.UseExceptionHandler("/_Error");
         }
+        app.Use(async (con, next) => {
+            if (
+                !con.Request.Path.StartsWithSegments("/_Photo")
+            ) {
+                con.Response.Headers.CacheControl = "no-cache, no-store, max-age=0";
+            }
+            await next(con);
+        });
         app.UseWhen(
-            (con) =>
-            {
+            (con) => {
                 if (con.Request.Path == "/") return false;
                 return Directory.Exists(Path.Join(env.WebRootPath, con.Request.Path));
             },
-            (app) =>
-            {
+            (app) => {
                 app.UseDirectoryBrowser();
             }
         );
