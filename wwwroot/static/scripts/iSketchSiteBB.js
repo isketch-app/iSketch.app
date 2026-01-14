@@ -1,4 +1,5 @@
 var iSketchSite = {
+    ServiceWorker: null,
     WebSocket: null,
     onconnect: function () { },
     Blazor: {},
@@ -23,6 +24,27 @@ var iSketchSite = {
         RX: new Event('isrx')
     }
 }
+
+navigator.serviceWorker.register(
+    "./dynamic/sw.serviceworker.js", 
+    { scope: "/" }
+).then((e) => {
+    iSketchSite.ServiceWorker = e;
+    e.update();
+});
+
+navigator.serviceWorker.addEventListener('message', function(e) {
+    if (e.data.startsWith('SW_IS_DL')) {
+        iSketchSite.Elements.PageLoader.Message.textContent = 'Downloading ' + e.data.replace('SW_IS_DL: ', '') + ' assets...';
+    }
+    if (e.data == 'SW_IS_RELOAD') {
+        iSketchSite.Elements.PageLoader.Message.textContent = 'Connecting to server...';
+        setTimeout(function() {
+            location.reload();
+        }, (performance.now() * -1) + 1500);
+    }
+});
+
 
 document.addEventListener('click', function (e) {
     e.composedPath().every(function (t) {
@@ -127,8 +149,14 @@ iSketchSite.Elements.PageLoader.Hide = function () {
 };
 
 iSketchSite.Blazor.Ready = function () {
-    iSketchSite.Loader.Start();
+    //iSketchSite.Loader.Start();
+    iSketchSite.Elements.PageLoader.Message.textContent = '';
     iSketchSite.Communications.Init();
+    if (iSketchSite.ServiceWorker.installing == null) {
+        iSketchSite.Elements.PageLoader.Hide();
+    } else {
+        iSketchSite.Elements.PageLoader.Message.textContent = 'Downloading assets...';
+    }
 };
 
 iSketchSite.Communications.Flicker = function (element) {
@@ -151,6 +179,7 @@ iSketchSite.Communications.Init = function () {
     });
 }
 
+/*
 iSketchSite.Loader.Start = function () {
     iSketchSite.Elements.PageLoader.Message.textContent = 'Retrieving asset list...';
     var req = new XMLHttpRequest();
@@ -178,6 +207,7 @@ iSketchSite.Loader.LoadAsset = function (path) {
     };
     req.send();
 };
+*/
 
 iSketchSite.Theme.ChangeTheme = function (setDark) {
     iSketchSite.Elements.ISBody.classList.remove('theme_light');
