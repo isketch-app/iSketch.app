@@ -13,7 +13,7 @@
     <table>
         <tr>
             <td>Version:</td>
-            <td>@name</td>
+            <td>@Helpers.Version</td>
         </tr>
         <tr>
             <td>Author:</td>
@@ -29,7 +29,7 @@
         </tr>
         <tr>
             <td>Commit:</td>
-            <td><a target="_blank" href="https://github.com/isketch-app/iSketch.app/commit/@commit">@commit.Substring(0, 7)</a></td>
+            <td><a target="_blank" href="https://github.com/isketch-app/iSketch.app/commit/@Helpers.Commit">@Helpers.MiniCommit</a></td>
         </tr>
     </table>
     <hr />
@@ -58,11 +58,16 @@
             <td>@netversion</td>
         </tr>
     </table>
+    <hr />
+    <p>
+        <div onclick="iSketchSite.Reload()">
+            <CButton Emphasis="CButton.EmphasisStyles.Low" Icon="refresh">Force Update</CButton>
+        </div>
+    </p>
 </div>
 
 @code {
     private static Assembly self = Assembly.GetExecutingAssembly();
-    private string name = self.GetName().Version.ToString();
     private string description = self.GetCustomAttribute<AssemblyDescriptionAttribute>().Description;
     private string author = self.GetCustomAttribute<AssemblyCompanyAttribute>().Company;
     private string copyright = self.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
@@ -70,16 +75,7 @@
     private string os = System.Environment.OSVersion.ToString();
     private string threads = System.Environment.ProcessorCount.ToString();
     private string netversion = System.Environment.Version.ToString();
-    private string commit = "";
     private Timer timer = new Timer();
-    protected override void OnInitialized()
-    {
-        StreamReader sr = new StreamReader(self.GetManifestResourceStream("iSketch.app.Properties.commit"));
-        commit = sr.ReadToEnd();
-        sr.Close();
-        sr.Dispose();
-        base.OnInitialized();
-    }
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

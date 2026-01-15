@@ -22,6 +22,9 @@ var iSketchSite = {
     Communications: {
         TX: new Event('istx'),
         RX: new Event('isrx')
+    },
+    Reload: function() {
+        iSketchSite.ServiceWorker.unregister().then(() => location.reload());
     }
 }
 
@@ -38,7 +41,7 @@ navigator.serviceWorker.addEventListener('message', function(e) {
         iSketchSite.Elements.PageLoader.Message.textContent = 'Downloading ' + e.data.replace('SW_IS_DL: ', '') + ' assets...';
     }
     if (e.data == 'SW_IS_RELOAD') {
-        iSketchSite.Elements.PageLoader.Message.textContent = 'Connecting to server...';
+        iSketchSite.Elements.PageLoader.Message.textContent = 'Reloading...';
         setTimeout(function() {
             location.reload();
         }, (performance.now() * -1) + 1500);

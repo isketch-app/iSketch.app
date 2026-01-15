@@ -1,4 +1,4 @@
-var CACHE_NAME = ['is-cache-v$VERSION$'];
+var CACHE_NAME = ['is-cache-v$VERSION$-c$COMMIT$-h$HASH$'];
 
 var assets = $STATICJSON$;
 

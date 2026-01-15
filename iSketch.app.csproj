@@ -34,18 +34,13 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\commit" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data/icons.json" />
+    <EmbeddedResource Include="Data\icons.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="wwwroot\.well-known\assetlinks.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\.well-known\microsoft-identity-association.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
