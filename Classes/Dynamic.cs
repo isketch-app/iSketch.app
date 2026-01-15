@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 
 namespace iSketch.app.Classes
@@ -10,7 +9,9 @@ namespace iSketch.app.Classes
     {
         public static Dictionary<string, string> Replacements = new Dictionary<string, string>()
         {
-            { "$VERSION$", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.ToString() },
+            { "$VERSION$", Helpers.Version },
+            { "$COMMIT$", Helpers.MiniCommit },
+            { "$HASH$", Helpers.MiniHash },
             { "$STATICJSON$", GetStaticJSON() }
         };
         public static Dictionary<string, string> MIME = new Dictionary<string, string>()

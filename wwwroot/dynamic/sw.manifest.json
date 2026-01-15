@@ -69,7 +69,7 @@
   "display": "standalone",
   "scope": "/",
   "theme_color": "#ffffff",
-  "version": "$VERSION$",
+  "version": "$VERSION$-$COMMIT$-$HASH$",
   "orientation": "any",
   "iarc_rating_id": "d33e7764-4796-4db9-ad28-4a9cdb05bed1",
   "categories": [ "game", "drawing", "multiplayer", "word" ]
