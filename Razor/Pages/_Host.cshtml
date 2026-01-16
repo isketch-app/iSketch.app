@@ -29,22 +29,39 @@
     </head>
     <body>
         <div id="is_body" class="theme_light">
-            @if (!session.Existing)
+            @if (HttpContext.Request.Path.StartsWithSegments("/_Static"))
             {
-                <component type="typeof(Razor.Components.General.SplashPopup)" render-mode="Static" />
+                <component 
+                    type="typeof(Razor.App)" 
+                    render-mode="Static"
+                    param-sSessionID="session.SessionID"
+                    param-sExisting="session.Existing"
+                    param-sIPAddress="session.IPAddress.ToString()"
+                    param-sBaseURI="session.BaseURI.ToString()"
+                />
+                <script src="./static/scripts/iSketchSiteBB.js"></script>
+                <script src="./static/scripts/iSketchSiteAB.js"></script>
             }
-            <component type="typeof(Razor.Components.Body.PageLoading)" render-mode="Static" />
-            <component 
-                type="typeof(App)" 
-                render-mode="Server"
-                param-sSessionID="session.SessionID"
-                param-sExisting="session.Existing"
-                param-sIPAddress="session.IPAddress.ToString()"
-                param-sBaseURI="session.BaseURI.ToString()"
-            />
+            else
+            {
+                @if (!session.Existing)
+                {
+                    <component type="typeof(Razor.Components.General.SplashPopup)" render-mode="Static" />
+                }
+                <component type="typeof(Razor.Components.General.Reconnecting)" render-mode="Static" />
+                <component type="typeof(Razor.Components.Body.PageLoading)" render-mode="Static" />
+                <component 
+                    type="typeof(Razor.App)" 
+                    render-mode="Server"
+                    param-sSessionID="session.SessionID"
+                    param-sExisting="session.Existing"
+                    param-sIPAddress="session.IPAddress.ToString()"
+                    param-sBaseURI="session.BaseURI.ToString()"
+                />
+                <script src="./static/scripts/iSketchSiteBB.js"></script>
+                <script src="_framework/blazor.server.js"></script>
+                <script src="./static/scripts/iSketchSiteAB.js"></script>
+            }
         </div>
-        <script src="./static/scripts/iSketchSiteBB.js"></script>
-        <script src="_framework/blazor.server.js"></script>
-        <script src="./static/scripts/iSketchSiteAB.js"></script>
     </body>
 </html>

@@ -8,7 +8,7 @@
 
 @using iSketch.app.Classes.OpenID;
 
-@if (user.Session.UserID == Guid.Empty)
+@if (AssignedRenderMode == RenderMode.InteractiveServer && user.Session.UserID == Guid.Empty)
 {
     <Dialog AllowBreakOut="false" Icon="@(HeaderIcons[(int)CurrentStage])" Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
         <Warning Message="@Warning" />
