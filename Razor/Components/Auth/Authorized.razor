@@ -2,7 +2,7 @@
 @inject User user
 @inject EventHookScoped EHS
 
-@if (IsAuthorized())
+@if (AssignedRenderMode == RenderMode.InteractiveServer && IsAuthorized())
 {
     @ChildContent
 }

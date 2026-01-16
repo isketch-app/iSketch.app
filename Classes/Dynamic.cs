@@ -7,17 +7,21 @@ namespace iSketch.app.Classes
 {
     public static class Dynamic
     {
-        public static Dictionary<string, string> Replacements = new Dictionary<string, string>()
-        {
+        public static readonly Dictionary<string, string> MIME = new() {
+            { "js", "text/javascript" },
+            { "json", "application/json" }
+        };
+        private static readonly List<string> StaticFiles = [
+            "/dynamic/sw.manifest.json",
+            "/iSketch.app.styles.css",
+            "/_framework/blazor.server.js",
+            "/_Static/Offline"
+        ];
+        public static readonly Dictionary<string, string> Replacements = new() {
             { "$VERSION$", Helpers.Version },
             { "$COMMIT$", Helpers.MiniCommit },
             { "$HASH$", Helpers.MiniHash },
             { "$STATICJSON$", GetStaticJSON() }
-        };
-        public static Dictionary<string, string> MIME = new Dictionary<string, string>()
-        {
-            { "js", "text/javascript" },
-            { "json", "application/json" }
         };
         public static string GetStaticJSON()
         {
@@ -38,8 +42,7 @@ namespace iSketch.app.Classes
                 newPath = newPath.Replace('\\', '/');
                 files[i] = '/' + newPath;
             }
-            files.Add("/iSketch.app.styles.css");
-            files.Add("/_framework/blazor.server.js");
+            files.AddRange(StaticFiles);
             return JsonSerializer.Serialize(files);
         }
     }

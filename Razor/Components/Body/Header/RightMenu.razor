@@ -2,12 +2,19 @@
 @inject EventHookScoped EventHookScoped;
 
 <span class="r-menu">
-    <RightMenuItem FMID="connection">
-        <span class="indicator">
-            <span class="tx">@Icons.Get("north_east")</span>
-            <span class="rx">@Icons.Get("south_west")</span>
-        </span>
-    </RightMenuItem>
+    @if (AssignedRenderMode == RenderMode.InteractiveServer)
+    {
+        <RightMenuItem FMID="connection">
+            <span class="indicator">
+                <span class="tx">@Icons.Get("north_east")</span>
+                <span class="rx">@Icons.Get("south_west")</span>
+            </span>
+        </RightMenuItem>
+    }
+    else
+    {
+        <RightMenuItem FMID="connection" Icon="cloud_off" />
+    }
     <Authenticated>
         @if (User.ProfilePictureID == Guid.Empty)
         {
@@ -62,7 +69,14 @@
 </FloaterMenu>
 
 <FloaterMenu FMID="connection">
-    <div fmid>Connected to iSketch.app</div>
+    @if (AssignedRenderMode == RenderMode.InteractiveServer)
+    {
+        <div fmid>Connected to iSketch.app</div>
+    }
+    else
+    {
+        <div fmid>Not connected to iSketch.app.</div>
+    }
 </FloaterMenu>
 
 @code {

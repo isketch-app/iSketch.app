@@ -1,19 +1,20 @@
 var iSketchSite = {
     ServiceWorker: null,
     WebSocket: null,
-    onconnect: function () { },
+    OnConnect: function () { },
     Blazor: {},
     JSInteropHelpers: {},
     Theme: {},
-    Loader: {
-        AssetsToLoad: 0,
-        AssetsLoaded: 0
-    },
     MutationObserver: new MutationObserver(MutationObserverCallback),
     Elements: {
         FloaterMenuF: {},
         PageLoader: {
-            Message: document.querySelector('.pl_body .message')
+            Message: document.querySelector('.pl_body .message'),
+            SetMessage: function(string) {
+                if (iSketchSite.Elements.PageLoader.Message != null) {
+                    iSketchSite.Elements.PageLoader.Message.textContent = string;
+                }
+            }
         },
         ISBody: document.getElementById('is_body'),
         ISTX: null,
@@ -38,10 +39,10 @@ navigator.serviceWorker.register(
 
 navigator.serviceWorker.addEventListener('message', function(e) {
     if (e.data.startsWith('SW_IS_DL')) {
-        iSketchSite.Elements.PageLoader.Message.textContent = 'Downloading ' + e.data.replace('SW_IS_DL: ', '') + ' assets...';
+        iSketchSite.Elements.PageLoader.SetMessage('Downloading ' + e.data.replace('SW_IS_DL: ', '') + ' assets...');
     }
     if (e.data == 'SW_IS_RELOAD') {
-        iSketchSite.Elements.PageLoader.Message.textContent = 'Reloading...';
+        iSketchSite.Elements.PageLoader.SetMessage('Reloading...');
         setTimeout(function() {
             location.reload();
         }, (performance.now() * -1) + 1500);
@@ -98,7 +99,7 @@ class WebSocketOverride extends WebSocket {
         super(url, protos);
         if (url.includes('_blazor')) {
             iSketchSite.WebSocket = this;
-            iSketchSite.onconnect();
+            iSketchSite.OnConnect();
         }
     }
     send(data) {
@@ -111,22 +112,24 @@ class WebSocketOverride extends WebSocket {
 
 WebSocket = WebSocketOverride;
 
-iSketchSite.onconnect = function () {
+iSketchSite.OnConnect = function () {
     iSketchSite.WebSocket.addEventListener('error', function () {
-        //window.location.reload();
+        //location.reload();
     });
     iSketchSite.WebSocket.addEventListener('close', function () {
-        //window.location.reload();
+        location.reload();
     });
     iSketchSite.WebSocket.addEventListener('message', function () {
         document.dispatchEvent(iSketchSite.Communications.RX);
     });
+    /*
     document.addEventListener('istx', function () {
         
     });
     document.addEventListener('isrx', function () {
         
     });
+    */
 }
 
 iSketchSite.registerJSInteropHelper = function (componentID, dotNetHelper) {
@@ -152,13 +155,13 @@ iSketchSite.Elements.PageLoader.Hide = function () {
 };
 
 iSketchSite.Blazor.Ready = function () {
-    //iSketchSite.Loader.Start();
-    iSketchSite.Elements.PageLoader.Message.textContent = '';
+    Blazor.defaultReconnectionHandler.onConnectionDown = null;
+    iSketchSite.Elements.PageLoader.SetMessage('');
     iSketchSite.Communications.Init();
     if (iSketchSite.ServiceWorker.installing == null) {
         iSketchSite.Elements.PageLoader.Hide();
     } else {
-        iSketchSite.Elements.PageLoader.Message.textContent = 'Downloading assets...';
+        iSketchSite.Elements.PageLoader.SetMessage('Downloading assets...');
     }
 };
 
@@ -181,36 +184,6 @@ iSketchSite.Communications.Init = function () {
         iSketchSite.Communications.Flicker(iSketchSite.Elements.ISRX);
     });
 }
-
-/*
-iSketchSite.Loader.Start = function () {
-    iSketchSite.Elements.PageLoader.Message.textContent = 'Retrieving asset list...';
-    var req = new XMLHttpRequest();
-    req.open('GET', '/dynamic/static.json');
-    req.onload = function () {
-        var assets = JSON.parse(req.response);
-        iSketchSite.Loader.AssetsToLoad = assets.length;
-        iSketchSite.Elements.PageLoader.Message.textContent = 'Loading assets (0 / ' + iSketchSite.Loader.AssetsToLoad + ')...';
-        assets.forEach(function (asset) {
-            iSketchSite.Loader.LoadAsset(asset);
-        });
-    };
-    req.send();
-};
-
-iSketchSite.Loader.LoadAsset = function (path) {
-    var req = new XMLHttpRequest();
-    req.open('GET', path);
-    req.onload = function () {
-        iSketchSite.Loader.AssetsLoaded++;
-        iSketchSite.Elements.PageLoader.Message.textContent = 'Loading assets (' + iSketchSite.Loader.AssetsLoaded + ' / ' + iSketchSite.Loader.AssetsToLoad + ')...';
-        if (iSketchSite.Loader.AssetsToLoad == iSketchSite.Loader.AssetsLoaded) {
-            iSketchSite.Elements.PageLoader.Hide();
-        }
-    };
-    req.send();
-};
-*/
 
 iSketchSite.Theme.ChangeTheme = function (setDark) {
     iSketchSite.Elements.ISBody.classList.remove('theme_light');

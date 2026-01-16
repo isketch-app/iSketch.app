@@ -1,0 +1,14 @@
+﻿@page "/_Static/Offline"
+
+<VCenter>
+    <div class="icon">@Icons.Get("cloud_off")</div>
+    <h1>Cannot connect to iSketch.app.</h1>
+    <h3>Waiting for connection...</h3>
+    <div class="spinner"></div>
+</VCenter>
+
+<script>
+    setTimeout(function() {
+        location.reload();
+    }, 3000);
+</script>

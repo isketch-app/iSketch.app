@@ -22,7 +22,7 @@ self.addEventListener('fetch', function (event) {
             if (response) return response;
             return fetch(event.request);
         }).catch(function () {
-            return caches.match('/static/pages/offline.html');
+            return caches.match('/_Static/Offline');
         })
     );
 });
