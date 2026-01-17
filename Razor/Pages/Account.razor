@@ -8,28 +8,28 @@
         <div class="page">
             <div class="title">
                 <ProfilePicture ProfilePictureID="User.ProfilePictureID" />
-                <BPageTitle Icon="" Title='@("Welcome, " + User.UserName)' />
+                <BPageTitle Icon="hand_gesture" Title='@("Welcome, " + User.UserName)' />
                 <span class="subtext">Manage and customize your iSketch.app profile.</span>
             </div>
             <div class="details">
-                <CText Icon="" Label="3rd Party Account Provider" Enabled="false" Value="@IdpName" />
-                <CText Icon="" Label="Account Creation Time" Enabled="false" Value="@CreatedTime" />
-                <CText Icon="" Label="Last Logon Time" Enabled="false" Value="@LastLogonTime" />
-                <CText Icon="" Label="Email" Enabled="false" Value="@Email" />
-                <CText Icon="" Label="Status" Enabled="false" Value="@Biography" />
+                <CText Icon="identity_platform" Label="Identity Platform" Enabled="false" Value="@IdpName" />
+                <CText Icon="more_time" Label="Account Creation Time" Enabled="false" Value="@CreatedTime" />
+                <CText Icon="login" Label="Last Logon Time" Enabled="false" Value="@LastLogonTime" />
+                <CText Icon="alternate_email" Label="Email" Enabled="false" Value="@Email" />
+                <CText Icon="campaign" Label="Status" Enabled="false" Value="@Biography" />
             </div>
         </div>
         <div class="sidebar">
-            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "SetStatus"'>Set Status</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePassword"'>Change Password</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="">Link 3rd Party Account</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="">Request New Username</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="" OnClick='() => Dialog = "ChangePhoto"'>Change Avatar</CButton>
-            <CButton Emphasis="Emphasis.Low" Icon="">Change / Verify Email</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="campaign" OnClick='() => Dialog = "SetStatus"'>Set Status</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="password_2" OnClick='() => Dialog = "ChangePassword"'>Change Password</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="identity_platform">Set Identity Platform</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="label">Request New Username</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="sticker" OnClick='() => Dialog = "ChangePhoto"'>Change Avatar</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="alternate_email">Change / Verify Email</CButton>
             <hr />
-            <CButton Emphasis="Emphasis.Low" Icon="">View Public Profile</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="visibility">View Public Profile</CButton>
             <hr />
-            <CButton Emphasis="Emphasis.Low" Icon="">Delete Account</CButton>
+            <CButton Emphasis="Emphasis.Low" Icon="person_cancel">Delete Account</CButton>
         </div>
     </div>
     @if (Dialog == "SetStatus")

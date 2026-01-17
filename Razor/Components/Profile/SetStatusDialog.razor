@@ -1,10 +1,10 @@
 ﻿@inject Services.User User;
 
 <Authenticated>
-    <Dialog Icon="" OnFadeOut="OnFadeOut" @ref="Dialog" Header="Set status message">
+    <Dialog Icon="campaign" OnFadeOut="OnFadeOut" @ref="Dialog" Header="Set status message">
         <Warning Message="@Warning" />
         <p>What's on your mind, @(User.UserName)?</p>
-        <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="" />
+        <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="campaign" />
         <DialogButtonContainer>
             <SavAppCan OnCancelClick='() => Dialog.FadeOut()'
                        OnApplyClick='() => SetBiography()'

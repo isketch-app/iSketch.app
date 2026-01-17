@@ -28,43 +28,43 @@
             </div>
             <DialogButtonContainer SpaceEvenly="true">
                 <CButton Icon="contract" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.Policies">Policies</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignGuest">Guest</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Viewer</CButton>
+                <CButton Icon="assignment_ind" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignGuest">Guest</CButton>
+                <CButton Icon="eyeglasses_2" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => Dialog.FadeOut()">Viewer</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.ISSignIn)
         {
             <div class="px-300">
                 <div class="input"><CText AutoFocus="true" FocusOnEnter="password" Icon="account_circle" Label="User Name" Value="@UserName" ValueChanged="(v) => UserName = v"></CText></div>
-                <div class="input"><CText Name="password" ClickOnEnter="signin" Icon="" Type="password" Label="Password" Value="@Password" ValueChanged="(v) => Password = v"></CText></div>
+                <div class="input"><CText Name="password" ClickOnEnter="signin" Icon="password_2" Type="password" Label="Password" Value="@Password" ValueChanged="(v) => Password = v"></CText></div>
             </div>
             <DialogButtonContainer SpaceEvenly="true">
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignUp">Sign up</CButton>
-                <CButton Name="signin" Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignIn">Sign in</CButton>
+                <CButton Icon="arrow_back" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+                <CButton Icon="person_edit" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignUp">Sign up</CButton>
+                <CButton Name="signin" Icon="check" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignIn">Sign in</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.ISSignUp)
         {
             <div class="px-300">
                 <div class="input"><CText FocusOnEnter="password" AutoFocus="true" Icon="account_circle" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
-                <div class="input"><CText FocusOnEnter="confirm" Name="password" Icon="" Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
-                <div class="input"><CText FocusOnEnter="email" Name="confirm" Icon="" Type="password" Label="Password (confirm)" ValueChanged="(v) => Password2 = v"></CText></div>
-                <div class="input"><CText ClickOnEnter="signup" Name="email" Icon="" Type="email" Label="Recovery Email (optional)" ValueChanged="(v) => Email = v"></CText></div>
+                <div class="input"><CText FocusOnEnter="confirm" Name="password" Icon="password_2" Type="password" Label="Password" ValueChanged="(v) => Password = v"></CText></div>
+                <div class="input"><CText FocusOnEnter="email" Name="confirm" Icon="password_2" Type="password" Label="Password (confirm)" ValueChanged="(v) => Password2 = v"></CText></div>
+                <div class="input"><CText ClickOnEnter="signup" Name="email" Icon="alternate_email" Type="email" Label="Recovery Email (optional)" ValueChanged="(v) => Email = v"></CText></div>
             </div>
             <DialogButtonContainer>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignIn">Back</CButton>
-                <CButton Name="signup" Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignUp">Sign up</CButton>
+                <CButton Icon="arrow_back" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.ISSignIn">Back</CButton>
+                <CButton Name="signup" Icon="check" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignUp">Sign up</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.ISSignGuest)
         {
             <div class="px-300">
-                <div class="input"><CText ClickOnEnter="continue" AutoFocus="true" Icon="" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText ClickOnEnter="continue" AutoFocus="true" Icon="account_circle" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
             </div>
             <DialogButtonContainer>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
-                <CButton Name="continue" Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignGuest">Continue</CButton>
+                <CButton Icon="arrow_back" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+                <CButton Name="continue" Icon="check" Emphasis="CButton.EmphasisStyles.Low" OnClick="ISSignGuest">Continue</CButton>
             </DialogButtonContainer>
         }
         @if (CurrentStage == Stage.Policies)
@@ -74,7 +74,7 @@
                 <CButton OnClick='() => { _ = Dialog.FadeOut(); nm.NavigateTo("/Privacy"); }' Emphasis="CButton.EmphasisStyles.Low" Icon="policy">Privacy Policy</CButton>
             </div>
             <DialogButtonContainer>
-                <CButton Icon="" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
+                <CButton Icon="arrow_back" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
             </DialogButtonContainer>
         }
     </Dialog>

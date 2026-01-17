@@ -2,7 +2,7 @@
     @if (ProfilePictureID == Guid.Empty)
     {
         <div class="placeholder">
-            <div class="icon">@Icon</div>
+            <div class="icon">@Icons.Get(Icon)</div>
         </div>
     }
     else
@@ -13,7 +13,7 @@
 
 @code {
     [Parameter]
-    public string Icon { get; set; } = "";
+    public string Icon { get; set; } = "person";
 
     [Parameter]
     public Guid ProfilePictureID { get; set; }

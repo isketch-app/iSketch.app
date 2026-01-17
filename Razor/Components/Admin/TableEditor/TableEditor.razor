@@ -24,12 +24,12 @@
                 }
                 <th @onclick="() => OnSortClick(index)">
                     @{
-                        string sorticn = "";
-                        if (SortColumnAndDirection == index) sorticn = "";
-                        if (SortColumnAndDirection * -1 == index) sorticn = "";
+                        string sorticn = "check_indeterminate_small";
+                        if (SortColumnAndDirection == index) sorticn = "arrow_upward";
+                        if (SortColumnAndDirection * -1 == index) sorticn = "arrow_downward";
                     }
                     <span>@title</span>
-                    <span class="sort-btn">@sorticn</span>
+                    <span class="sort-btn">@Icons.Get(sorticn)</span>
                 </th>
             }
             <th></th>
