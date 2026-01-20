@@ -4,16 +4,17 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 
-namespace iSketch.app.Classes.Access;
+namespace iSketch.app.Classes;
 
-public enum Permission
+
+public static class Access
 {
-    Administrator, //Main administrator page.
-    Words //Words administrator page.
-}
-public static class AccessHelpers
-{
-    public static ILogger Logger = Program.Host.Services.GetService<ILoggerFactory>().CreateLogger(typeof(AccessHelpers).FullName);
+    public enum Permission
+    {
+        Administrator, //Main administrator page.
+        Words //Words administrator page.
+    }
+    public static ILogger Logger = Program.Host.Services.GetService<ILoggerFactory>().CreateLogger(typeof(Access).FullName);
     public static Permission[] ReadUserPermissionsFromDatabase(Guid UserID)
     {
         SqlCommand sCmd = Database.NewConnection.CreateCommand();

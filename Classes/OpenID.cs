@@ -6,11 +6,10 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using iSketch.app.Services;
-using iSketch.app.Classes.User;
 
-namespace iSketch.app.Classes.OpenID;
+namespace iSketch.app.Classes;
 
-public static class OpenIDHelpers
+public static class OpenID
 {
     public static List<idP> GetIDPs(bool includeDisabled = false)
     {
@@ -103,7 +102,7 @@ public static class OpenIDHelpers
                         rdr.Read();
                         Guid UserID = rdr.GetGuid(0);
                         rdr.Close();
-                        UserHelpers.Logon(session, UserID);
+                        User.Logon(session, UserID);
                         HandleJwtClaims(session, idP, JWT);
                         return TokenHandleResult.Success;
                     }
@@ -119,8 +118,8 @@ public static class OpenIDHelpers
             }
             if (session.UserID == Guid.Empty)
             {
-                Guid newUserID = UserHelpers.CreateUser();
-                UserHelpers.Logon(session, newUserID);
+                Guid newUserID = User.CreateUser();
+                User.Logon(session, newUserID);
             }
             cmd.Parameters.AddWithValue("@USERID@", session.UserID);
             cmd.CommandText = "UPDATE [Security.Users] SET [OpenID.IdpID] = @IDPID@, [OpenID.Subject] = @SUBJECT@ WHERE UserID = @USERID@";
@@ -146,86 +145,86 @@ public static class OpenIDHelpers
             MailAddress.TryCreate(oClaimEmail.ToString(), out MailAddress mailAddress)
         )
         {
-            UserHelpers.SetUserEmail(Session.UserID, mailAddress);
+            User.SetUserEmail(Session.UserID, mailAddress);
         }
         return true;
     }
-}
-public class idP
-{
-    public Guid IdpID;
-    public string DisplayName;
-    public byte[] DisplayIcon;
-    public bool Enabled;
-    public string ClientID;
-    public string ClientSecret;
-    public string ExtraScopes;
-    public string EndpointAuthorization;
-    public string EndpointToken;
-    public string EndpointLogout;
-    public string ClaimsUserName;
-    public string ClaimsEmail;
-    public string ClaimsUserPhoto;
-    public string GetRedirectURI(Session session)
+    public class idP
     {
-        return session.BaseURI.ToString() + "_OpenID/" + IdpID.ToString() + "/Login";
-    }
-    public string GetRequestURI(Session session)
-    {
-        string URI =
-        EndpointAuthorization +
-        "?response_type=code";
-        if (ExtraScopes != null)
+        public Guid IdpID;
+        public string DisplayName;
+        public byte[] DisplayIcon;
+        public bool Enabled;
+        public string ClientID;
+        public string ClientSecret;
+        public string ExtraScopes;
+        public string EndpointAuthorization;
+        public string EndpointToken;
+        public string EndpointLogout;
+        public string ClaimsUserName;
+        public string ClaimsEmail;
+        public string ClaimsUserPhoto;
+        public string GetRedirectURI(Session session)
         {
-            URI += "&scope=openid" + HttpUtility.UrlEncode(" " + ExtraScopes);
+            return session.BaseURI.ToString() + "_OpenID/" + IdpID.ToString() + "/Login";
         }
-        else
+        public string GetRequestURI(Session session)
         {
-            URI += "&scope=openid";
-        }
-        URI += "&client_id=" +
-        HttpUtility.UrlEncode(ClientID) +
-        "&redirect_uri=" +
-        HttpUtility.UrlEncode(GetRedirectURI(session));
-        return URI;
-    }
-}
-public class JWT
-{
-    public Dictionary<string, object> Header;
-    public Dictionary<string, object> Payload;
-    public byte[] Signature;
-    public JWT(string RawToken)
-    {
-        try
-        {
-            string rJsonHeader;
-            string rJsonPayload;
-            string[] splitToken = RawToken.Split('.');
-            rJsonHeader = Encoding.Default.GetString(ConvertFromB64Url(splitToken[0]));
-            rJsonPayload = Encoding.Default.GetString(ConvertFromB64Url(splitToken[1]));
-            Header = JsonSerializer.Deserialize<Dictionary<string, object>>(rJsonHeader);
-            Payload = JsonSerializer.Deserialize<Dictionary<string, object>>(rJsonPayload);
-            Signature = ConvertFromB64Url(splitToken[2]);
-        }
-        catch (Exception)
-        {
-            throw new Exception("Failed to de-serialize the JsonWebToken.");
+            string URI =
+            EndpointAuthorization +
+            "?response_type=code";
+            if (ExtraScopes != null)
+            {
+                URI += "&scope=openid" + HttpUtility.UrlEncode(" " + ExtraScopes);
+            }
+            else
+            {
+                URI += "&scope=openid";
+            }
+            URI += "&client_id=" +
+            HttpUtility.UrlEncode(ClientID) +
+            "&redirect_uri=" +
+            HttpUtility.UrlEncode(GetRedirectURI(session));
+            return URI;
         }
     }
-    public static byte[] ConvertFromB64Url(string str)
+    public class JWT
     {
-        str = str.Replace('-', '+');
-        str = str.Replace('_', '/');
-        int padding = str.Length % 4;
-        if (padding == 3) str += "=";
-        if (padding == 2) str += "==";
-        return Convert.FromBase64String(str);
+        public Dictionary<string, object> Header;
+        public Dictionary<string, object> Payload;
+        public byte[] Signature;
+        public JWT(string RawToken)
+        {
+            try
+            {
+                string rJsonHeader;
+                string rJsonPayload;
+                string[] splitToken = RawToken.Split('.');
+                rJsonHeader = Encoding.Default.GetString(ConvertFromB64Url(splitToken[0]));
+                rJsonPayload = Encoding.Default.GetString(ConvertFromB64Url(splitToken[1]));
+                Header = JsonSerializer.Deserialize<Dictionary<string, object>>(rJsonHeader);
+                Payload = JsonSerializer.Deserialize<Dictionary<string, object>>(rJsonPayload);
+                Signature = ConvertFromB64Url(splitToken[2]);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Failed to de-serialize the JsonWebToken.");
+            }
+        }
+        public static byte[] ConvertFromB64Url(string str)
+        {
+            str = str.Replace('-', '+');
+            str = str.Replace('_', '/');
+            int padding = str.Length % 4;
+            if (padding == 3) str += "=";
+            if (padding == 2) str += "==";
+            return Convert.FromBase64String(str);
+        }
     }
-}
-public enum TokenHandleResult
-{
-    Success,
-    SubjectAlreadyBoundToAnotherAccount,
-    FailedToBindToCurrentUserAccount
+    public enum TokenHandleResult
+    {
+        Success,
+        SubjectAlreadyBoundToAnotherAccount,
+        FailedToBindToCurrentUserAccount
+    }
 }

@@ -29,9 +29,8 @@ public class Startup
         services.AddSingleton<EventHookGlobal>();
         services.AddScoped<EventHookScoped>();
         services.AddScoped<Session>();
-        services.AddScoped<User>();
+        services.AddScoped<Self>();
         services.AddScoped<Header>();
-        services.AddSingleton<PassHashQueue>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

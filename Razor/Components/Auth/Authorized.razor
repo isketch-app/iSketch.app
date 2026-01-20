@@ -1,5 +1,4 @@
-﻿@using iSketch.app.Classes.Access
-@inject User user
+﻿@inject Self Self
 @inject EventHookScoped EHS
 
 @if (AssignedRenderMode == RenderMode.InteractiveServer && IsAuthorized())
@@ -11,12 +10,12 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     [Parameter]
-    public Permission Permission { get; set; }
+    public Access.Permission Permission { get; set; }
     [Parameter]
     public bool Invert { get; set; } = false;
     private bool IsAuthorized()
     {
-        bool ret = user.Permissions.Contains(Permission);
+        bool ret = Self.Permissions.Contains(Permission);
         if (Invert) ret = !ret;
         return ret;
     }
