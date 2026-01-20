@@ -2,10 +2,8 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 
 namespace iSketch.app.Classes;
-
 
 public static class Access
 {
@@ -17,39 +15,32 @@ public static class Access
     public static ILogger Logger = Program.Host.Services.GetService<ILoggerFactory>().CreateLogger(typeof(Access).FullName);
     public static Permission[] ReadUserPermissionsFromDatabase(Guid UserID)
     {
-        SqlCommand sCmd = Database.NewConnection.CreateCommand();
-        try
-        {
-            List<Permission> access = new List<Permission>();
-            sCmd.Parameters.AddWithValue("@USERID@", UserID);
-            sCmd.CommandText = @"
-                    SELECT P.Permission FROM [Security.Users/Groups] UG
-                    JOIN [Security.Groups] G ON UG.GroupID = G.GroupID
-                    JOIN [Security.Groups/Permissions] GP ON UG.GroupID = GP.GroupID
-                    JOIN [Security.Permissions] P ON GP.PermissionID = P.PermissionID
-                    WHERE UG.UserID = @USERID@
-                ";
-            SqlDataReader sRead = sCmd.ExecuteReader();
-            if (sRead.HasRows)
+        List<Permission> access = new List<Permission>();
+        Database.ExecuteReader((cmd) => {
+            cmd.Parameters.AddWithValue("@USERID@", UserID);
+            cmd.CommandText = @"
+                SELECT P.Permission FROM [Security.Users/Groups] UG
+                JOIN [Security.Groups] G ON UG.GroupID = G.GroupID
+                JOIN [Security.Groups/Permissions] GP ON UG.GroupID = GP.GroupID
+                JOIN [Security.Permissions] P ON GP.PermissionID = P.PermissionID
+                WHERE UG.UserID = @USERID@
+            ";
+        }, (rdr) => {
+            if (rdr.HasRows)
             {
-                while (sRead.Read())
+                while (rdr.Read())
                 {
                     try
                     {
-                        access.Add(Enum.Parse<Permission>((string)sRead["Permission"]));
+                        access.Add(Enum.Parse<Permission>((string)rdr["Permission"]));
                     }
                     catch (Exception e)
                     {
-                        Logger.LogWarning(e, (string)sRead["Permission"] + ", is not a defined permission.");
+                        Logger.LogWarning(e, (string)rdr["Permission"] + ", is not a defined permission.");
                     }
                 }
             }
-            ;
-            return access.ToArray();
-        }
-        finally
-        {
-            sCmd.Connection.Close();
-        }
+        });
+        return access.ToArray();
     }
 }

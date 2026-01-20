@@ -13,26 +13,20 @@ public static class OpenID
 {
     public static List<idP> GetIDPs(bool includeDisabled = false)
     {
-        SqlCommand cmd = Database.NewConnection.CreateCommand();
-        cmd.CommandText = "SELECT IdpID FROM [Security.OpenID] ";
-        if (!includeDisabled)
-        {
-            cmd.CommandText += "WHERE Enabled = 1 ";
-        }
-        cmd.CommandText += "ORDER BY DisplayOrder";
         List<Guid> IdpIDs = new();
-        SqlDataReader rdr = cmd.ExecuteReader();
-        try
-        {
+        Database.ExecuteReader((cmd) => {
+            cmd.CommandText = "SELECT IdpID FROM [Security.OpenID] ";
+            if (!includeDisabled)
+            {
+                cmd.CommandText += "WHERE Enabled = 1 ";
+            }
+            cmd.CommandText += "ORDER BY DisplayOrder";
+        }, (rdr) => {
             while (rdr.Read())
             {
                 IdpIDs.Add(rdr.GetGuid(0));
             }
-        }
-        finally
-        {
-            cmd.Connection.Close();
-        }
+        });
         List<idP> IDPs = new();
         foreach (Guid IdpID in IdpIDs)
         {
@@ -42,46 +36,42 @@ public static class OpenID
     }
     public static idP GetIDP(Guid IdpID)
     {
-        idP idp;
-        SqlCommand cmd = Database.NewConnection.CreateCommand();
-        cmd.Parameters.AddWithValue("@IDPID@", IdpID);
-        cmd.CommandText =
-        "SELECT " +
-        "IdpID, " +
-        "DisplayName, " +
-        "Enabled, " +
-        "ClientID, " +
-        "ClientSecret, " +
-        "ExtraScopes, " +
-        "[Endpoint.Authorization], " +
-        "[Endpoint.Token], " +
-        "[Endpoint.Logout], " +
-        "[Claims.Email] " +
-        "FROM [Security.OpenID] WHERE IdpID = @IDPID@";
-        SqlDataReader rdr = cmd.ExecuteReader();
-        try
-        {
-            rdr.Read();
-            idp = new();
-            idp.IdpID = rdr.GetGuid(0);
-            idp.DisplayName = rdr.GetString(1);
-            idp.Enabled = rdr.GetBoolean(2);
-            idp.ClientID = rdr.GetString(3);
-            if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
-            if (!rdr.IsDBNull(5)) idp.ExtraScopes = rdr.GetString(5);
-            idp.EndpointAuthorization = rdr.GetString(6);
-            idp.EndpointToken = rdr.GetString(7);
-            if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
-            if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
-        }
-        catch (Exception)
-        {
-            idp = null;
-        }
-        finally
-        {
-            cmd.Connection.Close();
-        }
+        idP idp = new();
+        Database.ExecuteReader((cmd) => {
+            cmd.Parameters.AddWithValue("@IDPID@", IdpID);
+            cmd.CommandText =
+            "SELECT " +
+            "IdpID, " +
+            "DisplayName, " +
+            "Enabled, " +
+            "ClientID, " +
+            "ClientSecret, " +
+            "ExtraScopes, " +
+            "[Endpoint.Authorization], " +
+            "[Endpoint.Token], " +
+            "[Endpoint.Logout], " +
+            "[Claims.Email] " +
+            "FROM [Security.OpenID] WHERE IdpID = @IDPID@";
+        }, (rdr) => {
+            try
+            {
+                rdr.Read();
+                idp.IdpID = rdr.GetGuid(0);
+                idp.DisplayName = rdr.GetString(1);
+                idp.Enabled = rdr.GetBoolean(2);
+                idp.ClientID = rdr.GetString(3);
+                if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
+                if (!rdr.IsDBNull(5)) idp.ExtraScopes = rdr.GetString(5);
+                idp.EndpointAuthorization = rdr.GetString(6);
+                idp.EndpointToken = rdr.GetString(7);
+                if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
+                if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
+            }
+            catch (Exception)
+            {
+                idp = null;
+            }
+        });
         return idp;
     }
     public static TokenHandleResult HandleIdpIdToken(Session session, idP idP, JWT JWT)

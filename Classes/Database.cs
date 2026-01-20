@@ -21,4 +21,34 @@ public static class Database
             return con;
         }
     }
+    public static void ExecuteReader(Action<SqlCommand> Command, Action<SqlDataReader> Reader)
+    {
+        SqlConnection connection = NewConnection;
+        SqlCommand command = connection.CreateCommand();
+        Command.Invoke(command);
+        SqlDataReader reader = command.ExecuteReader();
+        Reader.Invoke(reader);
+        reader.Close();
+        command.Dispose();
+        connection.Close();
+    }
+    public static object ExecuteScaler(Action<SqlCommand> Command)
+    {
+        SqlConnection connection = NewConnection;
+        SqlCommand command = connection.CreateCommand();
+        Command.Invoke(command);
+        object result =  command.ExecuteScalar();
+        command.Dispose();
+        connection.Close();
+        return result;
+    }
+    public static void ExecuteNonQuery(Action<SqlCommand> Command)
+    {
+        SqlConnection connection = NewConnection;
+        SqlCommand command = connection.CreateCommand();
+        Command.Invoke(command);
+        command.ExecuteNonQuery();
+        command.Dispose();
+        connection.Close();
+    }
 }
