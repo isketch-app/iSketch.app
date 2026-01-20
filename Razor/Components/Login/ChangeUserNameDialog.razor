@@ -23,7 +23,7 @@
     public async Task SetUserName()
     {
         Warning = "";
-        SetUserNameResult result = UserTools.SetUserName(user.Session.db, user.Session.UserID, UserName);
+        SetUserNameResult result = UserHelpers.SetUserName(user.Session.UserID, UserName);
         if (result == SetUserNameResult.UserNameInvalid)
         {
             Warning = "The name entered is not valid.";

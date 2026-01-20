@@ -1,14 +1,12 @@
-﻿@inject Database db;
-@inject NavigationManager nm;
+﻿@inject NavigationManager nm;
 @inject IJSRuntime js;
 @inject EventHookGlobal eh;
 
 <ListPage 
     PageTitle="Difficulties"
     PageNumber="PageNumber"
-    DB="db"
     PagePath="/Administration/Difficulties"
-    From="[Words.Difficulties]"
+    From="[Game.Words.Difficulties]"
     VisibleRows='new List<string>() { "[DifficultyID]", "[Name]", "[ScoreMultiplier]", "[Enabled]", "[Default]" }'
     VisibleRowsTitles='new List<string>() { "DifficultyID", "Name", "Score Multiplier", "Enabled", "Default" }'
 />

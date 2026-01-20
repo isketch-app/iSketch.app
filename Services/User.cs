@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using iSketch.app.Classes.Access;
 using iSketch.app.Classes.User;
+using iSketch.app.Classes;
 
 namespace iSketch.app.Services {
     public class User
@@ -10,12 +11,10 @@ namespace iSketch.app.Services {
         public Permission[] Permissions;
         public string UserName;
         public Guid ProfilePictureID;
-        private Database Database;
         private PassHashQueue PHQ;
         private EventHookScoped EHS;
-        public User(Session Session, Database Database, PassHashQueue PHQ, EventHookScoped EHS)
+        public User(Session Session, PassHashQueue PHQ, EventHookScoped EHS)
         {
-            this.Database = Database;
             this.Session = Session;
             this.PHQ = PHQ;
             this.EHS = EHS;
@@ -27,7 +26,7 @@ namespace iSketch.app.Services {
         }
         public void ReloadUserData()
         {
-            Permissions = Database.ReadUserPermissionsFromDatabase(Session.UserID);
+            Permissions = AccessHelpers.ReadUserPermissionsFromDatabase(Session.UserID);
             UserName = null;
             ProfilePictureID = Guid.Empty;
             SqlCommand cmd = Database.NewConnection.CreateCommand();
@@ -51,15 +50,15 @@ namespace iSketch.app.Services {
         }
         public bool Logon(Guid UserID)
         {
-            bool success = UserTools.Logon(Session, UserID);
+            bool success = UserHelpers.Logon(Session, UserID);
             Init();
             EHS.OnLoginLogoutStatusChanged();
             return success;
         }
         public bool Logon(string UserName, string Password)
         {
-            Guid UserID = UserTools.GetUserID(Database, UserName);
-            if (UserTools.TestPassword(Database, PHQ, UserID, Password))
+            Guid UserID = UserHelpers.GetUserID(UserName);
+            if (UserHelpers.TestPassword(PHQ, UserID, Password))
             {
                 return Logon(UserID);
             }
@@ -70,30 +69,30 @@ namespace iSketch.app.Services {
         }
         public bool Logoff()
         {
-            bool success = UserTools.Logoff(Session);
+            bool success = UserHelpers.Logoff(Session);
             Init();
             EHS.OnLoginLogoutStatusChanged();
             return success;
         }
         public bool ChangePassword(string NewPassword = null)
         {
-            return UserTools.ChangePassword(Database, PHQ, Session.UserID, NewPassword);
+            return UserHelpers.ChangePassword(PHQ, Session.UserID, NewPassword);
         }
         public bool TestPassword(string Password)
         {
-            return UserTools.TestPassword(Database, PHQ, Session.UserID, Password);
+            return UserHelpers.TestPassword(PHQ, Session.UserID, Password);
         }
         public bool SetProperty(UserProperties Property, string Value)
         {
-            return UserTools.SetUserProperty(Database, Session.UserID, Property, Value);
+            return UserHelpers.SetUserProperty(Session.UserID, Property, Value);
         }
         public bool SetProperty(UserProperties Property, Guid Value)
         {
-            return UserTools.SetUserProperty(Database, Session.UserID, Property, Value);
+            return UserHelpers.SetUserProperty(Session.UserID, Property, Value);
         }
         public object GetProperty(UserProperties Property)
         {
-            return UserTools.GetUserProperty(Database, Session.UserID, Property);
+            return UserHelpers.GetUserProperty(Session.UserID, Property);
         }
     }
 }

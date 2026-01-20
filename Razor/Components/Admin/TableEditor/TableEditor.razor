@@ -118,8 +118,6 @@
 
 @code {
     [Parameter]
-    public Database DB { get; set; }
-    [Parameter]
     public string From { get; set; } = "";
     [Parameter]
     public string PagePath { get; set; } = "";
@@ -188,7 +186,7 @@
     }
     private void ReQueryTable()
     {
-        SqlConnection SQLCon = DB.NewConnection;
+        SqlConnection SQLCon = Database.NewConnection;
         try
         {
             string SVRows = "";

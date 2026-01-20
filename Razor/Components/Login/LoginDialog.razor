@@ -1,10 +1,9 @@
-﻿@using System.Net.Mail;
+﻿@using System.Net.Mail
 @inject Services.User user
-@inject Services.Database db
-@inject NavigationManager nm;
-@inject Services.Session session;  
-@inject Services.PassHashQueue phq; 
-@inject EventHookScoped ehs;
+@inject NavigationManager nm
+@inject Services.Session session
+@inject Services.PassHashQueue phq
+@inject EventHookScoped ehs
 
 @using iSketch.app.Classes.OpenID;
 
@@ -19,7 +18,7 @@
                 <h3>Ready to sketch?</h3>
                 <h4>Select an option to continue with:</h4>
                 <div class="idp-buttons">
-                    @foreach (idP idP in Classes.OpenID.Helpers.GetIDPs(db))
+                    @foreach (idP idP in Classes.OpenID.OpenIDHelpers.GetIDPs())
                     {
                         <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => { nm.NavigateTo(idP.GetRequestURI(session));   }'>@idP.DisplayName</CButton>
                     }
@@ -158,7 +157,7 @@
             Warning = "Your passwords do not match.";
             return;
         }
-        if (!UserTools.IsValidUserIDString(UserName))
+        if (!UserHelpers.IsValidUserIDString(UserName))
         {
             Warning = "The user name entered is invalid.";
             return;
@@ -169,10 +168,10 @@
             Warning = "You entered an invalid email address.";
             return;
         }
-        Guid uid = UserTools.GetUserID(db, UserName);
+        Guid uid = UserHelpers.GetUserID(UserName);
         if (uid != Guid.Empty)
         {
-            UserAuthMethodsResult methods = UserTools.GetUserAuthenticationMethods(db, uid);
+            UserAuthMethodsResult methods = UserHelpers.GetUserAuthenticationMethods(uid);
             if (methods.Methods != UserAuthMethods.None)
             {
                 Warning = "User Name is already taken.";
@@ -181,28 +180,28 @@
         }
         else
         {
-            uid = UserTools.CreateUser(db, UserName);
+            uid = UserHelpers.CreateUser(UserName);
         }
         if (mail != null)
         {
-            UserTools.SetUserProperty(db, uid, UserProperties.Email, mail.Address);
+            UserHelpers.SetUserProperty(uid, UserProperties.Email, mail.Address);
         }
-        await Task.Run<bool>(() => UserTools.ChangePassword(db, phq, uid, Password));
+        await Task.Run<bool>(() => UserHelpers.ChangePassword(phq, uid, Password));
         user.Logon(uid);
         await Dialog.FadeOut();
     }
     private async Task ISSignGuest()
     {
         Warning = "";
-        if (!UserTools.IsValidUserIDString(UserName))
+        if (!UserHelpers.IsValidUserIDString(UserName))
         {
             Warning = "The user name entered is invalid.";
             return;
         }
-        Guid uid = UserTools.GetUserID(db, UserName);
+        Guid uid = UserHelpers.GetUserID(UserName);
         if (uid != Guid.Empty)
         {
-            UserAuthMethodsResult methods = UserTools.GetUserAuthenticationMethods(db, uid);
+            UserAuthMethodsResult methods = UserHelpers.GetUserAuthenticationMethods(uid);
             if (methods.Methods != UserAuthMethods.None)
             {
                 Warning = "User Name is already taken.";
@@ -211,7 +210,7 @@
         }
         else
         {
-            uid = UserTools.CreateUser(db, UserName);
+            uid = UserHelpers.CreateUser(UserName);
         }
         user.Logon(uid);
         await Dialog.FadeOut();

@@ -1,5 +1,4 @@
-﻿@inject Database db;
-@inject NavigationManager nm;
+﻿@inject NavigationManager nm;
 @inject IJSRuntime js;
 @inject EventHookGlobal eh;
 @using Microsoft.Data.SqlClient;
@@ -64,9 +63,8 @@
 <ListPage 
     PageTitle="Words List"
     PageNumber="PageNumber"
-    DB="db"
     PagePath="/Administration/Words"
-    From="Words"
+    From="[Game.Words]"
     VisibleRows='new List<string>() { "WordID", "Word" }'
     VisibleRowsTitles='new List<string>() { "WordID", "Word" }'
 />
@@ -88,7 +86,7 @@
     {
         InitDifficultyValue = InitWordValue = InitScoreValue = "";
         if (!Guid.TryParse(WordID, out Guid id)) return 1;
-        SqlCommand cmd = db.NewConnection.CreateCommand();
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
             cmd.CommandText = "SELECT TOP(1) Word, Score, Difficulty FROM [Words.Game.Difficulties.Splice] WHERE WordID = '" + id.ToString() + "'";
@@ -129,7 +127,7 @@
             if (!Guid.TryParse(WordID, out Guid id)) return;
             string word = FilterWord(WordValue.Value);
             if (word == "") return;
-            SqlCommand cmd = db.NewConnection.CreateCommand();
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 cmd.CommandText = "UPDATE [Words.Game] SET Word = @WORD, Score = " + ScoreValue.Value + " WHERE WordID = '" + id.ToString() + "'";
@@ -158,7 +156,7 @@
     private async void DeleteWord()
     {
         if (!Guid.TryParse(WordID, out Guid id)) return;
-        SqlCommand cmd = db.NewConnection.CreateCommand();
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
             cmd.CommandText = "DELETE FROM [Words.Game] WHERE WordID = '" + id.ToString() + "'";
@@ -175,7 +173,7 @@
     {
         string word = FilterWord(WordValue.Value);
         if (word == "") return;
-        SqlCommand cmd = db.NewConnection.CreateCommand();
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
             cmd.CommandText = "INSERT INTO [Words.Game] (Word, Score) VALUES(@WORD, @SCORE)";

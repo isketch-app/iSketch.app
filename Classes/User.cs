@@ -2,17 +2,18 @@ using System;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using iSketch.app.Classes.PassHash;
 using iSketch.app.Services;
 using Microsoft.Data.SqlClient;
 
 namespace iSketch.app.Classes.User
 {
-    public static class UserTools
+    public static class UserHelpers
     {
         private static string UserNameRegex = "^[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]{3,25}$";
         public static bool Logon(Session session, Guid UserID)
         {
-            SqlCommand cmd = session.db.NewConnection.CreateCommand();
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 cmd.Parameters.AddWithValue("@USERID@", UserID);
@@ -36,7 +37,7 @@ namespace iSketch.app.Classes.User
         }
         public static bool Logoff(Session session)
         {
-            SqlCommand cmd = session.db.NewConnection.CreateCommand();
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 cmd.Parameters.AddWithValue("@SESSIONID@", session.SessionID);
@@ -55,7 +56,7 @@ namespace iSketch.app.Classes.User
                 cmd.Connection.Close();
             }
         }
-        public static bool TestPassword(Database Database, PassHashQueue PHQ, Guid UserID, string Password)
+        public static bool TestPassword(PassHashQueue PHQ, Guid UserID, string Password)
         {
             if (Password == "") Password = null;
             SqlCommand cmd = Database.NewConnection.CreateCommand();
@@ -93,7 +94,7 @@ namespace iSketch.app.Classes.User
                 cmd.Connection.Close();
             }
         }
-        public static bool ChangePassword(Database Database, PassHashQueue PHQ, Guid UserID, string NewPassword = null)
+        public static bool ChangePassword(PassHashQueue PHQ, Guid UserID, string NewPassword = null)
         {
             if (NewPassword == "") NewPassword = null;
             SqlCommand cmd = Database.NewConnection.CreateCommand();
@@ -125,7 +126,7 @@ namespace iSketch.app.Classes.User
                 cmd.Connection.Close();
             }
         }
-        public static Guid CreateUser(Database Database, string UserName = null)
+        public static Guid CreateUser(string UserName = null)
         {
             SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
@@ -148,7 +149,7 @@ namespace iSketch.app.Classes.User
                 cmd.Connection.Close();
             }
         }
-        public static bool SetUserProperty(Database Database, Guid UserID, UserProperties Property, object Value)
+        public static bool SetUserProperty(Guid UserID, UserProperties Property, object Value)
         {
             SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
@@ -170,7 +171,7 @@ namespace iSketch.app.Classes.User
                 cmd.Connection.Close();
             }
         }
-        public static object GetUserProperty(Database Database, Guid UserID, UserProperties Property)
+        public static object GetUserProperty(Guid UserID, UserProperties Property)
         {
             SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
@@ -190,7 +191,7 @@ namespace iSketch.app.Classes.User
                 cmd.Connection.Close();
             }
         }
-        public static Guid GetUserID(Database Database, string UserName)
+        public static Guid GetUserID(string UserName)
         {
             if (UserName == null) return Guid.Empty;
             SqlCommand cmd = Database.NewConnection.CreateCommand();
@@ -221,7 +222,7 @@ namespace iSketch.app.Classes.User
         {
             return Regex.IsMatch(UserName, UserNameRegex);
         }
-        public static UserAuthMethodsResult GetUserAuthenticationMethods(Database Database, Guid UserID)
+        public static UserAuthMethodsResult GetUserAuthenticationMethods(Guid UserID)
         {
             SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
@@ -251,17 +252,17 @@ namespace iSketch.app.Classes.User
                 cmd.Connection.Close();
             }
         }
-        public static bool SetUserEmail(Database Database, Guid UserID, MailAddress Email)
+        public static bool SetUserEmail(Guid UserID, MailAddress Email)
         {
             try
             {
-                string sEmail = (string)GetUserProperty(Database, UserID, UserProperties.Email);
+                string sEmail = (string)GetUserProperty(UserID, UserProperties.Email);
                 if (sEmail != null && MailAddress.TryCreate(sEmail, out MailAddress dbEmail))
                 {
                     if (Email.Address == dbEmail.Address) return true;
                 }
-                SetUserProperty(Database, UserID, UserProperties.EmailVerified, "false");
-                SetUserProperty(Database, UserID, UserProperties.Email, Email.Address);
+                SetUserProperty(UserID, UserProperties.EmailVerified, "false");
+                SetUserProperty(UserID, UserProperties.Email, Email.Address);
                 return true;
             }
             catch
@@ -269,18 +270,18 @@ namespace iSketch.app.Classes.User
                 return false;
             }
         }
-        public static SetUserNameResult SetUserName(Database Database, Guid UserID, string UserName)
+        public static SetUserNameResult SetUserName(Guid UserID, string UserName)
         {
             try
             {
                 if (!IsValidUserIDString(UserName)) return SetUserNameResult.UserNameInvalid;
-                Guid uid = GetUserID(Database, UserName);
+                Guid uid = GetUserID(UserName);
                 if (uid != Guid.Empty)
                 {
-                    UserAuthMethodsResult methods = GetUserAuthenticationMethods(Database, uid);
+                    UserAuthMethodsResult methods = GetUserAuthenticationMethods(uid);
                     if (methods.Methods != UserAuthMethods.None) return SetUserNameResult.UserNameAlreadyTaken;
                 }
-                SetUserProperty(Database, UserID, UserProperties.UserName, UserName);
+                SetUserProperty(UserID, UserProperties.UserName, UserName);
                 return SetUserNameResult.Success;
             }
             catch

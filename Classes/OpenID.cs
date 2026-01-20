@@ -8,225 +8,224 @@ using System.Web;
 using iSketch.app.Services;
 using iSketch.app.Classes.User;
 
-namespace iSketch.app.Classes.OpenID
+namespace iSketch.app.Classes.OpenID;
+
+public static class OpenIDHelpers
 {
-    public static class Helpers
+    public static List<idP> GetIDPs(bool includeDisabled = false)
     {
-        public static List<idP> GetIDPs(Database db, bool includeDisabled = false)
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
+        cmd.CommandText = "SELECT IdpID FROM [Security.OpenID] ";
+        if (!includeDisabled)
         {
-            SqlCommand cmd = db.NewConnection.CreateCommand();
-            cmd.CommandText = "SELECT IdpID FROM [Security.OpenID] ";
-            if (!includeDisabled)
+            cmd.CommandText += "WHERE Enabled = 1 ";
+        }
+        cmd.CommandText += "ORDER BY DisplayOrder";
+        List<Guid> IdpIDs = new();
+        SqlDataReader rdr = cmd.ExecuteReader();
+        try
+        {
+            while (rdr.Read())
             {
-                cmd.CommandText += "WHERE Enabled = 1 ";
+                IdpIDs.Add(rdr.GetGuid(0));
             }
-            cmd.CommandText += "ORDER BY DisplayOrder";
-            List<Guid> IdpIDs = new();
+        }
+        finally
+        {
+            cmd.Connection.Close();
+        }
+        List<idP> IDPs = new();
+        foreach (Guid IdpID in IdpIDs)
+        {
+            IDPs.Add(GetIDP(IdpID));
+        }
+        return IDPs;
+    }
+    public static idP GetIDP(Guid IdpID)
+    {
+        idP idp;
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
+        cmd.Parameters.AddWithValue("@IDPID@", IdpID);
+        cmd.CommandText =
+        "SELECT " +
+        "IdpID, " +
+        "DisplayName, " +
+        "Enabled, " +
+        "ClientID, " +
+        "ClientSecret, " +
+        "ExtraScopes, " +
+        "[Endpoint.Authorization], " +
+        "[Endpoint.Token], " +
+        "[Endpoint.Logout], " +
+        "[Claims.Email] " +
+        "FROM [Security.OpenID] WHERE IdpID = @IDPID@";
+        SqlDataReader rdr = cmd.ExecuteReader();
+        try
+        {
+            rdr.Read();
+            idp = new();
+            idp.IdpID = rdr.GetGuid(0);
+            idp.DisplayName = rdr.GetString(1);
+            idp.Enabled = rdr.GetBoolean(2);
+            idp.ClientID = rdr.GetString(3);
+            if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
+            if (!rdr.IsDBNull(5)) idp.ExtraScopes = rdr.GetString(5);
+            idp.EndpointAuthorization = rdr.GetString(6);
+            idp.EndpointToken = rdr.GetString(7);
+            if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
+            if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
+        }
+        catch (Exception)
+        {
+            idp = null;
+        }
+        finally
+        {
+            cmd.Connection.Close();
+        }
+        return idp;
+    }
+    public static TokenHandleResult HandleIdpIdToken(Session session, idP idP, JWT JWT)
+    {
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
+        try
+        {
+            cmd.Parameters.AddWithValue("@IDPID@", idP.IdpID);
+            cmd.Parameters.AddWithValue("@SUBJECT@", JWT.Payload["sub"].ToString());
+            cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE [OpenID.IdpID] = @IDPID@ AND [OpenID.Subject] = @SUBJECT@";
             SqlDataReader rdr = cmd.ExecuteReader();
             try
             {
-                while (rdr.Read())
+                if (rdr.HasRows)
                 {
-                    IdpIDs.Add(rdr.GetGuid(0));
-                }
-            }
-            finally
-            {
-                cmd.Connection.Close();
-            }
-            List<idP> IDPs = new();
-            foreach (Guid IdpID in IdpIDs)
-            {
-                IDPs.Add(GetIDP(db, IdpID));
-            }
-            return IDPs;
-        }
-        public static idP GetIDP(Database db, Guid IdpID)
-        {
-            idP idp;
-            SqlCommand cmd = db.NewConnection.CreateCommand();
-            cmd.Parameters.AddWithValue("@IDPID@", IdpID);
-            cmd.CommandText =
-            "SELECT " +
-            "IdpID, " +
-            "DisplayName, " +
-            "Enabled, " +
-            "ClientID, " +
-            "ClientSecret, " +
-            "ExtraScopes, " +
-            "[Endpoint.Authorization], " +
-            "[Endpoint.Token], " +
-            "[Endpoint.Logout], " +
-            "[Claims.Email] " +
-            "FROM [Security.OpenID] WHERE IdpID = @IDPID@";
-            SqlDataReader rdr = cmd.ExecuteReader();
-            try
-            {
-                rdr.Read();
-                idp = new();
-                idp.IdpID = rdr.GetGuid(0);
-                idp.DisplayName = rdr.GetString(1);
-                idp.Enabled = rdr.GetBoolean(2);
-                idp.ClientID = rdr.GetString(3);
-                if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
-                if (!rdr.IsDBNull(5)) idp.ExtraScopes = rdr.GetString(5);
-                idp.EndpointAuthorization = rdr.GetString(6);
-                idp.EndpointToken = rdr.GetString(7);
-                if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
-                if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
-            }
-            catch (Exception)
-            {
-                idp = null;
-            }
-            finally
-            {
-                cmd.Connection.Close();
-            }
-            return idp;
-        }
-        public static TokenHandleResult HandleIdpIdToken(Session session, idP idP, JWT JWT)
-        {
-            SqlCommand cmd = session.db.NewConnection.CreateCommand();
-            try
-            {
-                cmd.Parameters.AddWithValue("@IDPID@", idP.IdpID);
-                cmd.Parameters.AddWithValue("@SUBJECT@", JWT.Payload["sub"].ToString());
-                cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE [OpenID.IdpID] = @IDPID@ AND [OpenID.Subject] = @SUBJECT@";
-                SqlDataReader rdr = cmd.ExecuteReader();
-                try
-                {
-                    if (rdr.HasRows)
+                    if (session.UserID == Guid.Empty)
                     {
-                        if (session.UserID == Guid.Empty)
-                        {
-                            rdr.Read();
-                            Guid UserID = rdr.GetGuid(0);
-                            rdr.Close();
-                            UserTools.Logon(session, UserID);
-                            HandleJwtClaims(session, idP, JWT);
-                            return TokenHandleResult.Success;
-                        }
-                        else
-                        {
-                            return TokenHandleResult.SubjectAlreadyBoundToAnotherAccount;
-                        }
+                        rdr.Read();
+                        Guid UserID = rdr.GetGuid(0);
+                        rdr.Close();
+                        UserHelpers.Logon(session, UserID);
+                        HandleJwtClaims(session, idP, JWT);
+                        return TokenHandleResult.Success;
+                    }
+                    else
+                    {
+                        return TokenHandleResult.SubjectAlreadyBoundToAnotherAccount;
                     }
                 }
-                finally
-                {
-                    rdr.Close();
-                }
-                if (session.UserID == Guid.Empty)
-                {
-                    Guid newUserID = UserTools.CreateUser(session.db);
-                    UserTools.Logon(session, newUserID);
-                }
-                cmd.Parameters.AddWithValue("@USERID@", session.UserID);
-                cmd.CommandText = "UPDATE [Security.Users] SET [OpenID.IdpID] = @IDPID@, [OpenID.Subject] = @SUBJECT@ WHERE UserID = @USERID@";
-                int affected = cmd.ExecuteNonQuery();
-                if (affected != 1)
-                {
-                    return TokenHandleResult.FailedToBindToCurrentUserAccount;
-                }
-                HandleJwtClaims(session, idP, JWT);
-                return TokenHandleResult.Success;
             }
             finally
             {
-                cmd.Connection.Close();
+                rdr.Close();
             }
-        }
-        private static bool HandleJwtClaims(Session Session, idP idP, JWT JWT)
-        {
-            if (
-                idP.ClaimsEmail != null &&
-                idP.ClaimsEmail != "" &&
-                JWT.Payload.TryGetValue(idP.ClaimsEmail, out object oClaimEmail) &&
-                MailAddress.TryCreate(oClaimEmail.ToString(), out MailAddress mailAddress)
-            )
+            if (session.UserID == Guid.Empty)
             {
-                UserTools.SetUserEmail(Session.db, Session.UserID, mailAddress);
+                Guid newUserID = UserHelpers.CreateUser();
+                UserHelpers.Logon(session, newUserID);
             }
-            return true;
+            cmd.Parameters.AddWithValue("@USERID@", session.UserID);
+            cmd.CommandText = "UPDATE [Security.Users] SET [OpenID.IdpID] = @IDPID@, [OpenID.Subject] = @SUBJECT@ WHERE UserID = @USERID@";
+            int affected = cmd.ExecuteNonQuery();
+            if (affected != 1)
+            {
+                return TokenHandleResult.FailedToBindToCurrentUserAccount;
+            }
+            HandleJwtClaims(session, idP, JWT);
+            return TokenHandleResult.Success;
+        }
+        finally
+        {
+            cmd.Connection.Close();
         }
     }
-    public class idP
+    private static bool HandleJwtClaims(Session Session, idP idP, JWT JWT)
     {
-        public Guid IdpID;
-        public string DisplayName;
-        public byte[] DisplayIcon;
-        public bool Enabled;
-        public string ClientID;
-        public string ClientSecret;
-        public string ExtraScopes;
-        public string EndpointAuthorization;
-        public string EndpointToken;
-        public string EndpointLogout;
-        public string ClaimsUserName;
-        public string ClaimsEmail;
-        public string ClaimsUserPhoto;
-        public string GetRedirectURI(Session session)
+        if (
+            idP.ClaimsEmail != null &&
+            idP.ClaimsEmail != "" &&
+            JWT.Payload.TryGetValue(idP.ClaimsEmail, out object oClaimEmail) &&
+            MailAddress.TryCreate(oClaimEmail.ToString(), out MailAddress mailAddress)
+        )
         {
-            return session.BaseURI.ToString() + "_OpenID/" + IdpID.ToString() + "/Login";
+            UserHelpers.SetUserEmail(Session.UserID, mailAddress);
         }
-        public string GetRequestURI(Session session)
-        {
-            string URI =
-            EndpointAuthorization +
-            "?response_type=code";
-            if (ExtraScopes != null)
-            {
-                URI += "&scope=openid" + HttpUtility.UrlEncode(" " + ExtraScopes);
-            }
-            else
-            {
-                URI += "&scope=openid";
-            }
-            URI += "&client_id=" +
-            HttpUtility.UrlEncode(ClientID) +
-            "&redirect_uri=" +
-            HttpUtility.UrlEncode(GetRedirectURI(session));
-            return URI;
-        }
+        return true;
     }
-    public class JWT
+}
+public class idP
+{
+    public Guid IdpID;
+    public string DisplayName;
+    public byte[] DisplayIcon;
+    public bool Enabled;
+    public string ClientID;
+    public string ClientSecret;
+    public string ExtraScopes;
+    public string EndpointAuthorization;
+    public string EndpointToken;
+    public string EndpointLogout;
+    public string ClaimsUserName;
+    public string ClaimsEmail;
+    public string ClaimsUserPhoto;
+    public string GetRedirectURI(Session session)
     {
-        public Dictionary<string, object> Header;
-        public Dictionary<string, object> Payload;
-        public byte[] Signature;
-        public JWT(string RawToken)
-        {
-            try
-            {
-                string rJsonHeader;
-                string rJsonPayload;
-                string[] splitToken = RawToken.Split('.');
-                rJsonHeader = Encoding.Default.GetString(ConvertFromB64Url(splitToken[0]));
-                rJsonPayload = Encoding.Default.GetString(ConvertFromB64Url(splitToken[1]));
-                Header = JsonSerializer.Deserialize<Dictionary<string, object>>(rJsonHeader);
-                Payload = JsonSerializer.Deserialize<Dictionary<string, object>>(rJsonPayload);
-                Signature = ConvertFromB64Url(splitToken[2]);
-            }
-            catch (Exception)
-            {
-                throw new Exception("Failed to de-serialize the JsonWebToken.");
-            }
-        }
-        public static byte[] ConvertFromB64Url(string str)
-        {
-            str = str.Replace('-', '+');
-            str = str.Replace('_', '/');
-            int padding = str.Length % 4;
-            if (padding == 3) str += "=";
-            if (padding == 2) str += "==";
-            return Convert.FromBase64String(str);
-        }
+        return session.BaseURI.ToString() + "_OpenID/" + IdpID.ToString() + "/Login";
     }
-    public enum TokenHandleResult
+    public string GetRequestURI(Session session)
     {
-        Success,
-        SubjectAlreadyBoundToAnotherAccount,
-        FailedToBindToCurrentUserAccount
+        string URI =
+        EndpointAuthorization +
+        "?response_type=code";
+        if (ExtraScopes != null)
+        {
+            URI += "&scope=openid" + HttpUtility.UrlEncode(" " + ExtraScopes);
+        }
+        else
+        {
+            URI += "&scope=openid";
+        }
+        URI += "&client_id=" +
+        HttpUtility.UrlEncode(ClientID) +
+        "&redirect_uri=" +
+        HttpUtility.UrlEncode(GetRedirectURI(session));
+        return URI;
     }
+}
+public class JWT
+{
+    public Dictionary<string, object> Header;
+    public Dictionary<string, object> Payload;
+    public byte[] Signature;
+    public JWT(string RawToken)
+    {
+        try
+        {
+            string rJsonHeader;
+            string rJsonPayload;
+            string[] splitToken = RawToken.Split('.');
+            rJsonHeader = Encoding.Default.GetString(ConvertFromB64Url(splitToken[0]));
+            rJsonPayload = Encoding.Default.GetString(ConvertFromB64Url(splitToken[1]));
+            Header = JsonSerializer.Deserialize<Dictionary<string, object>>(rJsonHeader);
+            Payload = JsonSerializer.Deserialize<Dictionary<string, object>>(rJsonPayload);
+            Signature = ConvertFromB64Url(splitToken[2]);
+        }
+        catch (Exception)
+        {
+            throw new Exception("Failed to de-serialize the JsonWebToken.");
+        }
+    }
+    public static byte[] ConvertFromB64Url(string str)
+    {
+        str = str.Replace('-', '+');
+        str = str.Replace('_', '/');
+        int padding = str.Length % 4;
+        if (padding == 3) str += "=";
+        if (padding == 2) str += "==";
+        return Convert.FromBase64String(str);
+    }
+}
+public enum TokenHandleResult
+{
+    Success,
+    SubjectAlreadyBoundToAnotherAccount,
+    FailedToBindToCurrentUserAccount
 }

@@ -2,25 +2,21 @@
 using Microsoft.Data.SqlClient;
 using System.Net;
 using System.Net.Sockets;
+using iSketch.app.Classes;
 
 namespace iSketch.app.Services
 {
     public class Session
     {
-        public Database db;
         public Guid SessionID = Guid.Empty;
         public byte[] SessionKey = Array.Empty<byte>();
         public Guid UserID = Guid.Empty;
         public IPAddress IPAddress;
         public Uri BaseURI;
         public bool Existing = false;
-        public Session(Database db = null)
-        {
-            this.db = db;
-        }
         public bool Test(Guid SessionID, byte[] SessionKey)
         {
-            SqlCommand cmd = db.NewConnection.CreateCommand();
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 cmd.Parameters.AddWithValue("@SESSID@", SessionID);
@@ -43,7 +39,7 @@ namespace iSketch.app.Services
         }
         public void UpdateInDatabase()
         {
-            SqlCommand cmd = db.NewConnection.CreateCommand();
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             try
             {
                 cmd.Parameters.AddWithValue("@SESSID@", SessionID);

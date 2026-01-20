@@ -1,12 +1,10 @@
-﻿@inject Database db;
-@inject NavigationManager nm;
+﻿@inject NavigationManager nm;
 @inject IJSRuntime js;
 @inject EventHookGlobal eh;
 
 <ListPage 
     PageTitle="Sessions"
     PageNumber="PageNumber"
-    DB="db"
     PagePath="/Administration/Sessions"
     From="[Security.Sessions]"
     InitialSortColumnAndDirection="-1"
