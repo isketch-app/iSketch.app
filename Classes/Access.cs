@@ -16,31 +16,35 @@ public static class Access
     public static Permission[] ReadUserPermissionsFromDatabase(Guid UserID)
     {
         List<Permission> access = new List<Permission>();
-        Database.ExecuteReader((cmd) => {
-            cmd.Parameters.AddWithValue("@USERID@", UserID);
-            cmd.CommandText = @"
+        Database.ExecuteReader(
+            CommandText: @"
                 SELECT P.Permission FROM [Security.Users/Groups] UG
                 JOIN [Security.Groups] G ON UG.GroupID = G.GroupID
                 JOIN [Security.Groups/Permissions] GP ON UG.GroupID = GP.GroupID
                 JOIN [Security.Permissions] P ON GP.PermissionID = P.PermissionID
                 WHERE UG.UserID = @USERID@
-            ";
-        }, (rdr) => {
-            if (rdr.HasRows)
+            ",
+            Parameters: [
+                new("@USERID@", UserID)
+            ],
+            Reader: (rdr) =>
             {
-                while (rdr.Read())
+                if (rdr.HasRows)
                 {
-                    try
+                    while (rdr.Read())
                     {
-                        access.Add(Enum.Parse<Permission>((string)rdr["Permission"]));
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.LogWarning(e, (string)rdr["Permission"] + ", is not a defined permission.");
+                        try
+                        {
+                            access.Add(Enum.Parse<Permission>((string)rdr["Permission"]));
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.LogWarning(e, (string)rdr["Permission"] + ", is not a defined permission.");
+                        }
                     }
                 }
             }
-        });
+        );
         return access.ToArray();
     }
 }

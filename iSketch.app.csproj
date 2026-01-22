@@ -30,11 +30,12 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Data/" />
     <Folder Include="SQL\Upgrade\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\commit" />
-    <EmbeddedResource Include="Data\icons.json" />
+    <EmbeddedResource Include="Resources\icons.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="wwwroot\.well-known\assetlinks.json">

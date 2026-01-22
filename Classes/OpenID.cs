@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
@@ -14,19 +13,24 @@ public static class OpenID
     public static List<idP> GetIDPs(bool includeDisabled = false)
     {
         List<Guid> IdpIDs = new();
-        Database.ExecuteReader((cmd) => {
-            cmd.CommandText = "SELECT IdpID FROM [Security.OpenID] ";
-            if (!includeDisabled)
+        Database.ExecuteReader(
+            CommandText: "SELECT IdpID FROM [Security.OpenID] ",
+            Command: (cmd) =>
             {
-                cmd.CommandText += "WHERE Enabled = 1 ";
-            }
-            cmd.CommandText += "ORDER BY DisplayOrder";
-        }, (rdr) => {
-            while (rdr.Read())
+                if (!includeDisabled)
+                {
+                    cmd.CommandText += "WHERE Enabled = 1 ";
+                }
+                cmd.CommandText += "ORDER BY DisplayOrder";
+            },
+            Reader: (rdr) =>
             {
-                IdpIDs.Add(rdr.GetGuid(0));
+                while (rdr.Read())
+                {
+                    IdpIDs.Add(rdr.GetGuid(0));
+                }
             }
-        });
+        );
         List<idP> IDPs = new();
         foreach (Guid IdpID in IdpIDs)
         {
@@ -37,94 +41,100 @@ public static class OpenID
     public static idP GetIDP(Guid IdpID)
     {
         idP idp = new();
-        Database.ExecuteReader((cmd) => {
-            cmd.Parameters.AddWithValue("@IDPID@", IdpID);
-            cmd.CommandText =
-            "SELECT " +
-            "IdpID, " +
-            "DisplayName, " +
-            "Enabled, " +
-            "ClientID, " +
-            "ClientSecret, " +
-            "ExtraScopes, " +
-            "[Endpoint.Authorization], " +
-            "[Endpoint.Token], " +
-            "[Endpoint.Logout], " +
-            "[Claims.Email] " +
-            "FROM [Security.OpenID] WHERE IdpID = @IDPID@";
-        }, (rdr) => {
-            try
+        Database.ExecuteReader(
+            CommandText: @"
+                SELECT
+                IdpID,
+                DisplayName,
+                Enabled,
+                ClientID,
+                ClientSecret,
+                ExtraScopes,
+                [Endpoint.Authorization],
+                [Endpoint.Token],
+                [Endpoint.Logout],
+                [Claims.Email]
+                FROM [Security.OpenID] WHERE IdpID = @IDPID@
+            ",
+            Parameters: [
+                new("@IDPID@", IdpID)
+            ],
+            Reader: (rdr) =>
             {
-                rdr.Read();
-                idp.IdpID = rdr.GetGuid(0);
-                idp.DisplayName = rdr.GetString(1);
-                idp.Enabled = rdr.GetBoolean(2);
-                idp.ClientID = rdr.GetString(3);
-                if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
-                if (!rdr.IsDBNull(5)) idp.ExtraScopes = rdr.GetString(5);
-                idp.EndpointAuthorization = rdr.GetString(6);
-                idp.EndpointToken = rdr.GetString(7);
-                if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
-                if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
+                try
+                {
+                    rdr.Read();
+                    idp.IdpID = rdr.GetGuid(0);
+                    idp.DisplayName = rdr.GetString(1);
+                    idp.Enabled = rdr.GetBoolean(2);
+                    idp.ClientID = rdr.GetString(3);
+                    if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
+                    if (!rdr.IsDBNull(5)) idp.ExtraScopes = rdr.GetString(5);
+                    idp.EndpointAuthorization = rdr.GetString(6);
+                    idp.EndpointToken = rdr.GetString(7);
+                    if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
+                    if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
+                }
+                catch (Exception)
+                {
+                    idp = null;
+                }
             }
-            catch (Exception)
-            {
-                idp = null;
-            }
-        });
+        );
         return idp;
     }
     public static TokenHandleResult HandleIdpIdToken(Session session, idP idP, JWT JWT)
     {
-        SqlCommand cmd = Database.NewConnection.CreateCommand();
-        try
+        string subject = JWT.Payload["sub"].ToString();
+        var UserID = Database.ExecuteScalar<Guid>(
+            CommandText: @"
+                SELECT UserID 
+                FROM [Security.Users] 
+                WHERE [OpenID.IdpID] = @IDPID@
+                AND [OpenID.Subject] = @SUBJECT@
+            ",
+            Parameters: [
+                new("@IDPID@", idP.IdpID),
+                new("@SUBJECT@", subject)
+            ]
+        );
+        if (UserID != Guid.Empty)
         {
-            cmd.Parameters.AddWithValue("@IDPID@", idP.IdpID);
-            cmd.Parameters.AddWithValue("@SUBJECT@", JWT.Payload["sub"].ToString());
-            cmd.CommandText = "SELECT UserID FROM [Security.Users] WHERE [OpenID.IdpID] = @IDPID@ AND [OpenID.Subject] = @SUBJECT@";
-            SqlDataReader rdr = cmd.ExecuteReader();
-            try
-            {
-                if (rdr.HasRows)
-                {
-                    if (session.UserID == Guid.Empty)
-                    {
-                        rdr.Read();
-                        Guid UserID = rdr.GetGuid(0);
-                        rdr.Close();
-                        User.Logon(session, UserID);
-                        HandleJwtClaims(session, idP, JWT);
-                        return TokenHandleResult.Success;
-                    }
-                    else
-                    {
-                        return TokenHandleResult.SubjectAlreadyBoundToAnotherAccount;
-                    }
-                }
-            }
-            finally
-            {
-                rdr.Close();
-            }
             if (session.UserID == Guid.Empty)
             {
-                Guid newUserID = User.CreateUser();
-                User.Logon(session, newUserID);
+                User.Logon(session, UserID);
+                HandleJwtClaims(session, idP, JWT);
+                return TokenHandleResult.Success;
             }
-            cmd.Parameters.AddWithValue("@USERID@", session.UserID);
-            cmd.CommandText = "UPDATE [Security.Users] SET [OpenID.IdpID] = @IDPID@, [OpenID.Subject] = @SUBJECT@ WHERE UserID = @USERID@";
-            int affected = cmd.ExecuteNonQuery();
-            if (affected != 1)
+            else
             {
-                return TokenHandleResult.FailedToBindToCurrentUserAccount;
+                return TokenHandleResult.SubjectAlreadyBoundToAnotherAccount;
             }
-            HandleJwtClaims(session, idP, JWT);
-            return TokenHandleResult.Success;
         }
-        finally
+        if (session.UserID == Guid.Empty)
         {
-            cmd.Connection.Close();
+            Guid newUserID = User.CreateUser();
+            User.Logon(session, newUserID);
         }
+        int affected = Database.ExecuteNonQuery(
+            CommandText: @"
+                UPDATE [Security.Users] SET
+                [OpenID.IdpID] = @IDPID@,
+                [OpenID.Subject] = @SUBJECT@
+                WHERE UserID = @USERID@
+            ",
+            Parameters: [
+                new("@IDPID@", idP.IdpID),
+                new("@SUBJECT@", subject),
+                new("@USERID@", session.UserID)
+            ]
+        );
+        if (affected != 1)
+        {
+            return TokenHandleResult.FailedToBindToCurrentUserAccount;
+        }
+        HandleJwtClaims(session, idP, JWT);
+        return TokenHandleResult.Success;
     }
     private static bool HandleJwtClaims(Session Session, idP idP, JWT JWT)
     {
@@ -213,6 +223,7 @@ public static class OpenID
     }
     public enum TokenHandleResult
     {
+        Unknown,
         Success,
         SubjectAlreadyBoundToAnotherAccount,
         FailedToBindToCurrentUserAccount

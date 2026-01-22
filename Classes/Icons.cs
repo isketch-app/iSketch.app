@@ -17,7 +17,7 @@ public static class Icons
             Table = JsonSerializer.Deserialize<Dictionary<string, int>>(
                 Assembly
                 .GetExecutingAssembly()
-                .GetManifestResourceStream("iSketch.app.Data.icons.json")
+                .GetManifestResourceStream("iSketch.app.Resources.icons.json")
             );
             Logger.LogInformation("Icons indexed.");
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using Microsoft.Data.SqlClient;
 
 namespace iSketch.app.Classes;
@@ -21,34 +22,57 @@ public static class Database
             return con;
         }
     }
-    public static void ExecuteReader(Action<SqlCommand> Command, Action<SqlDataReader> Reader)
-    {
-        SqlConnection connection = NewConnection;
-        SqlCommand command = connection.CreateCommand();
-        Command.Invoke(command);
-        SqlDataReader reader = command.ExecuteReader();
-        Reader.Invoke(reader);
-        reader.Close();
-        command.Dispose();
-        connection.Close();
+    public static void ExecuteReader(
+        string CommandText,
+        [Optional]
+        SqlParameter[] Parameters,
+        [Optional]
+        Action<SqlCommand> Command,
+        Action<SqlDataReader> Reader
+    ) {
+        using SqlConnection connection = NewConnection;
+        using SqlCommand command = connection.CreateCommand();
+        command.CommandText = CommandText;
+        if (Parameters != null) command.Parameters.AddRange(Parameters);
+        if (Command != null) Command(command);
+        using SqlDataReader reader = command.ExecuteReader();
+        Reader(reader);
     }
-    public static object ExecuteScaler(Action<SqlCommand> Command)
-    {
-        SqlConnection connection = NewConnection;
-        SqlCommand command = connection.CreateCommand();
-        Command.Invoke(command);
-        object result =  command.ExecuteScalar();
-        command.Dispose();
-        connection.Close();
-        return result;
+    public static T ExecuteScalar<T>(
+        string CommandText,
+        [Optional]
+        SqlParameter[] Parameters,
+        [Optional]
+        Action<SqlCommand> Command
+    ) {
+        using SqlConnection connection = NewConnection;
+        using SqlCommand command = connection.CreateCommand();
+        command.CommandText = CommandText;
+        if (Parameters != null) command.Parameters.AddRange(Parameters);
+        if (Command != null) Command(command);
+        var result = command.ExecuteScalar();
+        if (result == null)
+        {
+            return default;
+        } 
+        else
+        {
+            return (T)result;
+        }
+        
     }
-    public static void ExecuteNonQuery(Action<SqlCommand> Command)
-    {
-        SqlConnection connection = NewConnection;
-        SqlCommand command = connection.CreateCommand();
-        Command.Invoke(command);
-        command.ExecuteNonQuery();
-        command.Dispose();
-        connection.Close();
+    public static int ExecuteNonQuery(
+        string CommandText,
+        [Optional]
+        SqlParameter[] Parameters,
+        [Optional]
+        Action<SqlCommand> Command
+    ) {
+        using SqlConnection connection = NewConnection;
+        using SqlCommand command = connection.CreateCommand();
+        command.CommandText = CommandText;
+        if (Parameters != null) command.Parameters.AddRange(Parameters);
+        if (Command != null) Command(command);
+        return command.ExecuteNonQuery();
     }
 }
