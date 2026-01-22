@@ -1,6 +1,6 @@
 ﻿@using Microsoft.Data.SqlClient;
-@inject User User;
-@inject Database Database;
+@using static iSketch.app.Classes.User
+@inject Self Self;
 @inject EventHookScoped EventHookScoped;
 
 <Authenticated>
@@ -50,14 +50,14 @@
         set
         {
             rSelectedPictureID = value;
-            User.ProfilePictureID = value;
+            Self.ProfilePictureID = value;
             EventHookScoped.OnProfilePictureIDChanged();
         }
     }
 
     protected override void OnInitialized()
     {
-        SelectedPictureID = OriginalPictureID = User.ProfilePictureID;
+        SelectedPictureID = OriginalPictureID = Self.ProfilePictureID;
         ProfilePictures = GetProfilePictures();
         base.OnInitialized();
     }
@@ -82,7 +82,7 @@
     }
     private void SetProfilePicture(bool tryClose = false)
     {
-        if (User.SetProperty(UserProperties.ProfilePictureID, SelectedPictureID))
+        if (Self.SetProperty(UserProperties.ProfilePictureID, SelectedPictureID))
         {
             OriginalPictureID = SelectedPictureID;
             if (tryClose) _ = Dialog.FadeOut();

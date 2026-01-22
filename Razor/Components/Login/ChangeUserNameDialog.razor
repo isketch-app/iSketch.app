@@ -1,8 +1,8 @@
-﻿@inject Services.User user;
+﻿@inject Self Self;
 @inject EventHookScoped ehs; 
 
 <Authenticated>
-    @if (user.UserName.ToLower() == user.Session.UserID.ToString().ToLower())
+    @if (Self.UserName.ToLower() == Self.Session.UserID.ToString().ToLower())
     {
         <Dialog AllowBreakOut="false" Header="Choose a user name" @ref="Dialog">
             <Warning Message="@Warning" />
@@ -23,23 +23,23 @@
     public async Task SetUserName()
     {
         Warning = "";
-        SetUserNameResult result = UserTools.SetUserName(user.Session.db, user.Session.UserID, UserName);
-        if (result == SetUserNameResult.UserNameInvalid)
+        User.SetUserNameResult result = User.SetUserName(Self.Session.UserID, UserName);
+        if (result == User.SetUserNameResult.UserNameInvalid)
         {
             Warning = "The name entered is not valid.";
         }
-        if (result == SetUserNameResult.UserNameAlreadyTaken)
+        if (result == User.SetUserNameResult.UserNameAlreadyTaken)
         {
             Warning = "The name entered is already taken.";
         }
-        if (result == SetUserNameResult.UnknownFailure)
+        if (result == User.SetUserNameResult.UnknownFailure)
         {
             Warning = "Something went wrong, try a different name.";
         }
-        if (result == SetUserNameResult.Success)
+        if (result == User.SetUserNameResult.Success)
         {
             await Dialog.FadeOut();
-            user.ReloadUserData();
+            Self.ReloadUserData();
             ehs.OnLoginLogoutStatusChanged();
         }
     }

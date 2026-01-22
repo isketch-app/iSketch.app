@@ -1,4 +1,4 @@
-﻿@inject User user
+﻿@inject Self Self
 @inject EventHookScoped EHS
 
 @if (AssignedRenderMode == RenderMode.InteractiveServer && IsAuthenticated())
@@ -14,7 +14,7 @@
     private bool IsAuthenticated()
     {
         bool ret = false;
-        if (user.Session.UserID != Guid.Empty) ret = true;
+        if (Self.Session.UserID != Guid.Empty) ret = true;
         if (Invert) ret = !ret;
         return ret;
     }

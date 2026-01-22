@@ -1,3 +1,4 @@
+using iSketch.app.Classes;
 using iSketch.app.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
@@ -16,8 +17,7 @@ namespace iSketch.app.Endpoints {
                 await context.Response.WriteAsync("Invalid Photo Location.");
                 return;
             }
-            Database db = (Database)context.RequestServices.GetService(typeof(Database));
-            SqlCommand cmd = db.NewConnection.CreateCommand();
+            SqlCommand cmd = Database.NewConnection.CreateCommand();
             cmd.Parameters.AddWithValue("@ROWID@", context.Request.RouteValues["RowID"]);
             cmd.CommandText =
             "SELECT " + tar.PhotoColumnName + " " +

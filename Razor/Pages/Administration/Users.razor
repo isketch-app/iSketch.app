@@ -1,11 +1,9 @@
-﻿@inject Database db;
-@inject NavigationManager nm;
+﻿@inject NavigationManager nm;
 @inject IJSRuntime js;
 @inject EventHookGlobal eh;
 
 <ListPage PageTitle="UserID"
           PageNumber="PageNumber"
-          DB="db"
           PagePath="/Administration/Users"
           From="[Security.Users] U LEFT JOIN [Security.OpenID] O ON U.[OpenID.IdpID] = O.IdpID"
           PhotoEndpoints='new List<string>() { "profile-picture", "idP-icon" }'

@@ -10,9 +10,10 @@
         "IS_SQL_DatabaseName": "dev.iSketch.app",
         "IS_SQL_Pass": "dev.iSketch.app"
       },
-      "hotReloadEnabled": true,
+      "hotReloadEnabled": false,
       "applicationUrl": "https://localhost:5000",
-      "dotnetRunMessages": true
+      "dotnetRunMessages": false,
+      "launchBrowser": false
     }
   }
 }

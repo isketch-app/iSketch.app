@@ -1,4 +1,3 @@
-﻿@page "/Privacy";
-@inject Database db;
+﻿@page "/Privacy"
 
-@((MarkupString)db.GetProperty("IS_HTML_Policy_Privacy"))
+@((MarkupString)Properties.GetProperty("IS_HTML_Policy_Privacy"))
