@@ -1,10 +1,9 @@
-using iSketch.app.Classes;
-using iSketch.app.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using static iSketch.app.Classes.Photo;
+using static iSketch.app.Data.Photo;
+using System;
 
 namespace iSketch.app.Endpoints {
 
@@ -17,16 +16,13 @@ namespace iSketch.app.Endpoints {
                 await context.Response.WriteAsync("Invalid Photo Location.");
                 return;
             }
-            SqlCommand cmd = Database.NewConnection.CreateCommand();
-            cmd.Parameters.AddWithValue("@ROWID@", context.Request.RouteValues["RowID"]);
-            cmd.CommandText =
-            "SELECT " + tar.PhotoColumnName + " " +
-            "FROM " + tar.TableName + " " +
-            "WHERE " + tar.GuidColumnName + " = @ROWID@";
-            object rawPhoto = cmd.ExecuteScalar();
-            cmd.Connection.Close();
-            if (rawPhoto == null || rawPhoto.GetType() == typeof(System.DBNull)) return;
-            IImageFormat format = Image.DetectFormat((byte[])rawPhoto);
+            byte[] rawPhoto = await GetPhoto(tar, Guid.Parse((string)context.Request.RouteValues["RowID"]));
+            if (rawPhoto == null)
+            {
+                await context.Response.WriteAsync("Photo not found.");
+                return;
+            }
+            IImageFormat format = Image.DetectFormat(rawPhoto);
             if (format != null) context.Response.ContentType = format.DefaultMimeType;
             if (context.Request.Query.Keys.Contains("download"))
             {
@@ -40,7 +36,7 @@ namespace iSketch.app.Endpoints {
             {
                 context.Response.Headers.Append("Cache-Control", "public, max-age=2592000, immutable");
             }
-            await context.Response.Body.WriteAsync((byte[])rawPhoto, 0, ((byte[])rawPhoto).Length);
+            await context.Response.Body.WriteAsync(rawPhoto, 0, rawPhoto.Length);
         });
     }
 }

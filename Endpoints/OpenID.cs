@@ -17,7 +17,7 @@ namespace iSketch.app.Endpoints {
         public static async Task Endpoint(HttpContext con)
         {
             Session session = con.InitializeSession();
-            Classes.OpenID.idP idP = Classes.OpenID.GetIDP(Guid.Parse(con.Request.RouteValues["IdpID"].ToString()));
+            Classes.OpenID.idP idP = await Classes.OpenID.GetIDP(Guid.Parse(con.Request.RouteValues["IdpID"].ToString()));
             if (idP == null)
             {
                 con.Response.Redirect("/_Error/OpenID/idp-does-not-exist");
@@ -83,7 +83,7 @@ namespace iSketch.app.Endpoints {
                 con.Response.Redirect("/_Error/OpenID/jwt-invalid");
                 return;
             }
-            Classes.OpenID.TokenHandleResult result = Classes.OpenID.HandleIdpIdToken(session, idP, JWT);
+            Classes.OpenID.TokenHandleResult result = await Classes.OpenID.HandleIdpIdToken(session, idP, JWT);
             if (result != Classes.OpenID.TokenHandleResult.Success)
             {
 

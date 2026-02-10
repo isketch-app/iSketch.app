@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace iSketch.app.Classes;
 
@@ -13,10 +14,10 @@ public static class Access
         Words //Words administrator page.
     }
     public static ILogger Logger = Program.Host.Services.GetService<ILoggerFactory>().CreateLogger(typeof(Access).FullName);
-    public static Permission[] ReadUserPermissionsFromDatabase(Guid UserID)
+    public static async Task<Permission[]> ReadUserPermissionsFromDatabase(Guid UserID)
     {
         List<Permission> access = new List<Permission>();
-        Database.ExecuteReader(
+        await Database.ExecuteReader(
             CommandText: @"
                 SELECT P.Permission FROM [Security.Users/Groups] UG
                 JOIN [Security.Groups] G ON UG.GroupID = G.GroupID
@@ -27,11 +28,11 @@ public static class Access
             Parameters: [
                 new("@USERID@", UserID)
             ],
-            Reader: (rdr) =>
+            Reader: async (rdr) =>
             {
                 if (rdr.HasRows)
                 {
-                    while (rdr.Read())
+                    while (await rdr.ReadAsync())
                     {
                         try
                         {
