@@ -15,11 +15,7 @@ namespace iSketch.app.Services {
         {
             this.Session = Session;
             this.EHS = EHS;
-            Init().Wait();
-        }
-        public async Task Init()
-        {
-            await ReloadUserData();
+            Task.Run(async () => await ReloadUserData()).Wait();
         }
         public async Task ReloadUserData()
         {
@@ -48,7 +44,7 @@ namespace iSketch.app.Services {
         public async Task<bool> Logon(Guid UserID)
         {
             bool success = User.Logon(Session, UserID);
-            await Init();
+            await ReloadUserData();
             EHS.OnLoginLogoutStatusChanged();
             return success;
         }
@@ -67,7 +63,7 @@ namespace iSketch.app.Services {
         public async Task<bool> Logoff()
         {
             bool success = User.Logoff(Session);
-            await Init();
+            await ReloadUserData();
             EHS.OnLoginLogoutStatusChanged();
             return success;
         }

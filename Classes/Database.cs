@@ -36,7 +36,7 @@ public static class Database
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
         if (Command != null) Command(command);
-        using SqlDataReader reader = await command.ExecuteReaderAsync(); //THIS IS AN ISSUE FOR SOME REASON, MORE TESTING NEEDED (Try a simple call somewhere in startup to test if it hangs there.)
+        using SqlDataReader reader = await command.ExecuteReaderAsync();
         await Reader(reader);
     }
     public static async Task<T> ExecuteScalar<T>(
@@ -44,13 +44,13 @@ public static class Database
         [Optional]
         SqlParameter[] Parameters,
         [Optional]
-        Action<SqlCommand> Command
+        Func<SqlCommand, Task> Command
     ) {
         using SqlConnection connection = NewConnection;
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
-        if (Command != null) Command(command);
+        if (Command != null) await Command(command);
         var result = await command.ExecuteScalarAsync();
         if (result == null)
         {

@@ -16,7 +16,7 @@
     }
 </Authenticated>
 
-@code { 
+@code {
     public Dialog Dialog;
     public string Warning = "";
     public string UserName = "";
@@ -39,7 +39,7 @@
         if (result == User.SetUserNameResult.Success)
         {
             await Dialog.FadeOut();
-            Self.ReloadUserData();
+            await Self.ReloadUserData();
             ehs.OnLoginLogoutStatusChanged();
         }
     }

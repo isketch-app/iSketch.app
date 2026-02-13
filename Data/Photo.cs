@@ -7,16 +7,18 @@ namespace iSketch.app.Data;
 
 public static class Photo
 {
-    public static async Task<byte[]> GetPhoto(TableAndRow TAR, Guid ID)
+    public static async Task<byte[]> GetPhoto(string Endpoint, Guid ID)
     {
+        if (!Classes.Photo.Endpoints.ContainsKey(Endpoint)) return null;
+        PhotoTable table = Classes.Photo.Endpoints[Endpoint];
         return await ExecuteScalar<byte[]>(
             CommandText: $@"
-                SELECT {TAR.PhotoColumnName}
-                FROM {TAR.TableName}
-                WHERE {TAR.GuidColumnName} = @ROWID@
+                SELECT {table.PhotoColumnName}
+                FROM {table.TableName}
+                WHERE {table.GuidColumnName} = @ID@
             ",
             Parameters: [
-                new("@ROWID@", ID)
+                new("@ID@", ID)
             ]
         );
     }

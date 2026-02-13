@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
-using static iSketch.app.Classes.Photo;
 using static iSketch.app.Data.Photo;
 using System;
 
@@ -11,12 +10,10 @@ namespace iSketch.app.Endpoints {
     {
         public static RequestDelegate Endpoint = new(async (context) =>
         {
-            if (!Classes.Photo.Endpoints.TryGetValue(context.Request.RouteValues["TableAndRow"].ToString(), out TableAndRow tar))
-            {
-                await context.Response.WriteAsync("Invalid Photo Location.");
-                return;
-            }
-            byte[] rawPhoto = await GetPhoto(tar, Guid.Parse((string)context.Request.RouteValues["RowID"]));
+            byte[] rawPhoto = await GetPhoto(
+                context.Request.RouteValues["TableAndRow"].ToString(),
+                Guid.Parse((string)context.Request.RouteValues["RowID"])
+            );
             if (rawPhoto == null)
             {
                 await context.Response.WriteAsync("Photo not found.");
