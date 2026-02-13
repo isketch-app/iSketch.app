@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 
 namespace iSketch.app.Classes;
@@ -22,35 +23,35 @@ public static class Database
             return con;
         }
     }
-    public static void ExecuteReader(
+    public static async Task ExecuteReader(
         string CommandText,
         [Optional]
         SqlParameter[] Parameters,
         [Optional]
         Action<SqlCommand> Command,
-        Action<SqlDataReader> Reader
+        Func<SqlDataReader, Task> Reader
     ) {
         using SqlConnection connection = NewConnection;
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
         if (Command != null) Command(command);
-        using SqlDataReader reader = command.ExecuteReader();
-        Reader(reader);
+        using SqlDataReader reader = await command.ExecuteReaderAsync();
+        await Reader(reader);
     }
-    public static T ExecuteScalar<T>(
+    public static async Task<T> ExecuteScalar<T>(
         string CommandText,
         [Optional]
         SqlParameter[] Parameters,
         [Optional]
-        Action<SqlCommand> Command
+        Func<SqlCommand, Task> Command
     ) {
         using SqlConnection connection = NewConnection;
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
-        if (Command != null) Command(command);
-        var result = command.ExecuteScalar();
+        if (Command != null) await Command(command);
+        var result = await command.ExecuteScalarAsync();
         if (result == null)
         {
             return default;
@@ -61,7 +62,7 @@ public static class Database
         }
         
     }
-    public static int ExecuteNonQuery(
+    public static async Task<int> ExecuteNonQuery(
         string CommandText,
         [Optional]
         SqlParameter[] Parameters,
@@ -73,6 +74,6 @@ public static class Database
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
         if (Command != null) Command(command);
-        return command.ExecuteNonQuery();
+        return await command.ExecuteNonQueryAsync();
     }
 }

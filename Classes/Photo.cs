@@ -4,7 +4,7 @@ namespace iSketch.app.Classes;
 
 public static class Photo
 {
-    public static Dictionary<string, TableAndRow> Endpoints = new()
+    public static PhotoEndpoint Endpoints = new()
     {
         {
             "idP-icon",
@@ -24,10 +24,11 @@ public static class Photo
             }
         }
     };
-    public class TableAndRow
+    public class PhotoTable
     {
         public string PhotoColumnName;
         public string GuidColumnName;
         public string TableName;
     }
+    public class PhotoEndpoint : Dictionary<string, PhotoTable> { }
 }

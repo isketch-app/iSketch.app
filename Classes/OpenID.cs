@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Web;
 using iSketch.app.Services;
 
@@ -10,12 +11,12 @@ namespace iSketch.app.Classes;
 
 public static class OpenID
 {
-    public static List<idP> GetIDPs(bool includeDisabled = false)
+    public static async Task<List<idP>> GetIDPs(bool includeDisabled = false)
     {
         List<Guid> IdpIDs = new();
-        Database.ExecuteReader(
+        await Database.ExecuteReader(
             CommandText: "SELECT IdpID FROM [Security.OpenID] ",
-            Command: (cmd) =>
+            Command: async (cmd) =>
             {
                 if (!includeDisabled)
                 {
@@ -23,9 +24,9 @@ public static class OpenID
                 }
                 cmd.CommandText += "ORDER BY DisplayOrder";
             },
-            Reader: (rdr) =>
+            Reader: async (rdr) =>
             {
-                while (rdr.Read())
+                while (await rdr.ReadAsync())
                 {
                     IdpIDs.Add(rdr.GetGuid(0));
                 }
@@ -34,14 +35,14 @@ public static class OpenID
         List<idP> IDPs = new();
         foreach (Guid IdpID in IdpIDs)
         {
-            IDPs.Add(GetIDP(IdpID));
+            IDPs.Add(await GetIDP(IdpID));
         }
         return IDPs;
     }
-    public static idP GetIDP(Guid IdpID)
+    public static async Task<idP> GetIDP(Guid IdpID)
     {
         idP idp = new();
-        Database.ExecuteReader(
+        await Database.ExecuteReader(
             CommandText: @"
                 SELECT
                 IdpID,
@@ -59,11 +60,11 @@ public static class OpenID
             Parameters: [
                 new("@IDPID@", IdpID)
             ],
-            Reader: (rdr) =>
+            Reader: async (rdr) =>
             {
                 try
                 {
-                    rdr.Read();
+                    await rdr.ReadAsync();
                     idp.IdpID = rdr.GetGuid(0);
                     idp.DisplayName = rdr.GetString(1);
                     idp.Enabled = rdr.GetBoolean(2);
@@ -83,10 +84,10 @@ public static class OpenID
         );
         return idp;
     }
-    public static TokenHandleResult HandleIdpIdToken(Session session, idP idP, JWT JWT)
+    public static async Task<TokenHandleResult> HandleIdpIdToken(Session session, idP idP, JWT JWT)
     {
         string subject = JWT.Payload["sub"].ToString();
-        var UserID = Database.ExecuteScalar<Guid>(
+        var UserID = await Database.ExecuteScalar<Guid>(
             CommandText: @"
                 SELECT UserID 
                 FROM [Security.Users] 
@@ -116,19 +117,7 @@ public static class OpenID
             Guid newUserID = User.CreateUser();
             User.Logon(session, newUserID);
         }
-        int affected = Database.ExecuteNonQuery(
-            CommandText: @"
-                UPDATE [Security.Users] SET
-                [OpenID.IdpID] = @IDPID@,
-                [OpenID.Subject] = @SUBJECT@
-                WHERE UserID = @USERID@
-            ",
-            Parameters: [
-                new("@IDPID@", idP.IdpID),
-                new("@SUBJECT@", subject),
-                new("@USERID@", session.UserID)
-            ]
-        );
+        int affected = await Data.OpenID.SetIdpAndSubject(session.UserID, idP.IdpID, subject);
         if (affected != 1)
         {
             return TokenHandleResult.FailedToBindToCurrentUserAccount;

@@ -15,7 +15,7 @@
                 <h3>Ready to sketch?</h3>
                 <h4>Select an option to continue with:</h4>
                 <div class="idp-buttons">
-                    @foreach (OpenID.idP idP in OpenID.GetIDPs())
+                    @foreach (OpenID.idP idP in IDPs)
                     {
                         <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => { nm.NavigateTo(idP.GetRequestURI(session));   }'>@idP.DisplayName</CButton>
                     }
@@ -77,10 +77,11 @@
 }
 
 @code {
-    override protected void OnInitialized()
+    override protected async Task OnInitializedAsync()
     {
+        IDPs = await OpenID.GetIDPs();
         ehs.LoginButtonPressed += LoginButtonPressed;
-        base.OnInitialized();
+        await base.OnInitializedAsync();
     }
     private Stage rCurrentStage = Stage.SelectAnIDP;
     private Stage CurrentStage
@@ -101,6 +102,7 @@
     private string Password2 = "";
     private string Email = "";
     private string Warning = "";
+    private List<OpenID.idP> IDPs = [];
     private string[] Headers = new string[]
     {
         "Unknown",
@@ -184,7 +186,7 @@
             Classes.User.SetUserProperty(uid, Classes.User.UserProperties.Email, mail.Address);
         }
         await Task.Run<bool>(() => Classes.User.ChangePassword(uid, Password));
-        Self.Logon(uid);
+        await Self.Logon(uid);
         await Dialog.FadeOut();
     }
     private async Task ISSignGuest()
@@ -209,7 +211,7 @@
         {
             uid = Classes.User.CreateUser(UserName);
         }
-        Self.Logon(uid);
+        await Self.Logon(uid);
         await Dialog.FadeOut();
     }
     private void LoginButtonPressed(object o, EventArgs e)

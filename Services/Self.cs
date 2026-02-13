@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using iSketch.app.Classes;
 using Microsoft.Data.SqlClient;
 
@@ -14,15 +15,11 @@ namespace iSketch.app.Services {
         {
             this.Session = Session;
             this.EHS = EHS;
-            Init();
+            Task.Run(async () => await ReloadUserData()).Wait();
         }
-        public void Init()
+        public async Task ReloadUserData()
         {
-            ReloadUserData();
-        }
-        public void ReloadUserData()
-        {
-            Permissions = Access.ReadUserPermissionsFromDatabase(Session.UserID);
+            Permissions = await Access.ReadUserPermissionsFromDatabase(Session.UserID);
             UserName = null;
             ProfilePictureID = Guid.Empty;
             SqlCommand cmd = Database.NewConnection.CreateCommand();
@@ -44,29 +41,29 @@ namespace iSketch.app.Services {
                 cmd.Connection.Close();
             }
         }
-        public bool Logon(Guid UserID)
+        public async Task<bool> Logon(Guid UserID)
         {
-            bool success = Classes.User.Logon(Session, UserID);
-            Init();
+            bool success = User.Logon(Session, UserID);
+            await ReloadUserData();
             EHS.OnLoginLogoutStatusChanged();
             return success;
         }
-        public bool Logon(string UserName, string Password)
+        public async Task<bool> Logon(string UserName, string Password)
         {
             Guid UserID = User.GetUserID(UserName);
             if (User.TestPassword(UserID, Password))
             {
-                return Logon(UserID);
+                return await Logon(UserID);
             }
             else
             {
                 return false;
             }
         }
-        public bool Logoff()
+        public async Task<bool> Logoff()
         {
             bool success = User.Logoff(Session);
-            Init();
+            await ReloadUserData();
             EHS.OnLoginLogoutStatusChanged();
             return success;
         }
