@@ -1,28 +1,21 @@
-﻿@inject IJSRuntime JS;
-@inject NavigationManager NM;
+﻿@using Microsoft.AspNetCore.Components.Server.Circuits
+@inject IJSRuntime JS;
 
 <div class="isketch-timer-frame">
     <canvas width="110" height="110" class="isketch-timer" id="@GUID"></canvas>
 </div>
 
 @code {
+    //Cleanup code needed, before this would run DisposeGameObject in iSketchGame.js, need to think of something better.
     public string CurrentLocation;
     public string GUID = "x" + Guid.NewGuid().ToString();
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            CurrentLocation = NM.Uri;
-            NM.LocationChanged += Dispose;
             await JS.InvokeVoidAsync("iSketchGame.NewISketchTimer", "#" + GUID, GUID);
             OnTimerInitialized(EventArgs.Empty);
         }
-    }
-    public async void Dispose(object o, LocationChangedEventArgs e)
-    {
-        if (e.Location == CurrentLocation) return;
-        await JS.InvokeVoidAsync("iSketchGame.GameObjects." + GUID + ".stopTimer");
-        await JS.InvokeVoidAsync("iSketchGame.DisposeGameObject", GUID);
     }
     public async Task StartTimer()
     {

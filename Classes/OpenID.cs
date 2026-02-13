@@ -16,7 +16,7 @@ public static class OpenID
         List<Guid> IdpIDs = new();
         await Database.ExecuteReader(
             CommandText: "SELECT IdpID FROM [Security.OpenID] ",
-            Command: (cmd) =>
+            Command: async (cmd) =>
             {
                 if (!includeDisabled)
                 {
@@ -117,19 +117,7 @@ public static class OpenID
             Guid newUserID = User.CreateUser();
             User.Logon(session, newUserID);
         }
-        int affected = await Database.ExecuteNonQuery(
-            CommandText: @"
-                UPDATE [Security.Users] SET
-                [OpenID.IdpID] = @IDPID@,
-                [OpenID.Subject] = @SUBJECT@
-                WHERE UserID = @USERID@
-            ",
-            Parameters: [
-                new("@IDPID@", idP.IdpID),
-                new("@SUBJECT@", subject),
-                new("@USERID@", session.UserID)
-            ]
-        );
+        int affected = await Data.OpenID.SetIdpAndSubject(session.UserID, idP.IdpID, subject);
         if (affected != 1)
         {
             return TokenHandleResult.FailedToBindToCurrentUserAccount;
