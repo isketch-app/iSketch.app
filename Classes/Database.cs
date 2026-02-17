@@ -23,34 +23,36 @@ public static class Database
             return con;
         }
     }
-    public static async Task ExecuteReader(
+    public static async Task<T> ExecuteReader<T>(
         string CommandText,
         [Optional]
         SqlParameter[] Parameters,
         [Optional]
         Action<SqlCommand> Command,
-        Func<SqlDataReader, Task> Reader
+        Func<SqlDataReader, Task<T>> Reader
     ) {
-        using SqlConnection connection = NewConnection;
+        using SqlConnection connection = new(ConnectionString);
+        await connection.OpenAsync();
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
         if (Command != null) Command(command);
         using SqlDataReader reader = await command.ExecuteReaderAsync();
-        await Reader(reader);
+        return await Reader(reader);
     }
     public static async Task<T> ExecuteScalar<T>(
         string CommandText,
         [Optional]
         SqlParameter[] Parameters,
         [Optional]
-        Func<SqlCommand, Task> Command
+        Action<SqlCommand> Command
     ) {
-        using SqlConnection connection = NewConnection;
+        using SqlConnection connection = new(ConnectionString);
+        await connection.OpenAsync();
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
-        if (Command != null) await Command(command);
+        if (Command != null) Command(command);
         var result = await command.ExecuteScalarAsync();
         if (result == null)
         {
@@ -69,7 +71,8 @@ public static class Database
         [Optional]
         Action<SqlCommand> Command
     ) {
-        using SqlConnection connection = NewConnection;
+        using SqlConnection connection = new(ConnectionString);
+        await connection.OpenAsync();
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);

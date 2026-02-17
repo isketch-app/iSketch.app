@@ -4,13 +4,14 @@
 <Authenticated>
     @if (Self.UserName.ToLower() == Self.Session.UserID.ToString().ToLower())
     {
-        <Dialog AllowBreakOut="false" Header="Choose a user name" @ref="Dialog">
+        <Dialog Icon="signature" AllowBreakOut="false" Header="Choose a user name" @ref="Dialog">
             <Warning Message="@Warning" />
             <div class="px-300">
-                <div class="input"><CText Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText Icon="signature" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
             </div>
             <DialogButtonContainer SpaceEvenly="false">
-                <CButton Icon="check" Emphasis="CButton.EmphasisStyles.Low" OnClick="SetUserName">Done</CButton>
+                <CButton Icon="logout" Emphasis="CButton.EmphasisStyles.Low" OnClick="Self.Logoff">Sign out</CButton>
+                <CButton Icon="check" Emphasis="CButton.EmphasisStyles.Low" OnClick="SetUserName">Continue</CButton>
             </DialogButtonContainer>
         </Dialog>
     }

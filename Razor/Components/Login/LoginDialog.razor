@@ -1,4 +1,5 @@
 ﻿@using System.Net.Mail
+@using System.Threading
 @inject Self Self
 @inject NavigationManager nm
 @inject Services.Session session
@@ -15,9 +16,18 @@
                 <h3>Ready to sketch?</h3>
                 <h4>Select an option to continue with:</h4>
                 <div class="idp-buttons">
-                    @foreach (OpenID.idP idP in IDPs)
+                    @if (IDPs == null)
                     {
-                        <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => { nm.NavigateTo(idP.GetRequestURI(session));   }'>@idP.DisplayName</CButton>
+                        <CButton Emphasis="CButton.EmphasisStyles.Medium">
+                            <span class="spinner"></span>
+                        </CButton>
+                    }
+                    else
+                    {
+                        @foreach (OpenID.IDP idP in IDPs)
+                        {
+                            <CButton IconURL='@("/_Photo/idP-icon/" + idP.IdpID.ToString())' Emphasis="CButton.EmphasisStyles.Medium" OnClick='() => { nm.NavigateTo(idP.GetRequestURI(session));   }'>@idP.DisplayName</CButton>
+                        }
                     }
                     <CButton Icon="account_circle" Emphasis="CButton.EmphasisStyles.Medium" OnClick="() => CurrentStage = Stage.ISSignIn">Username / Password</CButton>
                 </div>
@@ -56,7 +66,7 @@
         @if (CurrentStage == Stage.ISSignGuest)
         {
             <div class="px-300">
-                <div class="input"><CText ClickOnEnter="continue" AutoFocus="true" Icon="account_circle" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
+                <div class="input"><CText ClickOnEnter="continue" AutoFocus="true" Icon="signature" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
             </div>
             <DialogButtonContainer>
                 <CButton Icon="arrow_back" Emphasis="CButton.EmphasisStyles.Low" OnClick="() => CurrentStage = Stage.SelectAnIDP">Back</CButton>
@@ -79,7 +89,7 @@
 @code {
     override protected async Task OnInitializedAsync()
     {
-        IDPs = await OpenID.GetIDPs();
+        IDPs = await Data.OpenID.GetIDPs();
         ehs.LoginButtonPressed += LoginButtonPressed;
         await base.OnInitializedAsync();
     }
@@ -102,7 +112,7 @@
     private string Password2 = "";
     private string Email = "";
     private string Warning = "";
-    private List<OpenID.idP> IDPs = [];
+    private List<OpenID.IDP> IDPs = null;
     private string[] Headers = new string[]
     {
         "Unknown",
@@ -116,10 +126,10 @@
     {
         "",
         "",
-        "",
-        "",
-        "",
-        ""
+        "person_edit",
+        "account_circle",
+        "signature",
+        "account_balance"
     };
     private enum Stage : int
     {
