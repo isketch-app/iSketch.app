@@ -6,99 +6,16 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using iSketch.app.Services;
+using static iSketch.app.Data.OpenID;
 
 namespace iSketch.app.Classes;
 
 public static class OpenID
 {
-    public static async Task<List<idP>> GetIDPs(bool includeDisabled = false)
-    {
-        List<Guid> IdpIDs = new();
-        await Database.ExecuteReader(
-            CommandText: "SELECT IdpID FROM [Security.OpenID] ",
-            Command: async (cmd) =>
-            {
-                if (!includeDisabled)
-                {
-                    cmd.CommandText += "WHERE Enabled = 1 ";
-                }
-                cmd.CommandText += "ORDER BY DisplayOrder";
-            },
-            Reader: async (rdr) =>
-            {
-                while (await rdr.ReadAsync())
-                {
-                    IdpIDs.Add(rdr.GetGuid(0));
-                }
-            }
-        );
-        List<idP> IDPs = new();
-        foreach (Guid IdpID in IdpIDs)
-        {
-            IDPs.Add(await GetIDP(IdpID));
-        }
-        return IDPs;
-    }
-    public static async Task<idP> GetIDP(Guid IdpID)
-    {
-        idP idp = new();
-        await Database.ExecuteReader(
-            CommandText: @"
-                SELECT
-                IdpID,
-                DisplayName,
-                Enabled,
-                ClientID,
-                ClientSecret,
-                ExtraScopes,
-                [Endpoint.Authorization],
-                [Endpoint.Token],
-                [Endpoint.Logout],
-                [Claims.Email]
-                FROM [Security.OpenID] WHERE IdpID = @IDPID@
-            ",
-            Parameters: [
-                new("@IDPID@", IdpID)
-            ],
-            Reader: async (rdr) =>
-            {
-                try
-                {
-                    await rdr.ReadAsync();
-                    idp.IdpID = rdr.GetGuid(0);
-                    idp.DisplayName = rdr.GetString(1);
-                    idp.Enabled = rdr.GetBoolean(2);
-                    idp.ClientID = rdr.GetString(3);
-                    if (!rdr.IsDBNull(4)) idp.ClientSecret = rdr.GetString(4);
-                    if (!rdr.IsDBNull(5)) idp.ExtraScopes = rdr.GetString(5);
-                    idp.EndpointAuthorization = rdr.GetString(6);
-                    idp.EndpointToken = rdr.GetString(7);
-                    if (!rdr.IsDBNull(8)) idp.EndpointLogout = rdr.GetString(8);
-                    if (!rdr.IsDBNull(9)) idp.ClaimsEmail = rdr.GetString(9);
-                }
-                catch (Exception)
-                {
-                    idp = null;
-                }
-            }
-        );
-        return idp;
-    }
-    public static async Task<TokenHandleResult> HandleIdpIdToken(Session session, idP idP, JWT JWT)
+    public static async Task<TokenHandleResult> HandleIdpIdToken(Session session, IDP idP, JWT JWT)
     {
         string subject = JWT.Payload["sub"].ToString();
-        var UserID = await Database.ExecuteScalar<Guid>(
-            CommandText: @"
-                SELECT UserID 
-                FROM [Security.Users] 
-                WHERE [OpenID.IdpID] = @IDPID@
-                AND [OpenID.Subject] = @SUBJECT@
-            ",
-            Parameters: [
-                new("@IDPID@", idP.IdpID),
-                new("@SUBJECT@", subject)
-            ]
-        );
+        var UserID = await GetUserIDFromIdpAndSubject(idP.IdpID, subject);
         if (UserID != Guid.Empty)
         {
             if (session.UserID == Guid.Empty)
@@ -117,7 +34,7 @@ public static class OpenID
             Guid newUserID = User.CreateUser();
             User.Logon(session, newUserID);
         }
-        int affected = await Data.OpenID.SetIdpAndSubject(session.UserID, idP.IdpID, subject);
+        int affected = await SetIdpAndSubject(session.UserID, idP.IdpID, subject);
         if (affected != 1)
         {
             return TokenHandleResult.FailedToBindToCurrentUserAccount;
@@ -125,7 +42,7 @@ public static class OpenID
         HandleJwtClaims(session, idP, JWT);
         return TokenHandleResult.Success;
     }
-    private static bool HandleJwtClaims(Session Session, idP idP, JWT JWT)
+    private static bool HandleJwtClaims(Session Session, IDP idP, JWT JWT)
     {
         if (
             idP.ClaimsEmail != null &&
@@ -138,7 +55,7 @@ public static class OpenID
         }
         return true;
     }
-    public class idP
+    public class IDP
     {
         public Guid IdpID;
         public string DisplayName;
@@ -177,6 +94,7 @@ public static class OpenID
             return URI;
         }
     }
+    public class IDPs : List<IDP> { }
     public class JWT
     {
         public Dictionary<string, object> Header;

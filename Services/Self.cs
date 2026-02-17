@@ -2,12 +2,14 @@
 using System.Threading.Tasks;
 using iSketch.app.Classes;
 using Microsoft.Data.SqlClient;
+using static iSketch.app.Data.Access;
+using static iSketch.app.Classes.Access;
 
 namespace iSketch.app.Services {
     public class Self
     {
         public Session Session;
-        public Access.Permission[] Permissions;
+        public Permissions Permissions;
         public string UserName;
         public Guid ProfilePictureID;
         private EventHookScoped EHS;
@@ -19,7 +21,7 @@ namespace iSketch.app.Services {
         }
         public async Task ReloadUserData()
         {
-            Permissions = await Access.ReadUserPermissionsFromDatabase(Session.UserID);
+            Permissions = await GetPermissionsFromUserID(Session.UserID);
             UserName = null;
             ProfilePictureID = Guid.Empty;
             SqlCommand cmd = Database.NewConnection.CreateCommand();

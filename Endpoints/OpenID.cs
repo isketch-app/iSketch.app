@@ -9,6 +9,8 @@ using iSketch.app.Classes;
 using iSketch.app.Services;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using static iSketch.app.Classes.OpenID;
+using static iSketch.app.Data.OpenID;
 
 namespace iSketch.app.Endpoints {
 
@@ -17,7 +19,7 @@ namespace iSketch.app.Endpoints {
         public static async Task Endpoint(HttpContext con)
         {
             Session session = con.InitializeSession();
-            Classes.OpenID.idP idP = await Classes.OpenID.GetIDP(Guid.Parse(con.Request.RouteValues["IdpID"].ToString()));
+            IDP idP = await GetIDP(Guid.Parse(con.Request.RouteValues["IdpID"].ToString()));
             if (idP == null)
             {
                 con.Response.Redirect("/_Error/OpenID/idp-does-not-exist");
@@ -30,9 +32,10 @@ namespace iSketch.app.Endpoints {
             }
             string code = con.Request.Query["code"];
             HttpClient hc = new();
-            HttpRequestMessage msg = new();
-            msg.RequestUri = new(idP.EndpointToken);
-            msg.Method = HttpMethod.Post;
+            HttpRequestMessage msg = new() {
+                RequestUri = new(idP.EndpointToken),
+                Method = HttpMethod.Post
+            };
             if (idP.ClientSecret != null)
             {
                 byte[] secret = Encoding.Default.GetBytes(HttpUtility.UrlEncode(idP.ClientID) + ":" + idP.ClientSecret);
@@ -73,7 +76,7 @@ namespace iSketch.app.Endpoints {
                 con.Response.Redirect("/_Error/OpenID/jwt-missing?idp_response=" + HttpUtility.UrlEncode(await new StreamReader(sResponse).ReadToEndAsync()));
                 return;
             }
-            Classes.OpenID.JWT JWT;
+            JWT JWT;
             try
             {
                 JWT = new(idToken.ToString());
@@ -83,8 +86,8 @@ namespace iSketch.app.Endpoints {
                 con.Response.Redirect("/_Error/OpenID/jwt-invalid");
                 return;
             }
-            Classes.OpenID.TokenHandleResult result = await Classes.OpenID.HandleIdpIdToken(session, idP, JWT);
-            if (result != Classes.OpenID.TokenHandleResult.Success)
+            TokenHandleResult result = await HandleIdpIdToken(session, idP, JWT);
+            if (result != TokenHandleResult.Success)
             {
 
                 con.Response.Redirect("/_Error/OpenID/" + result.ToString());
@@ -94,5 +97,4 @@ namespace iSketch.app.Endpoints {
             await Task.CompletedTask;
         }
     }
-
 }
