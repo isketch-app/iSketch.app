@@ -67,7 +67,7 @@ public static class OpenID
     {
         return await ExecuteReader(
             CommandText: $@"{IdpQuery}",
-            Command: (cmd) =>
+            Command: async (cmd) =>
             {
                 if (!IncludeDisabled)
                 {
