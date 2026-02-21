@@ -1,0 +1,14 @@
+﻿@using static Data.Properties
+
+@Markup
+
+@code {
+    [Parameter]
+    public string Property { get; set; } = "";
+    private MarkupString Markup;
+    protected override async Task OnInitializedAsync()
+    {
+        Markup = (MarkupString)(await GetProperty(Property));
+        await base.OnInitializedAsync();
+    }
+}

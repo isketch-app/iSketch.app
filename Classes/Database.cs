@@ -24,11 +24,12 @@ public static class Database
         }
     }
     public static async Task<T> ExecuteReader<T>(
+        [Optional]
         string CommandText,
         [Optional]
         SqlParameter[] Parameters,
         [Optional]
-        Action<SqlCommand> Command,
+        Func<SqlCommand, Task> Command,
         Func<SqlDataReader, Task<T>> Reader
     ) {
         using SqlConnection connection = new(ConnectionString);
@@ -36,23 +37,24 @@ public static class Database
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
-        if (Command != null) Command(command);
+        if (Command != null) await Command(command);
         using SqlDataReader reader = await command.ExecuteReaderAsync();
         return await Reader(reader);
     }
     public static async Task<T> ExecuteScalar<T>(
+        [Optional]
         string CommandText,
         [Optional]
         SqlParameter[] Parameters,
         [Optional]
-        Action<SqlCommand> Command
+        Func<SqlCommand, Task> Command
     ) {
         using SqlConnection connection = new(ConnectionString);
         await connection.OpenAsync();
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
-        if (Command != null) Command(command);
+        if (Command != null) await Command(command);
         var result = await command.ExecuteScalarAsync();
         if (result == null)
         {
@@ -65,18 +67,19 @@ public static class Database
         
     }
     public static async Task<int> ExecuteNonQuery(
+        [Optional]
         string CommandText,
         [Optional]
         SqlParameter[] Parameters,
         [Optional]
-        Action<SqlCommand> Command
+        Func<SqlCommand, Task> Command
     ) {
         using SqlConnection connection = new(ConnectionString);
         await connection.OpenAsync();
         using SqlCommand command = connection.CreateCommand();
         command.CommandText = CommandText;
         if (Parameters != null) command.Parameters.AddRange(Parameters);
-        if (Command != null) Command(command);
+        if (Command != null) await Command(command);
         return await command.ExecuteNonQueryAsync();
     }
 }
