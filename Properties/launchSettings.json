@@ -2,7 +2,6 @@
   "profiles": {
     "iSketch.app": {
       "commandName": "Project",
-      "launchUrl": "http://0.0.0.0:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "IS_SQL_ServerHost": "ba-mv-db1",

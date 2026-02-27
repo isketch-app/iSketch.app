@@ -64,7 +64,7 @@ public static class SessionHandler
                 IsEssential = true,
                 MaxAge = CookieMaxAge,
                 SameSite = SameSiteMode.Lax,
-                Secure = true
+                Secure = con.Request.IsHttps
             });
         }
         session.UpdateInDatabase();

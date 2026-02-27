@@ -29,27 +29,6 @@ var iSketchSite = {
     }
 }
 
-navigator.serviceWorker.register(
-    "./dynamic/sw.serviceworker.js", 
-    { scope: "/" }
-).then((e) => {
-    iSketchSite.ServiceWorker = e;
-    e.update();
-});
-
-navigator.serviceWorker.addEventListener('message', function(e) {
-    if (e.data.startsWith('SW_IS_DL')) {
-        iSketchSite.Elements.PageLoader.SetMessage('Downloading ' + e.data.replace('SW_IS_DL: ', '') + ' assets...');
-    }
-    if (e.data == 'SW_IS_RELOAD') {
-        iSketchSite.Elements.PageLoader.SetMessage('Reloading...');
-        setTimeout(function() {
-            location.reload();
-        }, (performance.now() * -1) + 1500);
-    }
-});
-
-
 document.addEventListener('click', function (e) {
     e.composedPath().every(function (t) {
         if (t.classList != undefined && t.classList.contains('CButton')) {
@@ -208,6 +187,29 @@ function MutationObserverCallback(list, observer) {
             }
         });
     });
+}
+
+if (navigator.serviceWorker != undefined) {
+    navigator.serviceWorker.register(
+        "./dynamic/sw.serviceworker.js", 
+        { scope: "/" }
+    ).then((e) => {
+        iSketchSite.ServiceWorker = e;
+        e.update();
+    });
+    navigator.serviceWorker.addEventListener('message', function(e) {
+        if (e.data.startsWith('SW_IS_DL')) {
+            iSketchSite.Elements.PageLoader.SetMessage('Downloading ' + e.data.replace('SW_IS_DL: ', '') + ' assets...');
+        }
+        if (e.data == 'SW_IS_RELOAD') {
+            iSketchSite.Elements.PageLoader.SetMessage('Reloading...');
+            setTimeout(function() {
+                location.reload();
+            }, (performance.now() * -1) + 1500);
+        }
+    });
+} else {
+    iSketchSite.Elements.PageLoader.Hide();
 }
 
 iSketchSite.MutationObserver.observe(document, {childList: true, subtree: true});
