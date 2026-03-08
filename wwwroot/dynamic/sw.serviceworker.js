@@ -20,7 +20,14 @@ self.addEventListener('fetch', function (event) {
     event.respondWith(
         caches.match(event.request).then(function (response) {
             if (response) return response;
-            return fetch(event.request);
+            return fetch(event.request).then(function (response) {
+                if (response.status >= 500 && response.status < 600) {
+                    return caches.match('/_Static/Offline');
+                }
+                return response;
+            }).catch(function () {
+                return caches.match('/_Static/Offline');
+            });
         }).catch(function () {
             return caches.match('/_Static/Offline');
         })

@@ -2,13 +2,20 @@
 
 <VCenter>
     <div class="icon">@Icons.Get("cloud_off")</div>
-    <h1>Cannot connect to iSketch.app.</h1>
-    <h3>Waiting for connection...</h3>
+    <h1>iSketch.app is not responding.</h1>
+    <h3>Attempting to reconnect...</h3>
     <div class="spinner"></div>
 </VCenter>
 
 <script>
-    setTimeout(function() {
-        location.reload();
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+        if (xhr.responseText === 'Healthy') {
+            location.reload();
+        }
+    };
+    setInterval(function() {
+        xhr.open('GET', '/_Health', true);
+        xhr.send();
     }, 3000);
 </script>
