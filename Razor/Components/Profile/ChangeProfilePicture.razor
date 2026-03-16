@@ -1,7 +1,7 @@
-﻿@using Microsoft.Data.SqlClient;
-@using static iSketch.app.Classes.User
-@inject Self Self;
-@inject EventHookScoped EventHookScoped;
+﻿@using Microsoft.Data.SqlClient
+@using static iSketch.app.Classes.Static.User
+@inject Services.User User
+@inject EventHookScoped EventHookScoped
 
 <Authenticated>
     <Dialog Icon="sticker" OnFadeOut="() => DialogClosing()" @ref="Dialog" Header="Set your account avatar">
@@ -50,14 +50,14 @@
         set
         {
             rSelectedPictureID = value;
-            Self.ProfilePictureID = value;
+            User.ProfilePictureID = value;
             EventHookScoped.OnProfilePictureIDChanged();
         }
     }
 
     protected override void OnInitialized()
     {
-        SelectedPictureID = OriginalPictureID = Self.ProfilePictureID;
+        SelectedPictureID = OriginalPictureID = User.ProfilePictureID;
         ProfilePictures = GetProfilePictures();
         base.OnInitialized();
     }
@@ -82,7 +82,7 @@
     }
     private void SetProfilePicture(bool tryClose = false)
     {
-        if (Self.SetProperty(UserProperties.ProfilePictureID, SelectedPictureID))
+        if (User.SetProperty(UserProperty.ProfilePictureID, SelectedPictureID))
         {
             OriginalPictureID = SelectedPictureID;
             if (tryClose) _ = Dialog.FadeOut();

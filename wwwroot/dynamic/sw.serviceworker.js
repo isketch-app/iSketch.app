@@ -2,7 +2,7 @@ var CACHE_NAME = ['is-cache-v$VERSION$-c$COMMIT$-h$HASH$'];
 
 var assets = $STATICJSON$;
 
-self.addEventListener('install', function (event) {
+User.addEventListener('install', function (event) {
     console.log("Downloading asset cache....");
     event.waitUntil((async () => {
         var count = 1;
@@ -12,11 +12,11 @@ self.addEventListener('install', function (event) {
             var response = await fetch(asset);
             await cache.put(asset, response.clone());
         }
-        await self.skipWaiting();
+        await User.skipWaiting();
     })());
 });
 
-self.addEventListener('fetch', function (event) {
+User.addEventListener('fetch', function (event) {
     event.respondWith(
         caches.match(event.request).then(function (response) {
             if (response) return response;
@@ -34,7 +34,7 @@ self.addEventListener('fetch', function (event) {
     );
 });
 
-self.addEventListener('activate', function (event) {
+User.addEventListener('activate', function (event) {
     console.log("Checking for and removing old cache(s)...");
     event.waitUntil(
         caches.keys().then(function (cacheNames) {
@@ -51,7 +51,7 @@ self.addEventListener('activate', function (event) {
 });
 
 function broadcast(message) {
-    self.clients.matchAll({includeUncontrolled: true}).then(function (clients) {
+    User.clients.matchAll({includeUncontrolled: true}).then(function (clients) {
         clients.forEach(function(client) {
             client.postMessage(message);
         });

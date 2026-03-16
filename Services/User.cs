@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
-using iSketch.app.Classes;
+using iSketch.app.Classes.Static;
 using Microsoft.Data.SqlClient;
 using static iSketch.app.Data.Access;
-using static iSketch.app.Classes.Access;
+using static iSketch.app.Classes.Static.Access;
 
 namespace iSketch.app.Services {
-    public class Self
+    public class User
     {
         public Session Session;
-        public Permissions Permissions;
+        public Permission[] Permissions;
         public string UserName;
         public Guid ProfilePictureID;
         private EventHookScoped EHS;
-        public Self(Session Session, EventHookScoped EHS)
+        public User(Session Session, EventHookScoped EHS)
         {
             this.Session = Session;
             this.EHS = EHS;
@@ -45,15 +45,15 @@ namespace iSketch.app.Services {
         }
         public async Task<bool> Logon(Guid UserID)
         {
-            bool success = User.Logon(Session, UserID);
+            bool success = Classes.Static.User.Logon(Session, UserID);
             await ReloadUserData();
             EHS.OnLoginLogoutStatusChanged();
             return success;
         }
         public async Task<bool> Logon(string UserName, string Password)
         {
-            Guid UserID = User.GetUserID(UserName);
-            if (User.TestPassword(UserID, Password))
+            Guid UserID = Classes.Static.User.GetUserID(UserName);
+            if (Classes.Static.User.TestPassword(UserID, Password))
             {
                 return await Logon(UserID);
             }
@@ -64,30 +64,30 @@ namespace iSketch.app.Services {
         }
         public async Task<bool> Logoff()
         {
-            bool success = User.Logoff(Session);
+            bool success = Classes.Static.User.Logoff(Session);
             await ReloadUserData();
             EHS.OnLoginLogoutStatusChanged();
             return success;
         }
         public bool ChangePassword(string NewPassword = null)
         {
-            return User.ChangePassword(Session.UserID, NewPassword);
+            return Classes.Static.User.ChangePassword(Session.UserID, NewPassword);
         }
         public bool TestPassword(string Password)
         {
-            return User.TestPassword(Session.UserID, Password);
+            return Classes.Static.User.TestPassword(Session.UserID, Password);
         }
-        public bool SetProperty(User.UserProperties Property, string Value)
+        public bool SetProperty(Classes.Static.User.UserProperty Property, string Value)
         {
-            return User.SetUserProperty(Session.UserID, Property, Value);
+            return Classes.Static.User.SetUserProperty(Session.UserID, Property, Value);
         }
-        public bool SetProperty(User.UserProperties Property, Guid Value)
+        public bool SetProperty(Classes.Static.User.UserProperty Property, Guid Value)
         {
-            return User.SetUserProperty(Session.UserID, Property, Value);
+            return Classes.Static.User.SetUserProperty(Session.UserID, Property, Value);
         }
-        public object GetProperty(User.UserProperties Property)
+        public object GetProperty(Classes.Static.User.UserProperty Property)
         {
-            return User.GetUserProperty(Session.UserID, Property);
+            return Classes.Static.User.GetUserProperty(Session.UserID, Property);
         }
     }
 }

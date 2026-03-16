@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class Database
 {

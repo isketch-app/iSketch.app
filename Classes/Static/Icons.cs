@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class Icons
 {

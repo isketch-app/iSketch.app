@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class Dynamic
 {

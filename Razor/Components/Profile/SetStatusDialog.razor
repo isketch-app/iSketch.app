@@ -1,10 +1,10 @@
-﻿@using static iSketch.app.Classes.User
-@inject Self Self;
+﻿@using static iSketch.app.Classes.Static.User
+@inject Services.User User
 
 <Authenticated>
     <Dialog Icon="campaign" OnFadeOut="OnFadeOut" @ref="Dialog" Header="Set status message">
         <Warning Message="@Warning" />
-        <p>What's on your mind, @(Self.UserName)?</p>
+        <p>What's on your mind, @(User.UserName)?</p>
         <CText Value="@Biography" ValueChanged='(v) => Biography = v' Icon="campaign" />
         <DialogButtonContainer>
             <SavAppCan OnCancelClick='() => Dialog.FadeOut()'
@@ -26,7 +26,7 @@
 
     private void SetBiography(bool tryClose = false)
     {
-        bool success = Self.SetProperty(UserProperties.Biography, Biography);
+        bool success = User.SetProperty(UserProperty.Biography, Biography);
         if (tryClose) _ = Dialog.FadeOut();
         if (success)
         {

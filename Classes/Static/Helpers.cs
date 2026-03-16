@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class Helpers
 {

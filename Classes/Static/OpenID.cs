@@ -8,7 +8,7 @@ using System.Web;
 using iSketch.app.Services;
 using static iSketch.app.Data.OpenID;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class OpenID
 {

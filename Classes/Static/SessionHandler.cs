@@ -5,7 +5,7 @@ using System;
 using System.Net;
 using System.Security.Cryptography;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class SessionHandler
 {

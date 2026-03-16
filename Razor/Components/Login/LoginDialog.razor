@@ -1,11 +1,11 @@
 ﻿@using System.Net.Mail
 @using System.Threading
-@inject Self Self
+@inject Services.User User
 @inject NavigationManager nm
 @inject Services.Session session
 @inject EventHookScoped ehs
 
-@if (AssignedRenderMode == RenderMode.InteractiveServer && Self.Session.UserID == Guid.Empty)
+@if (AssignedRenderMode == RenderMode.InteractiveServer && User.Session.UserID == Guid.Empty)
 {
     <Dialog AllowBreakOut="false" Icon="@(HeaderIcons[(int)CurrentStage])" Header="@(Headers[(int)CurrentStage])" @ref="Dialog">
         <Warning Message="@Warning" />
@@ -143,7 +143,7 @@
     private async Task ISSignIn()
     {
         Warning = "";
-        if (await Task.Run<bool>(() => Self.Logon(UserName, Password)))
+        if (await Task.Run<bool>(() => User.Logon(UserName, Password)))
         {
             await Dialog.FadeOut();
         }
@@ -166,9 +166,9 @@
             Warning = "Your passwords do not match.";
             return;
         }
-        if (!Classes.User.IsValidUserIDString(UserName))
+        if (!Classes.Static.User.IsValidUserIDString(UserName))
         {
-            Warning = "The user name entered is invalid.";
+                Warning = "The user name entered is invalid.";
             return;
         }
         MailAddress mail = null;
@@ -177,51 +177,51 @@
             Warning = "You entered an invalid email address.";
             return;
         }
-        Guid uid = Classes.User.GetUserID(UserName);
+            Guid uid = Classes.Static.User.GetUserID(UserName);
         if (uid != Guid.Empty)
         {
-            Classes.User.UserAuthMethodsResult methods = Classes.User.GetUserAuthenticationMethods(uid);
-            if (methods.Methods != Classes.User.UserAuthMethods.None)
+                Classes.Static.User.UserAuthMethodsResult methods = Classes.Static.User.GetUserAuthenticationMethods(uid);
+            if (methods.Methods != Classes.Static.User.UserAuthMethod.None)
             {
-                Warning = "User Name is already taken.";
+                    Warning = "User Name is already taken.";
                 return;
             }
         }
         else
         {
-            uid = Classes.User.CreateUser(UserName);
+            uid = Classes.Static.User.CreateUser(UserName);
         }
         if (mail != null)
         {
-            Classes.User.SetUserProperty(uid, Classes.User.UserProperties.Email, mail.Address);
+                Classes.Static.User.SetUserProperty(uid, Classes.Static.User.UserProperty.Email, mail.Address);
         }
-        await Task.Run<bool>(() => Classes.User.ChangePassword(uid, Password));
-        await Self.Logon(uid);
+        await Task.Run<bool>(() => Classes.Static.User.ChangePassword(uid, Password));
+        await User.Logon(uid);
         await Dialog.FadeOut();
     }
     private async Task ISSignGuest()
     {
         Warning = "";
-        if (!Classes.User.IsValidUserIDString(UserName))
+        if (!Classes.Static.User.IsValidUserIDString(UserName))
         {
-            Warning = "The user name entered is invalid.";
+                Warning = "The user name entered is invalid.";
             return;
         }
-        Guid uid = Classes.User.GetUserID(UserName);
+            Guid uid = Classes.Static.User.GetUserID(UserName);
         if (uid != Guid.Empty)
         {
-            Classes.User.UserAuthMethodsResult methods = Classes.User.GetUserAuthenticationMethods(uid);
-            if (methods.Methods != Classes.User.UserAuthMethods.None)
+                Classes.Static.User.UserAuthMethodsResult methods = Classes.Static.User.GetUserAuthenticationMethods(uid);
+            if (methods.Methods != Classes.Static.User.UserAuthMethod.None)
             {
-                Warning = "User Name is already taken.";
+                    Warning = "User Name is already taken.";
                 return;
             }
         }
         else
         {
-            uid = Classes.User.CreateUser(UserName);
+            uid = Classes.Static.User.CreateUser(UserName);
         }
-        await Self.Logon(uid);
+        await User.Logon(uid);
         await Dialog.FadeOut();
     }
     private void LoginButtonPressed(object o, EventArgs e)

@@ -1,13 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using static iSketch.app.Classes.Access;
-using static iSketch.app.Classes.Database;
+using static iSketch.app.Classes.Static.Access;
+using static iSketch.app.Classes.Static.Database;
 
 namespace iSketch.app.Data;
 
 public static class Access
 {
-    public static async Task<Permissions> GetPermissionsFromUserID(Guid UserID)
+    public static async Task<Permission[]> GetPermissionsFromUserID(Guid UserID)
     {
         return await ExecuteReader(
             CommandText: @"
@@ -22,12 +23,12 @@ public static class Access
             ],
             Reader: async (rdr) =>
             {
-                Permissions access = new();
+                List<Permission> access = new();
                 while (await rdr.ReadAsync())
                 {
                     access.Add(Enum.Parse<Permission>((string)rdr["Permission"]));
                 }
-                return access;
+                return access.ToArray();
             }
         );
     }

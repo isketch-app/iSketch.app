@@ -29,7 +29,7 @@ public class Startup
         services.AddSingleton<EventHookGlobal>();
         services.AddScoped<EventHookScoped>();
         services.AddScoped<Session>();
-        services.AddScoped<Self>();
+        services.AddScoped<User>();
         services.AddScoped<Header>();
     }
 

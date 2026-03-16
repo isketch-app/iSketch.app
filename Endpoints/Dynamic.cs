@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using static iSketch.app.Classes.Dynamic;
+using static iSketch.app.Classes.Static.Dynamic;
 
 namespace iSketch.app.Endpoints;
 

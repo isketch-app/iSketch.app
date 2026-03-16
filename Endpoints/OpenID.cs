@@ -5,12 +5,12 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
-using iSketch.app.Classes;
 using iSketch.app.Services;
 using Microsoft.AspNetCore.Http;
 using System.Text;
-using static iSketch.app.Classes.OpenID;
+using static iSketch.app.Classes.Static.OpenID;
 using static iSketch.app.Data.OpenID;
+using iSketch.app.Classes.Static;
 
 namespace iSketch.app.Endpoints {
 

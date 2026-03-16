@@ -1,4 +1,4 @@
-﻿@inject Self Self
+﻿@inject Services.User User
 @inject EventHookScoped EHS
 
 @if (AssignedRenderMode == RenderMode.InteractiveServer && IsAuthorized())
@@ -15,7 +15,7 @@
     public bool Invert { get; set; } = false;
     private bool IsAuthorized()
     {
-        bool ret = Self.Permissions.Contains(Permission);
+        bool ret = User.Permissions.Contains(Permission);
         if (Invert) ret = !ret;
         return ret;
     }

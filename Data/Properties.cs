@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using static iSketch.app.Classes.Database;
+using static iSketch.app.Classes.Static.Database;
 
 namespace iSketch.app.Data
 {

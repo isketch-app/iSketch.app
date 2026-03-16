@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using static iSketch.app.Classes.Database;
-using static iSketch.app.Classes.OpenID;
+using static iSketch.app.Classes.Static.Database;
+using static iSketch.app.Classes.Static.OpenID;
 
 namespace iSketch.app.Data;
 

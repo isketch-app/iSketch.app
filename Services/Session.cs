@@ -2,7 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System.Net;
 using System.Net.Sockets;
-using iSketch.app.Classes;
+using iSketch.app.Classes.Static;
 
 namespace iSketch.app.Services
 {

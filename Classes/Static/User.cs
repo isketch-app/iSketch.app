@@ -1,18 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using iSketch.app.Services;
 using Microsoft.Data.SqlClient;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class User
 {
     private static string UserNameRegex = "^[a-zA-Z0-9~!@#$%^&*()_+{}|:\"<>?`\\-=[\\]\\\\;',./]{3,25}$";
     public static bool Logon(Session session, Guid UserID)
     {
-            SqlCommand cmd = Database.NewConnection.CreateCommand();
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
             cmd.Parameters.AddWithValue("@USERID@", UserID);
@@ -58,7 +59,7 @@ public static class User
     public static bool TestPassword(Guid UserID, string Password)
     {
         if (Password == "") Password = null;
-            SqlCommand cmd = Database.NewConnection.CreateCommand();
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
             cmd.Parameters.AddWithValue("@USERID@", UserID);
@@ -96,7 +97,7 @@ public static class User
     public static bool ChangePassword(Guid UserID, string NewPassword = null)
     {
         if (NewPassword == "") NewPassword = null;
-            SqlCommand cmd = Database.NewConnection.CreateCommand();
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
             cmd.Parameters.AddWithValue("@USERID@", UserID);
@@ -127,7 +128,7 @@ public static class User
     }
     public static Guid CreateUser(string UserName = null)
     {
-            SqlCommand cmd = Database.NewConnection.CreateCommand();
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
             Guid UserID = Guid.NewGuid();
@@ -148,7 +149,7 @@ public static class User
             cmd.Connection.Close();
         }
     }
-    public static bool SetUserProperty(Guid UserID, UserProperties Property, object Value)
+    public static bool SetUserProperty(Guid UserID, UserProperty Property, object Value)
     {
             SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
@@ -170,9 +171,9 @@ public static class User
             cmd.Connection.Close();
         }
     }
-    public static object GetUserProperty(Guid UserID, UserProperties Property)
+    public static object GetUserProperty(Guid UserID, UserProperty Property)
     {
-            SqlCommand cmd = Database.NewConnection.CreateCommand();
+        SqlCommand cmd = Database.NewConnection.CreateCommand();
         try
         {
             cmd.Parameters.AddWithValue("@USERID@", UserID);
@@ -233,11 +234,11 @@ public static class User
             rdr.Read();
             if (!rdr.IsDBNull(0))
             {
-                result.Methods |= UserAuthMethods.Password;
+                result.Methods |= UserAuthMethod.Password;
             }
             if (!rdr.IsDBNull(1))
             {
-                result.Methods |= UserAuthMethods.OpenID;
+                result.Methods |= UserAuthMethod.OpenID;
                 result.IdpID = rdr.GetGuid(1);
             }
             return result;
@@ -255,13 +256,13 @@ public static class User
     {
         try
         {
-            string sEmail = (string)GetUserProperty(UserID, UserProperties.Email);
+            string sEmail = (string)GetUserProperty(UserID, UserProperty.Email);
             if (sEmail != null && MailAddress.TryCreate(sEmail, out MailAddress dbEmail))
             {
                 if (Email.Address == dbEmail.Address) return true;
             }
-            SetUserProperty(UserID, UserProperties.EmailVerified, "false");
-            SetUserProperty(UserID, UserProperties.Email, Email.Address);
+            SetUserProperty(UserID, UserProperty.EmailVerified, "false");
+            SetUserProperty(UserID, UserProperty.Email, Email.Address);
             return true;
         }
         catch
@@ -278,9 +279,9 @@ public static class User
             if (uid != Guid.Empty)
             {
                 UserAuthMethodsResult methods = GetUserAuthenticationMethods(uid);
-                if (methods.Methods != UserAuthMethods.None) return SetUserNameResult.UserNameAlreadyTaken;
+                if (methods.Methods != UserAuthMethod.None) return SetUserNameResult.UserNameAlreadyTaken;
             }
-            SetUserProperty(UserID, UserProperties.UserName, UserName);
+            SetUserProperty(UserID, UserProperty.UserName, UserName);
             return SetUserNameResult.Success;
         }
         catch
@@ -291,7 +292,7 @@ public static class User
     public class UserAuthMethodsResult
     {
         public Guid IdpID;
-        public UserAuthMethods Methods;
+        public UserAuthMethod Methods;
     }
     public enum SetUserNameResult
     {
@@ -300,7 +301,7 @@ public static class User
         UserNameInvalid,
         UnknownFailure
     }
-    public enum UserProperties
+    public enum UserProperty
     {
         UserName,
         Email,
@@ -311,7 +312,8 @@ public static class User
         LastLogonTime,
         ProfilePictureID
     }
-    public enum UserAuthMethods
+    public class UserProperties : Dictionary<UserProperty, object> { }
+    public enum UserAuthMethod
     {
         None = 0x0,
         Password = 0x1,

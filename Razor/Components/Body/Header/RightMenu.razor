@@ -1,4 +1,4 @@
-﻿@inject Self Self;
+﻿@inject Services.User User
 @inject EventHookScoped EventHookScoped;
 
 <span class="r-menu">
@@ -16,14 +16,14 @@
         <RightMenuItem FMID="connection" Icon="cloud_off" />
     }
     <Authenticated>
-        @if (Self.ProfilePictureID == Guid.Empty)
+        @if (User.ProfilePictureID == Guid.Empty)
         {
             <RightMenuItem FMID="user" Icon="person" />
         }
         else
         {
             <RightMenuItem FMID="user">
-                <ProfilePicture ProfilePictureID="Self.ProfilePictureID" />
+                <ProfilePicture ProfilePictureID="User.ProfilePictureID" />
             </RightMenuItem>
         }
     </Authenticated>
@@ -37,10 +37,10 @@
     <div class="u-top">
         <div class="u-bg">
             <div class="white-circle"></div>
-            <ProfilePicture ProfilePictureID="Self.ProfilePictureID" />
+            <ProfilePicture ProfilePictureID="User.ProfilePictureID" />
         </div>
         <Authenticated>
-            <div class="u-name">@@@(Self.UserName)</div>
+            <div class="u-name">@@@(User.UserName)</div>
         </Authenticated>
         <Authenticated Invert="true">
             <div class="u-name">iSketch.app</div>
@@ -49,7 +49,7 @@
     <div fmid class="u-menu">
         <Authenticated>
             <a href="/Account"><CMenuItem Icon="account_circle" Text="My Account" /></a>
-            <CMenuItem Icon="logout" Text="Sign out" OnClick="() => Self.Logoff()" />
+            <CMenuItem Icon="logout" Text="Sign out" OnClick="() => User.Logoff()" />
         </Authenticated>
         <Authenticated Invert="true">
             <CMenuItem Icon="login" Text="Sign in / Sign up" OnClick="EventHookScoped.OnLoginButtonPressed" />

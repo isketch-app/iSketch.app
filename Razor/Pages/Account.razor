@@ -1,15 +1,15 @@
-﻿@page "/Account";
-@using static iSketch.app.Classes.User
-@inject Self Self;
-@inject EventHookScoped EventHookScoped;
-@inject NavigationManager NavigationManager;
+﻿@page "/Account"
+@using static iSketch.app.Classes.Static.User
+@inject Services.User User
+@inject EventHookScoped EventHookScoped
+@inject NavigationManager NavigationManager
 
 <Authenticated>
     <div class="main">
         <div class="page">
             <div class="title">
-                <ProfilePicture ProfilePictureID="Self.ProfilePictureID" />
-                <BPageTitle Icon="hand_gesture" Title='@("Welcome, " + Self.UserName)' />
+                <ProfilePicture ProfilePictureID="User.ProfilePictureID" />
+                <BPageTitle Icon="hand_gesture" Title='@("Welcome, " + User.UserName)' />
                 <span class="subtext">Manage and customize your iSketch.app profile.</span>
             </div>
             <div class="details">
@@ -64,12 +64,12 @@
 
     private void LoadUserData()
     {
-        if (Self.Session.UserID == Guid.Empty) return;
-        Email = (string)Self.GetProperty(UserProperties.Email);
+        if (User.Session.UserID == Guid.Empty) return;
+        Email = (string)User.GetProperty(UserProperty.Email);
         //IdpName = (string)User.GetProperty(UserProperties.OpenID_IdpName);
-        Biography = (string)Self.GetProperty(UserProperties.Biography);
-        CreatedTime = Self.GetProperty(UserProperties.CreatedTime).ToString();
-        LastLogonTime = Self.GetProperty(UserProperties.LastLogonTime).ToString();
+        Biography = (string)User.GetProperty(UserProperty.Biography);
+        CreatedTime = User.GetProperty(UserProperty.CreatedTime).ToString();
+        LastLogonTime = User.GetProperty(UserProperty.LastLogonTime).ToString();
     }
 
     private void OnLoginLogoutStatusChanged(object o, EventArgs a)

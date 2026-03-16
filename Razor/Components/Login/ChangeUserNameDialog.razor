@@ -1,8 +1,8 @@
-﻿@inject Self Self;
+﻿@inject Services.User User;
 @inject EventHookScoped ehs; 
 
 <Authenticated>
-    @if (Self.UserName.ToLower() == Self.Session.UserID.ToString().ToLower())
+    @if (User.UserName.ToLower() == User.Session.UserID.ToString().ToLower())
     {
         <Dialog Icon="signature" AllowBreakOut="false" Header="Choose a user name" @ref="Dialog">
             <Warning Message="@Warning" />
@@ -10,7 +10,7 @@
                 <div class="input"><CText Icon="signature" Label="User Name" ValueChanged="(v) => UserName = v"></CText></div>
             </div>
             <DialogButtonContainer SpaceEvenly="false">
-                <CButton Icon="logout" Emphasis="CButton.EmphasisStyles.Low" OnClick="Self.Logoff">Sign out</CButton>
+                <CButton Icon="logout" Emphasis="CButton.EmphasisStyles.Low" OnClick="User.Logoff">Sign out</CButton>
                 <CButton Icon="check" Emphasis="CButton.EmphasisStyles.Low" OnClick="SetUserName">Continue</CButton>
             </DialogButtonContainer>
         </Dialog>
@@ -24,24 +24,24 @@
     public async Task SetUserName()
     {
         Warning = "";
-        User.SetUserNameResult result = User.SetUserName(Self.Session.UserID, UserName);
-        if (result == User.SetUserNameResult.UserNameInvalid)
+            Classes.Static.User.SetUserNameResult result = Classes.Static.User.SetUserName(User.Session.UserID, UserName);
+        if (result == Classes.Static.User.SetUserNameResult.UserNameInvalid)
         {
-            Warning = "The name entered is not valid.";
+                Warning = "The name entered is not valid.";
         }
-        if (result == User.SetUserNameResult.UserNameAlreadyTaken)
+        if (result == Classes.Static.User.SetUserNameResult.UserNameAlreadyTaken)
         {
-            Warning = "The name entered is already taken.";
+                Warning = "The name entered is already taken.";
         }
-        if (result == User.SetUserNameResult.UnknownFailure)
+        if (result == Classes.Static.User.SetUserNameResult.UnknownFailure)
         {
-            Warning = "Something went wrong, try a different name.";
+                Warning = "Something went wrong, try a different name.";
         }
-        if (result == User.SetUserNameResult.Success)
+        if (result == Classes.Static.User.SetUserNameResult.Success)
         {
             await Dialog.FadeOut();
-            await Self.ReloadUserData();
-            ehs.OnLoginLogoutStatusChanged();
+            await User.ReloadUserData();
+                ehs.OnLoginLogoutStatusChanged();
         }
     }
 }

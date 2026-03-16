@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class Photo
 {

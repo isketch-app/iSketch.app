@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace iSketch.app.Classes;
+namespace iSketch.app.Classes.Static;
 
 public static class Access
 {
@@ -9,5 +9,5 @@ public static class Access
         Administrator, //Main administrator page.
         Words //Words administrator page.
     }
-    public class Permissions : List<Permission> { }
+    //public class Permissions : List<Permission> { }
 }
